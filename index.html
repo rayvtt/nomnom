@@ -89,6 +89,17 @@
   }
   .lang-toggle button.active { background: var(--accent); color: white; border-radius: 99px; }
 
+  /* ===== MOBILE NAV ===== */
+  .nav-mobile {
+    display: none; align-items: center; gap: 10px;
+  }
+  .nav-mobile .lang-toggle button { padding: 5px 12px; font-size: 11px; }
+  .nav-mobile-cta {
+    background: var(--accent); color: white; padding: 8px 16px; border-radius: 99px;
+    font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; transition: all 0.3s;
+  }
+  .nav-mobile-cta:hover { transform: scale(1.05); }
+
   /* ===== HERO ===== */
   .hero {
     min-height: 100vh; display: flex; flex-direction: column; align-items: center;
@@ -1238,8 +1249,9 @@
 
   /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {
-    nav { padding: 16px 20px; }
+    nav { padding: 14px 20px; }
     .nav-links { display: none; }
+    .nav-mobile { display: flex; }
     .tracking-demo, .gamify-demo, .order-demo, .group-demo, .vendor-demo { flex-direction: column; align-items: center; }
     .tracking-right, .order-cards, .group-leaderboard, .group-challenge,
     .gamify-profile, .gamify-unlock, .gamify-badges, .order-remaining,
@@ -1259,9 +1271,34 @@
     .an-macros-grid { grid-template-columns: repeat(2, 1fr); }
     .testimonial { padding: 24px; }
     .tm-quote { font-size: 18px; }
+    /* Section spacing */
+    .tracking-section, .audience-section, .timeline-section, .gamify-section,
+    .voice-section, .order-section, .dineout-section, .group-section,
+    .cuisine-section, .recipe-section, .analyzer-section, .vendor-section,
+    .proof-section { padding-top: 72px; padding-bottom: 80px; }
+    .section-sub { max-width: 100%; font-size: 16px; margin-bottom: 48px; }
+    .hero { padding: 100px 20px 60px; }
+    /* Timeline */
+    .timeline-tabs { flex-wrap: wrap; justify-content: center; }
+    .timeline-tab { padding: 8px 16px; font-size: 12px; }
+    /* Referral */
+    .referral-card { max-width: 100%; }
+    .ref-row { flex-wrap: wrap; }
+    .ref-link { min-width: 0; }
+    /* Analyzer */
+    .an-textarea { min-height: 140px; }
+    .analyzer-output-card { min-height: auto; }
+    .an-empty-state { min-height: 200px; }
+    .an-processing { min-height: 200px; }
+    /* Audience card text */
+    .aud-name { font-size: 18px; }
   }
   @media (max-width: 600px) {
     .audience-grid { grid-template-columns: 1fr; }
+    .tracking-demo, .gamify-demo, .order-demo { max-width: 100%; }
+    .timeline-chart { padding: 20px 16px; }
+    .do-result { grid-template-columns: 44px 1fr auto; gap: 12px; }
+    .do-result-emoji { font-size: 28px; }
   }
 </style>
 </head>
@@ -1282,6 +1319,14 @@
       <button onclick="setLang('en')">EN</button>
     </div>
     <a href="#cta" class="nav-cta" data-vi="Tham gia waitlist" data-en="Join waitlist">Tham gia waitlist</a>
+  </div>
+  <!-- Mobile only: lang toggle + CTA -->
+  <div class="nav-mobile">
+    <div class="lang-toggle">
+      <button class="active" onclick="setLang('vi')">VN</button>
+      <button onclick="setLang('en')">EN</button>
+    </div>
+    <a href="#cta" class="nav-mobile-cta" data-vi="Đăng ký" data-en="Sign up">Đăng ký</a>
   </div>
 </nav>
 
