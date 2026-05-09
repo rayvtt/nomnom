@@ -1397,6 +1397,43 @@
     .an-processing { min-height: 200px; }
     /* Audience card text */
     .aud-name { font-size: 18px; }
+    /* Missing section padding overrides */
+    .statement { padding: 72px 20px; }
+    .stats-section { padding: 72px 20px; }
+    .stats-grid { gap: 24px; }
+    .cta-section { padding: 72px 20px 80px; }
+    .cta-sub { font-size: 16px; margin-bottom: 32px; }
+    /* Section sub tighter */
+    .section-sub { margin-bottom: 32px; }
+    /* Hero tighter */
+    .hero { padding: 88px 20px 48px; }
+    .hero-sub { font-size: 15px; margin-bottom: 28px; }
+    .hero-badge { margin-bottom: 24px; }
+    /* Hero h1 smaller on mobile */
+    .hero h1 { font-size: clamp(40px, 10vw, 140px); }
+    /* Proof counter cap */
+    .proof-counter { font-size: clamp(56px, 14vw, 120px); }
+    .testimonial-track { margin-bottom: 32px; }
+    /* Tracking section compact */
+    .tracking-demo { gap: 28px; }
+    .ring-container { width: 210px; height: 210px; }
+    .macro-bar-track { width: 52px; height: 84px; }
+    .macro-bar-val { font-size: 14px; }
+    .profile-module { padding: 18px 20px; }
+    /* Gamify compact */
+    .gamify-profile, .gamify-unlock { padding: 22px; }
+    .gamify-profile, .gamify-badges, .gamify-unlock { max-width: 420px; }
+    /* Voice compact */
+    .voice-transcript { padding: 20px 22px; min-height: 110px; }
+    /* Smart Order compact */
+    .so-panel { padding: 16px 18px; }
+    .so-notif-title { font-size: 18px; }
+    /* Dine-out results compact */
+    .do-result { padding: 14px 16px; gap: 14px; }
+    .do-score-num { font-size: 28px; }
+    .do-result-name { font-size: 17px; }
+    /* Vendor compact */
+    .vendor-menu-editor, .vendor-stats-panel { max-width: 420px; }
   }
   @media (max-width: 600px) {
     .audience-grid { grid-template-columns: 1fr; }
@@ -1404,6 +1441,50 @@
     .timeline-chart { padding: 20px 16px; }
     .do-result { grid-template-columns: 44px 1fr auto; gap: 12px; }
     .do-result-emoji { font-size: 28px; }
+  }
+  @media (max-width: 480px) {
+    /* iPhone SE / mini — very tight */
+    .hero h1 { font-size: 38px; }
+    .section-title { font-size: 26px; }
+    .stat-number { font-size: 52px; }
+    .proof-counter { font-size: 60px; }
+    /* Tracking */
+    .ring-container { width: 190px; height: 190px; }
+    .ring-number { font-size: 40px; }
+    .macro-bar-track { width: 46px; height: 72px; }
+    .macro-bar-val { font-size: 13px; }
+    .profile-module { padding: 14px 16px; }
+    .bmi-number { font-size: 32px; }
+    .ct-value { font-size: 18px; }
+    /* Gamify */
+    .gamify-profile, .gamify-unlock { padding: 18px; }
+    .gp-level-ring { width: 88px; height: 88px; }
+    .gp-level-num { font-size: 28px; }
+    .gp-streak-num { font-size: 22px; }
+    .gu-reward-icon { font-size: 44px; }
+    .gu-reward-name { font-size: 18px; }
+    .badge-item { width: 64px; height: 64px; border-radius: 16px; }
+    .badge-emoji { font-size: 20px; }
+    /* Voice */
+    .vt-text { font-size: 18px; }
+    .voice-transcript { padding: 16px 18px; }
+    /* Smart Order */
+    .so-panel { padding: 14px 16px; }
+    .so-notif-title { font-size: 16px; }
+    .so-option { padding: 11px 14px; gap: 10px; }
+    .so-opt-emoji { font-size: 22px; }
+    .so-wmacro { min-width: 60px; padding: 8px 10px; }
+    .so-wmacro-val { font-size: 16px; }
+    /* Analyzer */
+    .an-macro-val { font-size: 18px; }
+    .an-result-name { font-size: 20px; }
+    /* Cuisine */
+    .cc-name { font-size: 17px; }
+    /* Section sub */
+    .section-sub { font-size: 14px; }
+    /* Testimonial */
+    .tm-quote { font-size: 16px; }
+    .testimonial { padding: 18px; }
   }
 </style>
 </head>
