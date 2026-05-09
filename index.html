@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NomNom – Chuyên gia dinh dưỡng trong túi bạn</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
@@ -46,7 +46,7 @@
   body {
     background: var(--bg);
     color: var(--text);
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
     transition: background 0.5s, color 0.5s;
@@ -67,7 +67,7 @@
     border-bottom: 1px solid var(--card-border);
     transition: all 0.4s;
   }
-  .nav-logo { font-family: 'Instrument Serif', serif; font-size: 24px; color: var(--text); letter-spacing: -0.02em; }
+  .nav-logo { font-family: 'Lora', serif; font-size: 24px; color: var(--text); letter-spacing: -0.02em; }
   .nav-logo span { color: var(--accent); }
   .nav-links { display: flex; gap: 32px; align-items: center; }
   .nav-links a { color: var(--text-2); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
@@ -85,7 +85,7 @@
   }
   .lang-toggle button {
     padding: 6px 14px; font-size: 12px; font-weight: 700; border: none; background: none;
-    color: var(--text-3); cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s;
+    color: var(--text-3); cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif; transition: all 0.2s;
   }
   .lang-toggle button.active { background: var(--accent); color: white; border-radius: 99px; }
 
@@ -119,7 +119,7 @@
   .hero-badge .pulse { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: blink 2s infinite; }
   @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
   .hero h1 {
-    font-family: 'Instrument Serif', serif; font-size: clamp(56px, 10vw, 140px);
+    font-family: 'Lora', serif; font-size: clamp(56px, 10vw, 140px);
     line-height: 0.9; letter-spacing: -0.04em; margin-bottom: 32px;
     opacity: 0; animation: heroReveal 1s 0.4s ease both;
   }
@@ -141,13 +141,13 @@
   .btn-primary {
     background: var(--accent); color: white; padding: 16px 36px; border-radius: 99px;
     font-size: 16px; font-weight: 700; text-decoration: none; transition: all 0.3s;
-    border: none; cursor: pointer; font-family: 'Outfit', sans-serif;
+    border: none; cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif;
   }
   .btn-primary:hover { transform: scale(1.06); box-shadow: 0 0 60px rgba(255,106,40,0.5); }
   .btn-ghost {
     color: var(--text-2); padding: 16px 24px; font-size: 16px; font-weight: 500;
     text-decoration: none; transition: color 0.2s; cursor: pointer; border: none;
-    background: none; font-family: 'Outfit', sans-serif;
+    background: none; font-family: 'Be Vietnam Pro', sans-serif;
   }
   .btn-ghost:hover { color: var(--text); }
   .scroll-hint {
@@ -168,7 +168,7 @@
   /* ===== STATEMENT ===== */
   .statement { padding: 160px 24px; display: flex; justify-content: center; position: relative; }
   .statement-text {
-    font-family: 'Instrument Serif', serif; font-size: clamp(28px, 5vw, 56px);
+    font-family: 'Lora', serif; font-size: clamp(28px, 5vw, 56px);
     line-height: 1.3; max-width: 900px; text-align: center; letter-spacing: -0.02em;
   }
   .statement-text .word { display: inline-block; opacity: 0.1; transition: opacity 0.6s ease, color 0.6s ease; }
@@ -178,7 +178,7 @@
   /* ===== SHARED SECTION ===== */
   .section-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); font-weight: 700; margin-bottom: 16px; }
   .section-title {
-    font-family: 'Instrument Serif', serif; font-size: clamp(32px, 5vw, 64px);
+    font-family: 'Lora', serif; font-size: clamp(32px, 5vw, 64px);
     text-align: center; letter-spacing: -0.03em; margin-bottom: 16px; line-height: 1.1;
   }
   .section-sub { font-size: 18px; color: var(--text-2); text-align: center; max-width: 480px; line-height: 1.6; margin-bottom: 72px; }
@@ -217,7 +217,7 @@
     background: rgba(255,106,40,0.12); font-size: 22px; flex-shrink: 0;
   }
   .profile-header-text { flex: 1; }
-  .profile-header-text h3 { font-family: 'Instrument Serif', serif; font-size: 20px; margin: 0; color: var(--text); }
+  .profile-header-text h3 { font-family: 'Lora', serif; font-size: 20px; margin: 0; color: var(--text); }
   .profile-header-text p { font-size: 12px; color: var(--text-3); margin: 2px 0 0; }
   .profile-edit-btn {
     background: none; border: 1px solid var(--card-border); border-radius: 8px;
@@ -234,7 +234,7 @@
   }
   .profile-field input, .profile-field select {
     background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
-    padding: 10px 14px; color: var(--text); font-size: 14px; font-family: 'Outfit', sans-serif;
+    padding: 10px 14px; color: var(--text); font-size: 14px; font-family: 'Be Vietnam Pro', sans-serif;
     transition: all 0.3s; outline: none; width: 100%; box-sizing: border-box;
   }
   .profile-field input:focus, .profile-field select:focus {
@@ -249,7 +249,7 @@
     grid-column: 1 / -1; margin-top: 8px; padding: 14px 0;
     background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
     border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
-    font-family: 'Outfit', sans-serif; cursor: pointer; transition: all 0.3s;
+    font-family: 'Be Vietnam Pro', sans-serif; cursor: pointer; transition: all 0.3s;
     letter-spacing: 0.02em;
   }
   .profile-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,106,40,0.3); }
@@ -262,7 +262,7 @@
     display: flex; align-items: center; gap: 20px; margin-bottom: 16px;
   }
   .bmi-number {
-    font-family: 'Instrument Serif', serif; font-size: 48px; line-height: 1;
+    font-family: 'Lora', serif; font-size: 48px; line-height: 1;
   }
   .bmi-info { flex: 1; }
   .bmi-category {
@@ -284,7 +284,7 @@
     text-align: center; padding: 12px 8px; border-radius: 12px;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
   }
-  .ct-value { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 2px; }
+  .ct-value { font-family: 'Lora', serif; font-size: 22px; margin-bottom: 2px; }
   .ct-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); font-weight: 700; }
   .ct-unit { font-size: 10px; color: var(--text-3); }
   @media (max-width: 600px) {
@@ -308,7 +308,7 @@
   .ring-center {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;
   }
-  .ring-number { font-family: 'Instrument Serif', serif; font-size: 52px; font-weight: 400; line-height: 1; color: var(--text); transition: all 0.3s; }
+  .ring-number { font-family: 'Lora', serif; font-size: 52px; font-weight: 400; line-height: 1; color: var(--text); transition: all 0.3s; }
   .ring-label { font-size: 13px; color: var(--text-2); margin-top: 4px; font-weight: 500; }
   .macro-bars { display: flex; gap: 20px; }
   .macro-bar-item { text-align: center; }
@@ -323,7 +323,7 @@
     transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
     opacity: 0.6;
   }
-  .macro-bar-val { font-family: 'Instrument Serif', serif; font-size: 18px; margin-top: 6px; }
+  .macro-bar-val { font-family: 'Lora', serif; font-size: 18px; margin-top: 6px; }
   .macro-bar-max { font-size: 10px; color: var(--text-3); }
   .carb-split-label { font-size: 8px; margin-top: 2px; line-height: 1.3; }
   .carb-split-label .good-c { color: var(--accent-2); }
@@ -360,7 +360,7 @@
   .mci-macros span { display: inline-flex; align-items: center; gap: 3px; }
   .mci-macros .dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
   .mci-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-  .mci-kcal { font-family: 'Instrument Serif', serif; font-size: 20px; color: var(--text-2); }
+  .mci-kcal { font-family: 'Lora', serif; font-size: 20px; color: var(--text-2); }
   .mci-check { color: var(--green); font-weight: 700; font-size: 16px; opacity: 0; transition: opacity 0.3s; }
   .mci-warnings {
     display: flex; gap: 4px; flex-wrap: wrap; padding: 0 18px 12px;
@@ -404,7 +404,7 @@
 
   .meal-add-flash {
     position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
-    font-family: 'Instrument Serif', serif; font-size: 48px; color: var(--green);
+    font-family: 'Lora', serif; font-size: 48px; color: var(--green);
     opacity: 0; z-index: 200; transition: none;
   }
   .meal-add-flash.show {
@@ -460,7 +460,7 @@
   }
   .gp-level-num {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    font-family: 'Instrument Serif', serif; font-size: 36px;
+    font-family: 'Lora', serif; font-size: 36px;
   }
   .gp-title { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
   .gp-subtitle { font-size: 12px; color: var(--text-3); margin-bottom: 20px; }
@@ -474,7 +474,7 @@
   }
   .gp-streak-fire { font-size: 24px; animation: fireWiggle 0.6s ease-in-out infinite alternate; }
   @keyframes fireWiggle { from { transform: rotate(-5deg) scale(1); } to { transform: rotate(5deg) scale(1.1); } }
-  .gp-streak-num { font-family: 'Instrument Serif', serif; font-size: 28px; }
+  .gp-streak-num { font-family: 'Lora', serif; font-size: 28px; }
   .gp-streak-label { font-size: 11px; color: var(--text-2); }
 
   /* Badges Grid */
@@ -514,7 +514,7 @@
     0% { transform: scale(1); } 30% { transform: scale(1.4) rotate(-10deg); }
     60% { transform: scale(0.9) rotate(5deg); } 100% { transform: scale(1) rotate(0); }
   }
-  .gu-reward-name { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 4px; }
+  .gu-reward-name { font-family: 'Lora', serif; font-size: 22px; margin-bottom: 4px; }
   .gu-reward-sub { font-size: 12px; color: var(--text-3); margin-bottom: 24px; }
   .gu-meter { width: 100%; height: 12px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; margin-bottom: 8px; position: relative; }
   .gu-meter-fill {
@@ -527,7 +527,7 @@
   .gu-btn {
     margin-top: 20px; padding: 12px 28px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.1);
     background: rgba(255,255,255,0.04); color: var(--text-2); font-size: 13px; font-weight: 600;
-    font-family: 'Outfit', sans-serif; cursor: pointer; transition: all 0.3s;
+    font-family: 'Be Vietnam Pro', sans-serif; cursor: pointer; transition: all 0.3s;
   }
   .gu-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(255,106,40,0.06); }
   .gu-btn.claimed { background: var(--green); border-color: var(--green); color: white; pointer-events: none; }
@@ -587,7 +587,7 @@
     justify-content: center; gap: 16px;
   }
   .vt-text {
-    font-family: 'Instrument Serif', serif; font-size: 22px; font-style: italic;
+    font-family: 'Lora', serif; font-size: 22px; font-style: italic;
     color: var(--text); line-height: 1.4; min-height: 32px;
   }
   .vt-cursor { display: inline-block; width: 2px; height: 24px; background: var(--accent); animation: cursorBlink 0.8s infinite; vertical-align: middle; margin-left: 2px; }
@@ -627,7 +627,7 @@
   .or-item:last-child { border: none; }
   .or-item-name { font-size: 13px; color: var(--text-2); display: flex; align-items: center; gap: 8px; }
   .or-item-name .dot { width: 8px; height: 8px; border-radius: 50%; }
-  .or-item-val { font-family: 'Instrument Serif', serif; font-size: 20px; }
+  .or-item-val { font-family: 'Lora', serif; font-size: 20px; }
   .or-budget { margin-top: 16px; padding: 12px 16px; background: rgba(255,159,28,0.06); border-radius: 14px; display: flex; align-items: center; gap: 10px; }
   .or-budget-icon { font-size: 20px; }
   .or-budget-text { font-size: 12px; color: var(--accent-2); font-weight: 600; }
@@ -655,7 +655,7 @@
   .oc-restaurant { font-size: 11px; color: var(--text-3); }
   .oc-right { text-align: right; flex-shrink: 0; }
   .oc-match {
-    font-family: 'Instrument Serif', serif; font-size: 22px; color: var(--green);
+    font-family: 'Lora', serif; font-size: 22px; color: var(--green);
   }
   .oc-price { font-size: 11px; color: var(--text-3); }
   .oc-match-bar { width: 60px; height: 3px; background: rgba(255,255,255,0.06); border-radius: 99px; margin-top: 4px; margin-left: auto; overflow: hidden; }
@@ -687,7 +687,7 @@
     border-radius: 28px; padding: 28px; overflow: hidden;
   }
   .gl-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-  .gl-title { font-family: 'Instrument Serif', serif; font-size: 22px; }
+  .gl-title { font-family: 'Lora', serif; font-size: 22px; }
   .gl-week { font-size: 11px; color: var(--text-3); background: rgba(255,255,255,0.04); padding: 4px 12px; border-radius: 99px; }
 
   .gl-row {
@@ -698,7 +698,7 @@
   .gl-row.highlight { background: rgba(255,106,40,0.06); border: 1px solid rgba(255,106,40,0.15); }
   .gl-row.moving-up { animation: moveUp 0.6s cubic-bezier(0.4,0,0.2,1); }
   @keyframes moveUp { 0% { transform: translateY(60px); opacity: 0.5; } 100% { transform: translateY(0); opacity: 1; } }
-  .gl-pos { font-family: 'Instrument Serif', serif; font-size: 20px; width: 28px; text-align: center; }
+  .gl-pos { font-family: 'Lora', serif; font-size: 20px; width: 28px; text-align: center; }
   .gl-avatar {
     width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center;
     justify-content: center; font-size: 16px; flex-shrink: 0;
@@ -706,7 +706,7 @@
   .gl-info { flex: 1; }
   .gl-name { font-size: 13px; font-weight: 600; }
   .gl-streak-small { font-size: 10px; color: var(--text-3); }
-  .gl-score { font-family: 'Instrument Serif', serif; font-size: 20px; text-align: right; }
+  .gl-score { font-family: 'Lora', serif; font-size: 20px; text-align: right; }
   .gl-score-change {
     font-size: 10px; font-weight: 700; opacity: 0; transition: opacity 0.3s;
   }
@@ -740,7 +740,7 @@
   .gc-btn {
     padding: 14px; border-radius: 16px; border: 1px solid rgba(255,106,40,0.3);
     background: rgba(255,106,40,0.06); color: var(--accent); font-size: 13px;
-    font-weight: 700; font-family: 'Outfit', sans-serif; cursor: pointer;
+    font-weight: 700; font-family: 'Be Vietnam Pro', sans-serif; cursor: pointer;
     transition: all 0.3s; text-align: center;
   }
   .gc-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
@@ -768,9 +768,9 @@
   }
   .cc-emoji { font-size: 40px; margin-bottom: 12px; display: block; transition: transform 0.3s; }
   .cuisine-card:hover .cc-emoji { transform: scale(1.2) rotate(-5deg); }
-  .cc-name { font-family: 'Instrument Serif', serif; font-size: 20px; margin-bottom: 4px; }
+  .cc-name { font-family: 'Lora', serif; font-size: 20px; margin-bottom: 4px; }
   .cc-region { font-size: 11px; color: var(--text-3); font-weight: 500; }
-  .cc-kcal { font-family: 'Instrument Serif', serif; font-size: 16px; color: var(--accent); margin-top: 8px; }
+  .cc-kcal { font-family: 'Lora', serif; font-size: 16px; color: var(--accent); margin-top: 8px; }
 
   .cc-expanded-info {
     display: none; margin-top: 20px; text-align: left;
@@ -780,13 +780,13 @@
   .cc-macro-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
   .cc-macro-item { flex: 1; min-width: 70px; }
   .cc-macro-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; font-weight: 700; }
-  .cc-macro-val { font-family: 'Instrument Serif', serif; font-size: 22px; }
+  .cc-macro-val { font-family: 'Lora', serif; font-size: 22px; }
   .cc-macro-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; margin-top: 4px; }
   .cc-macro-bar-fill { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(0.4,0,0.2,1); }
   .cc-health-score { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px; }
   .cc-hs-ring { width: 44px; height: 44px; position: relative; flex-shrink: 0; }
   .cc-hs-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .cc-hs-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Instrument Serif', serif; font-size: 14px; }
+  .cc-hs-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Lora', serif; font-size: 14px; }
   .cc-hs-text { font-size: 11px; color: var(--text-2); }
   .cc-ingredients { margin-top: 12px; }
   .cc-ingredients-title { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 6px; }
@@ -807,7 +807,7 @@
   }
   .stat-item { text-align: center; }
   .stat-number {
-    font-family: 'Instrument Serif', serif; font-size: clamp(48px, 8vw, 96px); line-height: 1;
+    font-family: 'Lora', serif; font-size: clamp(48px, 8vw, 96px); line-height: 1;
     background: linear-gradient(180deg, var(--text), var(--text-2));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
@@ -851,7 +851,7 @@
   .recipe-search {
     flex: 1; background: var(--card-bg); border: 1px solid var(--card-border);
     border-radius: 14px; padding: 14px 20px; font-size: 14px; color: var(--text);
-    outline: none; font-family: 'Outfit', sans-serif; transition: border-color 0.3s;
+    outline: none; font-family: 'Be Vietnam Pro', sans-serif; transition: border-color 0.3s;
   }
   .recipe-search:focus { border-color: var(--accent); }
   .recipe-search::placeholder { color: var(--text-3); }
@@ -860,7 +860,7 @@
     padding: 8px 16px; border-radius: 99px; font-size: 12px; font-weight: 600;
     background: var(--card-bg); border: 1px solid var(--card-border);
     color: var(--text-2); cursor: pointer; transition: all 0.2s; border: none;
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Be Vietnam Pro', sans-serif;
   }
   .recipe-pill.active { background: var(--accent); color: white; }
   .recipe-pill:hover { color: var(--text); }
@@ -878,7 +878,7 @@
   .recipe-card-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
   .recipe-card-region { font-size: 11px; color: var(--text-3); }
   .recipe-card-score {
-    font-family: 'Instrument Serif', serif; font-size: 24px; flex-shrink: 0;
+    font-family: 'Lora', serif; font-size: 24px; flex-shrink: 0;
   }
   .recipe-card-macros { display: flex; gap: 12px; margin-bottom: 10px; }
   .recipe-card-macro { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
@@ -940,7 +940,7 @@
     display: flex; gap: 0; border-bottom: 1px solid var(--card-border); overflow-x: auto;
   }
   .vendor-tab {
-    flex: 1; padding: 12px 16px; font-size: 12px; font-weight: 600; font-family: 'Outfit', sans-serif;
+    flex: 1; padding: 12px 16px; font-size: 12px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif;
     background: none; border: none; color: var(--text-3); cursor: pointer;
     border-bottom: 2px solid transparent; transition: all 0.3s; white-space: nowrap;
   }
@@ -987,7 +987,7 @@
     border-radius: 18px; padding: 20px; text-align: center;
   }
   .vendor-stat-num {
-    font-family: 'Instrument Serif', serif; font-size: 36px; line-height: 1;
+    font-family: 'Lora', serif; font-size: 36px; line-height: 1;
     margin-bottom: 4px;
   }
   .vendor-stat-label { font-size: 11px; color: var(--text-3); font-weight: 500; }
@@ -1031,7 +1031,7 @@
     top: 30%; left: 50%; transform: translate(-50%,-50%); pointer-events: none;
   }
   .cta-title {
-    font-family: 'Instrument Serif', serif; font-size: clamp(36px, 6vw, 72px);
+    font-family: 'Lora', serif; font-size: clamp(36px, 6vw, 72px);
     line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px; position: relative;
   }
   .cta-sub {
@@ -1042,7 +1042,7 @@
   .waitlist-input {
     background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
     border-radius: 99px; padding: 16px 28px; font-size: 16px; color: var(--text);
-    width: 320px; outline: none; font-family: 'Outfit', sans-serif; transition: border-color 0.3s;
+    width: 320px; outline: none; font-family: 'Be Vietnam Pro', sans-serif; transition: border-color 0.3s;
   }
   .waitlist-input::placeholder { color: var(--text-3); }
   .waitlist-input:focus { border-color: var(--accent); }
@@ -1052,7 +1052,7 @@
     padding: 48px 24px; text-align: center; border-top: 1px solid rgba(255,255,255,0.04);
   }
   footer p { font-size: 13px; color: var(--text-3); }
-  footer .ft-logo { font-family: 'Instrument Serif', serif; font-size: 18px; color: var(--text-2); margin-bottom: 12px; }
+  footer .ft-logo { font-family: 'Lora', serif; font-size: 18px; color: var(--text-2); margin-bottom: 12px; }
 
   /* ========================================== */
   /* 1.5 WHO'S IT FOR (AUDIENCE)               */
@@ -1069,7 +1069,7 @@
   .audience-card[data-color="purple"]::before { background: var(--purple); }
   .aud-emoji { font-size: 44px; margin-bottom: 16px; display: block; transition: transform 0.4s; position: relative; }
   .audience-card:hover .aud-emoji { transform: scale(1.15) rotate(-6deg); }
-  .aud-name { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 8px; line-height: 1.2; }
+  .aud-name { font-family: 'Lora', serif; font-size: 22px; margin-bottom: 8px; line-height: 1.2; }
   .aud-pain { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 16px; }
   .aud-divider { height: 1px; background: var(--card-border); margin-bottom: 12px; }
   .aud-help-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
@@ -1081,11 +1081,11 @@
   .timeline-section { padding: 100px 24px 140px; display: flex; flex-direction: column; align-items: center; position: relative; }
   .timeline-container { max-width: 900px; width: 100%; margin-top: 32px; }
   .timeline-tabs { display: flex; gap: 4px; justify-content: center; margin-bottom: 28px; background: var(--card-bg); padding: 5px; border-radius: 99px; border: 1px solid var(--card-border); width: fit-content; margin-left: auto; margin-right: auto; }
-  .timeline-tab { padding: 9px 22px; border-radius: 99px; border: none; background: none; color: var(--text-2); font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+  .timeline-tab { padding: 9px 22px; border-radius: 99px; border: none; background: none; color: var(--text-2); font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
   .timeline-tab.active { background: var(--accent); color: white; }
   .timeline-chart { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden; }
   .tl-chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
-  .tl-chart-stat { font-family: 'Instrument Serif', serif; font-size: 44px; line-height: 1; }
+  .tl-chart-stat { font-family: 'Lora', serif; font-size: 44px; line-height: 1; }
   .tl-chart-stat-sub { font-size: 12px; color: var(--text-2); margin-top: 6px; }
   .tl-chart-trend { font-size: 12px; padding: 8px 14px; border-radius: 99px; font-weight: 600; align-self: center; }
   .tl-chart-trend.up { background: rgba(52,211,153,0.12); color: var(--green); }
@@ -1113,7 +1113,7 @@
   .do-slider-row { margin-bottom: 22px; }
   .do-slider-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; margin-bottom: 10px; font-weight: 600; }
   .do-slider-label-name { color: var(--text); }
-  .do-slider-label-val { font-family: 'Instrument Serif', serif; font-size: 22px; }
+  .do-slider-label-val { font-family: 'Lora', serif; font-size: 22px; }
   .do-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 99px; background: var(--card-border); outline: none; cursor: pointer; }
   .do-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--card-border); transition: transform 0.2s; }
   .do-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
@@ -1127,19 +1127,19 @@
   .do-slider[data-color="orange"] { background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--pct, 50%), var(--card-border) var(--pct, 50%), var(--card-border) 100%); }
   .do-slider[data-color="amber"] { background: linear-gradient(to right, var(--accent-2) 0%, var(--accent-2) var(--pct, 50%), var(--card-border) var(--pct, 50%), var(--card-border) 100%); }
   .do-slider[data-color="green"] { background: linear-gradient(to right, var(--green) 0%, var(--green) var(--pct, 50%), var(--card-border) var(--pct, 50%), var(--card-border) 100%); }
-  .do-match-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 14px; border-radius: 14px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: all 0.3s; }
+  .do-match-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 14px; border-radius: 14px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: all 0.3s; }
   .do-match-btn:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(255,106,40,0.35); }
   .do-results { display: flex; flex-direction: column; gap: 14px; min-height: 200px; }
   .do-result { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 18px 22px; display: grid; grid-template-columns: 60px 1fr auto; gap: 18px; align-items: center; opacity: 0; transform: translateY(20px); transition: all 0.5s; }
   .do-result.visible { opacity: 1; transform: translateY(0); }
   .do-result:hover { border-color: rgba(52,211,153,0.3); }
   .do-result-emoji { font-size: 38px; }
-  .do-result-name { font-family: 'Instrument Serif', serif; font-size: 20px; margin-bottom: 6px; line-height: 1.2; }
+  .do-result-name { font-family: 'Lora', serif; font-size: 20px; margin-bottom: 6px; line-height: 1.2; }
   .do-result-meta { display: flex; gap: 12px; font-size: 12px; color: var(--text-2); flex-wrap: wrap; }
   .do-result-macros { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
   .do-result-macro { font-size: 11px; padding: 3px 9px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 6px; font-weight: 700; }
   .do-result-score { text-align: center; }
-  .do-score-num { font-family: 'Instrument Serif', serif; font-size: 36px; line-height: 1; color: var(--green); }
+  .do-score-num { font-family: 'Lora', serif; font-size: 36px; line-height: 1; color: var(--green); }
   .do-score-num.medium { color: var(--accent-2); }
   .do-score-num.low { color: var(--text-2); }
   .do-score-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-top: 4px; }
@@ -1157,12 +1157,12 @@
   .analyzer-container { max-width: 1080px; width: 100%; margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
   .analyzer-input-card, .analyzer-output-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 28px; }
   .an-card-title { font-size: 11px; color: var(--purple); font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 16px; }
-  .an-textarea { width: 100%; min-height: 200px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px 16px; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px; line-height: 1.5; resize: vertical; transition: border-color 0.3s; }
+  .an-textarea { width: 100%; min-height: 200px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px 16px; color: var(--text); font-family: 'Be Vietnam Pro', sans-serif; font-size: 14px; line-height: 1.5; resize: vertical; transition: border-color 0.3s; }
   .an-textarea:focus { outline: none; border-color: var(--purple); }
   .an-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; margin-bottom: 18px; }
-  .an-preset { background: var(--bg-2); color: var(--text-2); border: 1px solid var(--card-border); padding: 7px 14px; border-radius: 99px; font-size: 12px; font-family: 'Outfit', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+  .an-preset { background: var(--bg-2); color: var(--text-2); border: 1px solid var(--card-border); padding: 7px 14px; border-radius: 99px; font-size: 12px; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; }
   .an-preset:hover { background: var(--purple); color: white; border-color: var(--purple); }
-  .an-analyze-btn { width: 100%; background: var(--purple); color: white; border: none; padding: 14px; border-radius: 14px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+  .an-analyze-btn { width: 100%; background: var(--purple); color: white; border: none; padding: 14px; border-radius: 14px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
   .an-analyze-btn:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(167,139,250,0.35); }
   .an-analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
   .analyzer-output-card { min-height: 380px; position: relative; }
@@ -1181,16 +1181,16 @@
   .an-result { display: none; }
   .an-result.visible { display: block; animation: fadeInUp 0.6s; }
   .an-result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 14px; }
-  .an-result-name { font-family: 'Instrument Serif', serif; font-size: 26px; line-height: 1.2; margin-bottom: 4px; }
+  .an-result-name { font-family: 'Lora', serif; font-size: 26px; line-height: 1.2; margin-bottom: 4px; }
   .an-result-tag { font-size: 12px; color: var(--text-2); }
   .an-score-badge { background: var(--green); color: white; padding: 8px 14px; border-radius: 12px; text-align: center; min-width: 68px; flex-shrink: 0; }
   .an-score-badge.medium { background: var(--accent-2); }
   .an-score-badge.low { background: var(--red); }
-  .an-score-num { font-family: 'Instrument Serif', serif; font-size: 26px; line-height: 1; }
+  .an-score-num { font-family: 'Lora', serif; font-size: 26px; line-height: 1; }
   .an-score-text { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-top: 2px; }
   .an-macros-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
   .an-macro { background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px 8px; text-align: center; }
-  .an-macro-val { font-family: 'Instrument Serif', serif; font-size: 22px; line-height: 1; }
+  .an-macro-val { font-family: 'Lora', serif; font-size: 22px; line-height: 1; }
   .an-macro-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-top: 6px; }
   .an-macro[data-c="kcal"] .an-macro-val { color: var(--text); }
   .an-macro[data-c="p"] .an-macro-val { color: var(--accent); }
@@ -1209,27 +1209,27 @@
   /* SOCIAL PROOF + REFERRAL                    */
   /* ========================================== */
   .proof-section { padding: 100px 24px 80px; display: flex; flex-direction: column; align-items: center; text-align: center; }
-  .proof-counter { font-family: 'Instrument Serif', serif; font-size: clamp(72px, 13vw, 140px); line-height: 1; color: var(--accent); margin-bottom: 8px; letter-spacing: -0.04em; }
+  .proof-counter { font-family: 'Lora', serif; font-size: clamp(72px, 13vw, 140px); line-height: 1; color: var(--accent); margin-bottom: 8px; letter-spacing: -0.04em; }
   .proof-counter-sub { font-size: 12px; color: var(--text-2); margin-bottom: 56px; text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; }
   .proof-counter-pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.6s infinite; }
   @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.5); } 50% { box-shadow: 0 0 0 8px rgba(52,211,153,0); } }
   .testimonial-track { max-width: 760px; width: 100%; overflow: hidden; position: relative; margin-bottom: 56px; }
   .testimonial-list { display: flex; gap: 0; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); }
   .testimonial { min-width: 100%; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 22px; padding: 36px; text-align: left; box-sizing: border-box; }
-  .tm-quote { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 22px; line-height: 1.5; color: var(--text); margin-bottom: 24px; }
+  .tm-quote { font-family: 'Lora', serif; font-style: italic; font-size: 22px; line-height: 1.5; color: var(--text); margin-bottom: 24px; }
   .tm-author { display: flex; align-items: center; gap: 14px; }
-  .tm-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 18px; flex-shrink: 0; font-family: 'Outfit', sans-serif; }
+  .tm-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 18px; flex-shrink: 0; font-family: 'Be Vietnam Pro', sans-serif; }
   .tm-name { font-size: 14px; font-weight: 700; color: var(--text); }
   .tm-role { font-size: 12px; color: var(--text-2); }
   .testimonial-dots { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
   .tm-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--card-border); border: none; cursor: pointer; padding: 0; transition: all 0.3s; }
   .tm-dot.active { background: var(--accent); width: 24px; border-radius: 99px; }
   .referral-card { max-width: 540px; width: 100%; background: linear-gradient(135deg, rgba(255,106,40,0.10), rgba(255,159,28,0.04)); border: 1px solid rgba(255,106,40,0.22); border-radius: 22px; padding: 30px; text-align: left; }
-  .ref-title { font-family: 'Instrument Serif', serif; font-size: 24px; margin-bottom: 8px; line-height: 1.2; }
+  .ref-title { font-family: 'Lora', serif; font-size: 24px; margin-bottom: 8px; line-height: 1.2; }
   .ref-sub { font-size: 13px; color: var(--text-2); margin-bottom: 18px; line-height: 1.5; }
   .ref-row { display: flex; gap: 8px; margin-bottom: 14px; }
   .ref-link { flex: 1; padding: 12px 16px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 10px; color: var(--text); font-family: monospace; font-size: 13px; user-select: all; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ref-copy-btn { padding: 12px 18px; background: var(--accent); color: white; border: none; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
+  .ref-copy-btn { padding: 12px 18px; background: var(--accent); color: white; border: none; border-radius: 10px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
   .ref-copy-btn:hover { transform: scale(1.05); }
   .ref-progress { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-2); border-radius: 10px; font-size: 12px; color: var(--text-2); flex-wrap: wrap; }
   .ref-progress-bar { flex: 1; min-width: 100px; height: 6px; background: var(--card-border); border-radius: 99px; overflow: hidden; }
@@ -1466,7 +1466,7 @@
           <svg viewBox="0 0 48 48">
             <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
             <circle id="trkQualityRing" cx="24" cy="24" r="20" fill="none" stroke="var(--green)" stroke-width="4" stroke-linecap="round" stroke-dasharray="125.66" stroke-dashoffset="125.66" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 0.8s ease, stroke 0.5s;"/>
-            <text id="trkQualityNum" x="24" y="26" text-anchor="middle" fill="var(--text)" font-family="Instrument Serif" font-size="14" dominant-baseline="middle">—</text>
+            <text id="trkQualityNum" x="24" y="26" text-anchor="middle" fill="var(--text)" font-family="Lora" font-size="14" dominant-baseline="middle">—</text>
           </svg>
         </div>
         <div class="qs-label" id="trkQualityLabel"><strong data-vi="Chất lượng" data-en="Quality">Chất lượng</strong><br><span data-vi="Thêm món để xem điểm" data-en="Add meals to see score">Thêm món để xem điểm</span></div>
@@ -3424,7 +3424,7 @@ function initOrderMap() {
     html: '<div style="width:16px;height:16px;background:var(--accent);border-radius:50%;border:3px solid white;box-shadow:0 0 12px rgba(255,106,40,0.5);"></div>',
     iconSize: [16, 16], iconAnchor: [8, 8]
   });
-  L.marker([10.7769, 106.7009], { icon: userIcon }).addTo(orderMap).bindPopup('<b style="font-family:Outfit;">You are here</b>');
+  L.marker([10.7769, 106.7009], { icon: userIcon }).addTo(orderMap).bindPopup('<b style="font-family:'Be Vietnam Pro';">You are here</b>');
 
   // Restaurant markers
   const restaurants = [
@@ -3474,11 +3474,11 @@ function addRestaurantMarker(r) {
   const markerColor = r.match >= 90 ? '#34D399' : r.match >= 80 ? '#FF9F1C' : '#FF6A28';
   const icon = L.divIcon({
     className: '',
-    html: `<div style="background:${markerColor};color:#000;font-weight:800;font-size:11px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(0,0,0,0.3);box-shadow:0 2px 8px rgba(0,0,0,0.3);font-family:Outfit;animation:fadeInUp 0.4s ease;">${r.match}%</div>`,
+    html: `<div style="background:${markerColor};color:#000;font-weight:800;font-size:11px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(0,0,0,0.3);box-shadow:0 2px 8px rgba(0,0,0,0.3);font-family:'Be Vietnam Pro';animation:fadeInUp 0.4s ease;">${r.match}%</div>`,
     iconSize: [30, 30], iconAnchor: [15, 15]
   });
   const dist = r.dist || ((Math.random() * 3 + 0.3).toFixed(1) + 'km');
-  const popupContent = `<div style="font-family:Outfit;min-width:180px;"><b style="font-size:13px;">${r.name}</b><br><span style="font-size:12px;color:#666;">${currentLang === 'en' ? r.dishEn : r.dish}</span><br><span style="font-size:11px;color:#999;">${dist} · ${r.price}đ · ${r.platform}</span><br><span style="font-size:11px;font-weight:600;color:${markerColor};">Match: ${r.match}% · ${r.kcal} kcal</span></div>`;
+  const popupContent = `<div style="font-family:'Be Vietnam Pro';min-width:180px;"><b style="font-size:13px;">${r.name}</b><br><span style="font-size:12px;color:#666;">${currentLang === 'en' ? r.dishEn : r.dish}</span><br><span style="font-size:11px;color:#999;">${dist} · ${r.price}đ · ${r.platform}</span><br><span style="font-size:11px;font-weight:600;color:${markerColor};">Match: ${r.match}% · ${r.kcal} kcal</span></div>`;
   const marker = L.marker([r.lat, r.lng], { icon }).addTo(orderMap).bindPopup(popupContent);
   return marker;
 }
@@ -3588,7 +3588,7 @@ function renderTimeline() {
     const fill = d.score >= 75 ? 'rgb(52,211,153)' : d.score >= 60 ? 'rgb(255,159,28)' : 'rgb(239,68,68)';
     bars += `<rect class="tl-bar" x="${x}" y="${y}" width="${barW}" height="${barH}" rx="6" fill="${fill}" opacity="0.85"></rect>`;
     if (days.length <= 12) {
-      bars += `<text x="${x + barW/2}" y="${y - 6}" text-anchor="middle" font-size="10" fill="${isLight?'#6B6560':'#8A8070'}" font-family="Outfit" font-weight="600">${d.kcal.toLocaleString()}</text>`;
+      bars += `<text x="${x + barW/2}" y="${y - 6}" text-anchor="middle" font-size="10" fill="${isLight?'#6B6560':'#8A8070'}" font-family="Be Vietnam Pro" font-weight="600">${d.kcal.toLocaleString()}</text>`;
     }
   });
   svg.innerHTML = bars;
