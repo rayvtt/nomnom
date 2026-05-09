@@ -625,8 +625,8 @@
     top: 40%; left: 30%; pointer-events: none;
   }
   .order-demo {
-    display: flex; gap: 48px; max-width: 1000px; width: 100%;
-    justify-content: center; flex-wrap: wrap; align-items: flex-start;
+    display: flex; flex-direction: column; gap: 20px; max-width: 900px; width: 100%;
+    align-items: stretch;
   }
 
   .order-remaining {
@@ -1247,6 +1247,67 @@
   .ref-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 99px; transition: width 1.4s cubic-bezier(0.4,0,0.2,1); }
   .ref-progress-text { font-weight: 700; color: var(--text); white-space: nowrap; }
 
+  /* ===== SMART ORDER REDESIGN ===== */
+  .so-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 24px 28px; }
+  .so-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+  .so-panel-label { font-size: 10px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; }
+  .so-week-tag { font-size: 11px; color: var(--accent); font-weight: 700; background: rgba(255,106,40,0.1); padding: 3px 12px; border-radius: 99px; }
+  .so-goal-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+  .so-goal-btn { padding: 8px 18px; border-radius: 99px; border: 1px solid var(--card-border); background: var(--bg-2); color: var(--text-2); font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.25s; }
+  .so-goal-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .so-goal-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+  .so-week-grid { display: flex; gap: 8px; margin-bottom: 16px; }
+  .so-day { flex: 1; text-align: center; }
+  .so-day-lbl { font-size: 9px; color: var(--text-3); font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .so-day.today .so-day-lbl { color: var(--accent); }
+  .so-day-bar-wrap { height: 52px; background: var(--bg-3); border-radius: 6px; position: relative; overflow: hidden; }
+  .so-day.today .so-day-bar-wrap { border: 1.5px solid var(--accent); }
+  .so-day-fill { position: absolute; bottom: 0; left: 0; right: 0; background: var(--green); border-radius: 4px; width: 100%; height: 0%; transition: height 0.9s cubic-bezier(0.4,0,0.2,1); }
+  .so-day.today .so-day-fill { background: var(--accent); }
+  .so-day-pct { font-size: 8px; color: var(--text-3); margin-top: 4px; font-weight: 700; }
+  .so-day.today .so-day-pct { color: var(--accent); }
+  .so-week-macros { display: flex; gap: 10px; flex-wrap: wrap; }
+  .so-wmacro { flex: 1; min-width: 80px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 10px; padding: 10px 12px; text-align: center; }
+  .so-wmacro-val { font-family: 'Lora', serif; font-size: 20px; line-height: 1; }
+  .so-wmacro-lbl { font-size: 9px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px; }
+
+  /* Notification card */
+  .so-notif-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .so-notif-badge { font-size: 11px; color: var(--text-3); font-weight: 700; letter-spacing: 0.06em; }
+  .so-countdown { font-size: 11px; color: var(--accent); font-weight: 700; background: rgba(255,106,40,0.1); padding: 3px 10px; border-radius: 99px; }
+  .so-notif-title { font-family: 'Lora', serif; font-size: 21px; margin-bottom: 14px; line-height: 1.25; }
+  .so-gap-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .so-gap-pill { padding: 5px 13px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+  .so-gap-pill.p { background: rgba(255,106,40,0.12); color: var(--accent); }
+  .so-gap-pill.c { background: rgba(255,159,28,0.12); color: var(--accent-2); }
+  .so-gap-pill.f { background: rgba(52,211,153,0.1); color: var(--green); }
+  .so-gap-pill.k { background: var(--bg-3); color: var(--text-3); }
+  .so-options-label { font-size: 10px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 12px; }
+  .so-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+  .so-option { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--bg-2); border: 1.5px solid var(--card-border); border-radius: 16px; cursor: pointer; transition: all 0.25s; }
+  .so-option:hover { border-color: var(--green); }
+  .so-option.selected { border-color: var(--green); background: rgba(52,211,153,0.07); }
+  .so-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--card-border); flex-shrink: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+  .so-option.selected .so-radio { border-color: var(--green); background: var(--green); }
+  .so-option.selected .so-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; display: block; }
+  .so-opt-emoji { font-size: 26px; flex-shrink: 0; }
+  .so-opt-info { flex: 1; min-width: 0; }
+  .so-opt-name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; margin-bottom: 3px; }
+  .so-opt-meta { font-size: 11px; color: var(--text-3); display: flex; gap: 8px; flex-wrap: wrap; }
+  .so-opt-platform { font-size: 10px; font-weight: 700; color: var(--green); background: rgba(52,211,153,0.1); padding: 1px 7px; border-radius: 99px; }
+  .so-opt-right { text-align: right; flex-shrink: 0; }
+  .so-opt-match { font-family: 'Lora', serif; font-size: 22px; color: var(--green); line-height: 1; }
+  .so-opt-price { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+  .so-order-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; animation: fadeInUp 0.4s; }
+  .so-order-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: white; padding: 12px 22px; border-radius: 14px; font-weight: 700; font-size: 14px; font-family: 'Be Vietnam Pro', sans-serif; transition: all 0.3s; cursor: pointer; border: none; text-decoration: none; }
+  .so-order-btn:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(52,211,153,0.35); }
+  .so-skip-btn { background: none; border: 1px solid var(--card-border); color: var(--text-3); padding: 12px 18px; border-radius: 14px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .so-skip-btn:hover { border-color: var(--text-2); color: var(--text-2); }
+
+  /* Mobile recipe/cuisine show-more */
+  .show-more-btn { display: none; width: 100%; margin-top: 14px; background: var(--bg-2); border: 1px solid var(--card-border); color: var(--text-2); padding: 12px; border-radius: 12px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.25s; }
+  .show-more-btn:hover { border-color: var(--accent); color: var(--accent); }
+
   /* ===== FLOAT NAV ===== */
   .float-nav-btn { position: fixed; top: 20px; left: 20px; z-index: 1002; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--card-border); cursor: pointer; background: var(--nav-bg); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
   .float-nav-btn:hover { transform: scale(1.08); border-color: var(--accent); }
@@ -1292,7 +1353,11 @@
     nav { padding: 14px 20px 14px 76px; }
     .nav-links { display: none; }
     .nav-mobile { display: flex; }
-    .tracking-demo, .gamify-demo, .order-demo, .group-demo, .vendor-demo { flex-direction: column; align-items: center; }
+    .show-more-btn { display: block; }
+    .so-week-grid { gap: 4px; }
+    .so-day-bar-wrap { height: 38px; }
+    .so-opt-name { font-size: 13px; }
+    .tracking-demo, .gamify-demo, .group-demo, .vendor-demo { flex-direction: column; align-items: center; }
     .tracking-right, .order-cards, .group-leaderboard, .group-challenge,
     .gamify-profile, .gamify-unlock, .gamify-badges, .order-remaining,
     .vendor-menu-editor, .vendor-stats-panel { width: 100%; max-width: 360px; }
@@ -1911,40 +1976,42 @@
   <p class="section-sub reveal" data-vi="Dựa trên macro còn thiếu + ngân sách + khẩu vị, NomNom gợi ý bữa ăn perfect từ delivery app." data-en="Based on remaining macros + budget + taste, NomNom suggests perfect meals from delivery apps.">Dựa trên macro còn thiếu + ngân sách + khẩu vị, NomNom gợi ý bữa ăn perfect từ delivery app.</p>
 
   <div class="order-demo" id="orderDemo">
-    <div class="order-remaining">
-      <div class="or-title" data-vi="Macro còn thiếu hôm nay" data-en="Remaining macros today">Macro còn thiếu hôm nay</div>
-      <div class="or-item"><div class="or-item-name"><span class="dot" style="background:var(--accent);"></span> Protein</div><div class="or-item-val" style="color:var(--accent);">46g</div></div>
-      <div class="or-item"><div class="or-item-name"><span class="dot" style="background:var(--accent-2);"></span> Carbs</div><div class="or-item-val" style="color:var(--accent-2);">48g</div></div>
-      <div class="or-item"><div class="or-item-name"><span class="dot" style="background:var(--green);"></span> Fat</div><div class="or-item-val" style="color:var(--green);">21g</div></div>
-      <div class="or-item"><div class="or-item-name"><span class="dot" style="background:var(--text-2);"></span> Calories</div><div class="or-item-val">610</div></div>
-      <div class="or-budget"><div class="or-budget-icon">💰</div><div class="or-budget-text">Budget: 55,000đ</div></div>
+
+    <!-- Panel 1: Weekly Goal Setup -->
+    <div class="so-panel reveal" id="soSetupPanel">
+      <div class="so-panel-header">
+        <div class="so-panel-label" data-vi="KẾ HOẠCH TUẦN" data-en="WEEKLY PLAN">KẾ HOẠCH TUẦN</div>
+        <div class="so-week-tag" id="soWeekTag" data-vi="Thứ 6 · 3 ngày còn lại" data-en="Friday · 3 days left">Thứ 6 · 3 ngày còn lại</div>
+      </div>
+      <div class="so-goal-btns" id="soGoalBtns">
+        <button class="so-goal-btn active" data-goal="loss" data-vi="⚡ Giảm cân" data-en="⚡ Lose weight">⚡ Giảm cân</button>
+        <button class="so-goal-btn" data-goal="maintain" data-vi="⚖️ Duy trì" data-en="⚖️ Maintain">⚖️ Duy trì</button>
+        <button class="so-goal-btn" data-goal="gain" data-vi="💪 Tăng cơ" data-en="💪 Gain muscle">💪 Tăng cơ</button>
+      </div>
+      <!-- Day bars Mon–Sun -->
+      <div class="so-week-grid" id="soWeekGrid"></div>
+      <!-- Remaining macros for the week -->
+      <div class="so-week-macros" id="soWeekMacros"></div>
     </div>
 
-    <div class="order-cards" id="orderCards">
-      <div class="order-card" data-delay="0" data-order-vi="🛵 Đang đặt..." data-order-en="🛵 Ordering...">
-        <div class="oc-rank gold">1</div>
-        <div class="oc-emoji">🍖</div>
-        <div class="oc-info"><div class="oc-name">Bún thịt nướng chả giò</div><div class="oc-restaurant">Quán Bà Năm · 1.2km · GrabFood</div></div>
-        <div class="oc-right"><div class="oc-match">96%</div><div class="oc-price">45,000đ</div><div class="oc-match-bar"><div class="oc-match-fill" data-w="96%"></div></div></div>
+    <!-- Panel 2: Push Notification → MCQ Order -->
+    <div class="so-panel reveal" id="soNotifPanel">
+      <div class="so-notif-top">
+        <div class="so-notif-badge">🔔 NomNom Smart Order</div>
+        <div class="so-countdown" id="soCountdown">28 phút đến bữa trưa</div>
       </div>
-      <div class="order-card" data-delay="150" data-order-vi="🛵 Đang đặt..." data-order-en="🛵 Ordering...">
-        <div class="oc-rank silver">2</div>
-        <div class="oc-emoji">🥘</div>
-        <div class="oc-info"><div class="oc-name">Cá kho tộ + canh rau</div><div class="oc-restaurant">Cơm nhà Lan · 0.8km · ShopeeFood</div></div>
-        <div class="oc-right"><div class="oc-match">89%</div><div class="oc-price">50,000đ</div><div class="oc-match-bar"><div class="oc-match-fill" data-w="89%"></div></div></div>
-      </div>
-      <div class="order-card" data-delay="300" data-order-vi="🛵 Đang đặt..." data-order-en="🛵 Ordering...">
-        <div class="oc-rank bronze">3</div>
-        <div class="oc-emoji">🥗</div>
-        <div class="oc-info"><div class="oc-name">Salad ức gà + gạo lứt</div><div class="oc-restaurant">Healthy Box · 2.1km · GrabFood</div></div>
-        <div class="oc-right"><div class="oc-match">82%</div><div class="oc-price">55,000đ</div><div class="oc-match-bar"><div class="oc-match-fill" data-w="82%"></div></div></div>
-      </div>
+      <div class="so-notif-title" id="soNotifTitle">Hôm nay bạn còn thiếu:</div>
+      <div class="so-gap-pills" id="soGapPills"></div>
+      <div class="so-options-label" data-vi="CHỌN MỘT MÓN GẦN BẠN:" data-en="PICK A DISH NEAR YOU:">CHỌN MỘT MÓN GẦN BẠN:</div>
+      <div class="so-options" id="soOptions"></div>
+      <div class="so-order-actions" id="soOrderActions" style="display:none;"></div>
     </div>
+
   </div>
 
   <!-- Interactive Map -->
   <div class="order-map-wrap reveal">
-    <div class="order-map-label" data-vi="📍 Top 5 gần bạn" data-en="📍 Top 5 near you">📍 Top 5 gần bạn</div>
+    <div class="order-map-label" data-vi="📍 Giao hàng gần bạn" data-en="📍 Delivery near you">📍 Giao hàng gần bạn</div>
     <div class="order-map" id="orderMap"></div>
   </div>
 </section>
@@ -2401,11 +2468,6 @@ function setLang(lang) {
   // Rebuild cuisine cards
   rebuildCuisine();
 
-  // Update order card status attributes
-  document.querySelectorAll('.order-card').forEach(card => {
-    card.setAttribute('data-order-status', card.getAttribute('data-order-' + lang));
-  });
-
   // Analyzer textarea placeholder
   const anTa = document.getElementById('anTextarea');
   if (anTa) anTa.placeholder = anTa.getAttribute('data-ph-' + lang);
@@ -2413,6 +2475,8 @@ function setLang(lang) {
   // Re-render new section content if functions exist
   if (typeof renderTimeline === 'function') renderTimeline();
   if (typeof renderTestimonials === 'function') renderTestimonials();
+  if (typeof renderSmartOrder === 'function' && soAnimated) renderSmartOrder();
+  if (typeof buildDoPrefPills === 'function') buildDoPrefPills();
 
   // Set html lang
   document.documentElement.lang = lang === 'vi' ? 'vi' : 'en';
@@ -2861,45 +2925,206 @@ document.getElementById('voiceMicBtn').addEventListener('click', () => {
 });
 
 // =============================================
-// 4. SMART ORDER CARDS ANIMATION
+// 4. SMART ORDER — WEEKLY PLAN + MCQ
 // =============================================
-// Initialize order status attributes
-document.querySelectorAll('.order-card').forEach(card => {
-  card.setAttribute('data-order-status', card.getAttribute('data-order-vi'));
+const soGoalData = {
+  loss: {
+    label: { vi: 'Giảm cân', en: 'Lose weight' },
+    weekly: { p: 700, c: 1400, f: 350 },
+    today:  { p: 46,  c: 48,  f: 12, k: 590 },
+    weekProgress: [0.86, 0.71, 0.94, 0.62, 0.38, 0, 0],
+    options: [
+      { emoji:'🍖', vi:'Bún thịt nướng chả giò', en:'Grilled Pork Vermicelli', rest:'Quán Bà Năm', dist:'1.2km', platform:'GrabFood', price:'45,000đ', match:96 },
+      { emoji:'🥘', vi:'Cá kho tộ + canh rau muống', en:'Braised Fish + Water Spinach', rest:'Cơm nhà Lan', dist:'0.8km', platform:'ShopeeFood', price:'50,000đ', match:89 },
+      { emoji:'🥗', vi:'Salad ức gà + gạo lứt', en:'Chicken Salad + Brown Rice', rest:'Healthy Box', dist:'2.1km', platform:'GrabFood', price:'55,000đ', match:82 }
+    ]
+  },
+  maintain: {
+    label: { vi: 'Duy trì', en: 'Maintain' },
+    weekly: { p: 900, c: 2100, f: 450 },
+    today:  { p: 55, c: 80, f: 22, k: 750 },
+    weekProgress: [0.75, 0.82, 0.78, 0.54, 0.26, 0, 0],
+    options: [
+      { emoji:'🍗', vi:'Cơm gà xào sả ớt', en:'Lemongrass Chilli Chicken Rice', rest:'Cơm Tấm Cali', dist:'0.9km', platform:'GrabFood', price:'52,000đ', match:91 },
+      { emoji:'🍲', vi:'Canh chua cá + cơm trắng', en:'Sour Fish Soup + Rice', rest:'Bếp Má Hai', dist:'1.4km', platform:'ShopeeFood', price:'48,000đ', match:85 },
+      { emoji:'🍜', vi:'Bún bò Huế', en:'Huế-style Beef Noodle Soup', rest:'Bún Bò Cô Ba', dist:'1.8km', platform:'GrabFood', price:'55,000đ', match:79 }
+    ]
+  },
+  gain: {
+    label: { vi: 'Tăng cơ', en: 'Gain muscle' },
+    weekly: { p: 1200, c: 2800, f: 560 },
+    today:  { p: 80, c: 120, f: 30, k: 1050 },
+    weekProgress: [0.65, 0.88, 0.73, 0.49, 0.22, 0, 0],
+    options: [
+      { emoji:'🍚', vi:'Cơm tấm sườn bì chả trứng', en:'Broken Rice Full Set', rest:'Cơm Tấm Thuận Kiều', dist:'0.7km', platform:'GrabFood', price:'60,000đ', match:94 },
+      { emoji:'🍗', vi:'Gà nướng mật ong + khoai lang', en:'Honey Grilled Chicken + Sweet Potato', rest:'Healthy Box', dist:'2.1km', platform:'ShopeeFood', price:'65,000đ', match:88 },
+      { emoji:'🍖', vi:'Phở bò đặc biệt + trứng', en:'Special Beef Pho + Egg', rest:'Phở Hòa Pasteur', dist:'1.5km', platform:'GrabFood', price:'70,000đ', match:83 }
+    ]
+  }
+};
+
+let soActiveGoal = 'loss';
+let soSelectedOption = null;
+const soDayLabels = {
+  vi: ['T2','T3','T4','T5','T6','T7','CN'],
+  en: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
+};
+
+function renderSmartOrder() {
+  const lang = currentLang;
+  const goal = soGoalData[soActiveGoal];
+
+  // Week grid
+  const gridEl = document.getElementById('soWeekGrid');
+  if (gridEl) {
+    gridEl.innerHTML = '';
+    goal.weekProgress.forEach((pct, i) => {
+      const isToday = i === 4;
+      const day = document.createElement('div');
+      day.className = 'so-day' + (isToday ? ' today' : '') + (pct === 0 ? ' future' : '');
+      const fillH = Math.round(pct * 100);
+      day.innerHTML = `
+        <div class="so-day-lbl">${soDayLabels[lang][i]}</div>
+        <div class="so-day-bar-wrap">
+          <div class="so-day-fill" style="height:0%;" data-h="${fillH}%"></div>
+        </div>
+        <div class="so-day-pct">${pct > 0 ? fillH + '%' : '—'}</div>
+      `;
+      gridEl.appendChild(day);
+    });
+    // Animate fills
+    setTimeout(() => {
+      gridEl.querySelectorAll('.so-day-fill').forEach(el => {
+        el.style.height = el.dataset.h;
+      });
+    }, 80);
+  }
+
+  // Weekly remaining macros
+  const macrosEl = document.getElementById('soWeekMacros');
+  if (macrosEl) {
+    const wk = goal.weekly;
+    const doneRatio = goal.weekProgress.reduce((a, b) => a + b, 0) / 5;
+    const remP = Math.round(wk.p * (1 - doneRatio * 0.74));
+    const remC = Math.round(wk.c * (1 - doneRatio * 0.74));
+    const remF = Math.round(wk.f * (1 - doneRatio * 0.74));
+    const weekLbl = lang === 'vi' ? 'TUẦN NÀY CÒN THIẾU' : 'REMAINING THIS WEEK';
+    macrosEl.innerHTML = `
+      <div class="so-wmacro" style="border-color:rgba(255,106,40,0.2);">
+        <div class="so-wmacro-val" style="color:var(--accent);">${remP}g</div>
+        <div class="so-wmacro-lbl">Protein</div>
+      </div>
+      <div class="so-wmacro" style="border-color:rgba(255,159,28,0.2);">
+        <div class="so-wmacro-val" style="color:var(--accent-2);">${remC}g</div>
+        <div class="so-wmacro-lbl">Carbs</div>
+      </div>
+      <div class="so-wmacro" style="border-color:rgba(52,211,153,0.2);">
+        <div class="so-wmacro-val" style="color:var(--green);">${remF}g</div>
+        <div class="so-wmacro-lbl">Fat</div>
+      </div>
+    `;
+  }
+
+  // Gap pills (today)
+  const gapEl = document.getElementById('soGapPills');
+  if (gapEl) {
+    const t = goal.today;
+    const pLbl = lang === 'vi' ? 'thiếu' : 'needed';
+    gapEl.innerHTML = `
+      <span class="so-gap-pill p">+${t.p}g Protein</span>
+      <span class="so-gap-pill c">+${t.c}g Carbs</span>
+      <span class="so-gap-pill f">+${t.f}g Fat</span>
+      <span class="so-gap-pill k">~${t.k} kcal</span>
+    `;
+  }
+
+  // Countdown label
+  const cdEl = document.getElementById('soCountdown');
+  if (cdEl) {
+    cdEl.textContent = lang === 'vi' ? '28 phút đến bữa trưa' : '28 min until lunch';
+  }
+
+  // Notification title
+  const titleEl = document.getElementById('soNotifTitle');
+  if (titleEl) {
+    titleEl.textContent = lang === 'vi' ? 'Hôm nay bạn còn thiếu:' : 'You still need today:';
+  }
+
+  // Options (MCQ)
+  const optionsEl = document.getElementById('soOptions');
+  if (optionsEl) {
+    optionsEl.innerHTML = '';
+    soSelectedOption = null;
+    document.getElementById('soOrderActions').style.display = 'none';
+
+    goal.options.forEach((opt, idx) => {
+      const div = document.createElement('div');
+      div.className = 'so-option';
+      const name = lang === 'en' ? opt.en : opt.vi;
+      div.innerHTML = `
+        <div class="so-radio"></div>
+        <div class="so-opt-emoji">${opt.emoji}</div>
+        <div class="so-opt-info">
+          <div class="so-opt-name">${name}</div>
+          <div class="so-opt-meta">
+            <span>📍 ${opt.rest}</span>
+            <span>🚶 ${opt.dist}</span>
+            <span class="so-opt-platform">${opt.platform}</span>
+          </div>
+        </div>
+        <div class="so-opt-right">
+          <div class="so-opt-match">${opt.match}<span style="font-size:12px;color:var(--text-3);">%</span></div>
+          <div class="so-opt-price">${opt.price}</div>
+        </div>
+      `;
+      div.addEventListener('click', () => selectSoOption(idx));
+      optionsEl.appendChild(div);
+    });
+  }
+}
+
+function selectSoOption(idx) {
+  soSelectedOption = idx;
+  document.querySelectorAll('.so-option').forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+  const actionsEl = document.getElementById('soOrderActions');
+  const opt = soGoalData[soActiveGoal].options[idx];
+  const lang = currentLang;
+  const orderLabel = lang === 'vi' ? `🛵 Đặt ngay trên ${opt.platform}` : `🛵 Order on ${opt.platform}`;
+  const skipLabel = lang === 'vi' ? 'Bỏ qua bữa này' : 'Skip this meal';
+  actionsEl.innerHTML = `
+    <button class="so-order-btn">${orderLabel}</button>
+    <button class="so-skip-btn">${skipLabel}</button>
+  `;
+  actionsEl.style.display = 'flex';
+  actionsEl.querySelector('.so-order-btn').addEventListener('click', () => {
+    actionsEl.querySelector('.so-order-btn').textContent = lang === 'vi' ? '✓ Đã gửi đến GrabFood!' : '✓ Sent to GrabFood!';
+  });
+}
+
+// Goal button clicks
+document.querySelectorAll('.so-goal-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.so-goal-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    soActiveGoal = btn.dataset.goal;
+    renderSmartOrder();
+  });
 });
 
-let orderAnimated = false;
-const orderObserver = new IntersectionObserver((entries) => {
+// Animate on scroll
+let soAnimated = false;
+const soObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => {
-    if (e.isIntersecting && !orderAnimated) {
-      orderAnimated = true;
-      document.querySelectorAll('.order-card').forEach((card, i) => {
-        setTimeout(() => {
-          card.classList.add('visible');
-          // Animate match bar
-          const fill = card.querySelector('.oc-match-fill');
-          if (fill) setTimeout(() => fill.style.width = fill.dataset.w, 300);
-        }, parseInt(card.dataset.delay || 0) + i * 200);
-      });
+    if (e.isIntersecting && !soAnimated) {
+      soAnimated = true;
+      renderSmartOrder();
     }
   });
-}, { threshold: 0.3 });
-orderObserver.observe(document.getElementById('orderCards'));
-
-// Click to "order"
-document.querySelectorAll('.order-card').forEach(card => {
-  card.addEventListener('click', () => {
-    if (card.classList.contains('selected')) return;
-    document.querySelectorAll('.order-card').forEach(c => c.classList.remove('selected'));
-    card.classList.add('selected');
-    setTimeout(() => {
-      card.querySelector('::before')?.remove();
-      card.classList.remove('selected');
-      card.style.borderColor = 'var(--green)';
-      card.style.background = 'rgba(52,211,153,0.06)';
-    }, 2000);
-  });
-});
+}, { threshold: 0.2 });
+const soPanel = document.getElementById('soSetupPanel');
+if (soPanel) soObserver.observe(soPanel);
 
 // =============================================
 // 5. GROUP LEADERBOARD ANIMATION
@@ -2966,12 +3191,18 @@ const ingredientsTitleText = {
 
 const explorer = document.getElementById('cuisineExplorer');
 let expandedIdx = -1;
+let cuisineShowAll = false;
 
 function rebuildCuisine() {
   explorer.innerHTML = '';
   expandedIdx = -1;
 
-  cuisineData.forEach((dish, idx) => {
+  const isMobile = window.innerWidth <= 768;
+  const cuisineLimit = 4;
+  const toShowCuisine = (isMobile && !cuisineShowAll) ? cuisineData.slice(0, cuisineLimit) : cuisineData;
+  const hiddenCuisine = (isMobile && !cuisineShowAll) ? Math.max(0, cuisineData.length - cuisineLimit) : 0;
+
+  toShowCuisine.forEach((dish, idx) => {
     const card = document.createElement('div');
     card.className = 'cuisine-card reveal';
     card.dataset.idx = idx;
@@ -3033,7 +3264,6 @@ function rebuildCuisine() {
         document.querySelectorAll('.cuisine-card.expanded').forEach(c => c.classList.remove('expanded'));
         card.classList.add('expanded');
         expandedIdx = idx;
-        // Animate bars
         setTimeout(() => {
           card.querySelectorAll('.cc-macro-bar-fill').forEach(f => f.style.width = f.dataset.w);
         }, 100);
@@ -3043,6 +3273,19 @@ function rebuildCuisine() {
     explorer.appendChild(card);
     revealObserver.observe(card);
   });
+
+  // Show-more button (mobile only)
+  const existingCuisineBtn = document.getElementById('cuisineShowMoreBtn');
+  if (existingCuisineBtn) existingCuisineBtn.remove();
+  if (hiddenCuisine > 0) {
+    const btn = document.createElement('button');
+    btn.id = 'cuisineShowMoreBtn';
+    btn.className = 'show-more-btn';
+    btn.style.gridColumn = '1 / -1';
+    btn.textContent = currentLang === 'vi' ? `Xem thêm ${hiddenCuisine} món ↓` : `Show ${hiddenCuisine} more dishes ↓`;
+    btn.onclick = () => { cuisineShowAll = true; rebuildCuisine(); };
+    explorer.after(btn);
+  }
 }
 
 // Initial build
@@ -3300,6 +3543,7 @@ const recipeCats = [
 
 let activeRecipeCat = 'all';
 let recipeSearchTerm = '';
+let recipeShowAll = false;
 
 function buildRecipeHub() {
   const pillsEl = document.getElementById('recipePills');
@@ -3312,7 +3556,7 @@ function buildRecipeHub() {
     const btn = document.createElement('button');
     btn.className = 'recipe-pill' + (cat.id === activeRecipeCat ? ' active' : '');
     btn.textContent = lang === 'en' ? cat.en : cat.vi;
-    btn.onclick = () => { activeRecipeCat = cat.id; buildRecipeHub(); };
+    btn.onclick = () => { activeRecipeCat = cat.id; recipeShowAll = false; buildRecipeHub(); };
     pillsEl.appendChild(btn);
   });
 
@@ -3324,9 +3568,15 @@ function buildRecipeHub() {
     filtered = filtered.filter(r => r.name.toLowerCase().includes(q) || (r.nameEn && r.nameEn.toLowerCase().includes(q)));
   }
 
+  // Mobile: show only first 6 unless expanded
+  const isMobile = window.innerWidth <= 768;
+  const mobileLimit = 6;
+  const hiddenCount = isMobile && !recipeShowAll ? Math.max(0, filtered.length - mobileLimit) : 0;
+  const toShow = (isMobile && !recipeShowAll) ? filtered.slice(0, mobileLimit) : filtered;
+
   // Cards
   gridEl.innerHTML = '';
-  filtered.forEach(r => {
+  toShow.forEach(r => {
     const goodPerc = r.c > 0 ? Math.round((r.goodC / r.c) * 100) : 0;
     const scoreColor = r.score >= 70 ? 'var(--green)' : r.score >= 50 ? '#fbbf24' : '#f87171';
     const warnBg = r.warnType === 'sugar' ? 'rgba(248,113,113,0.1)' : r.warnType === 'sodium' ? 'rgba(251,191,36,0.1)' : 'rgba(52,211,153,0.1)';
@@ -3359,10 +3609,23 @@ function buildRecipeHub() {
     gridEl.appendChild(card);
     revealObserver.observe(card);
   });
+
+  // Show-more button (mobile only)
+  const existingBtn = document.getElementById('recipeShowMoreBtn');
+  if (existingBtn) existingBtn.remove();
+  if (hiddenCount > 0) {
+    const btn = document.createElement('button');
+    btn.id = 'recipeShowMoreBtn';
+    btn.className = 'show-more-btn';
+    btn.textContent = lang === 'vi' ? `Xem thêm ${hiddenCount} món ↓` : `Show ${hiddenCount} more dishes ↓`;
+    btn.onclick = () => { recipeShowAll = true; buildRecipeHub(); };
+    gridEl.after(btn);
+  }
 }
 
 document.getElementById('recipeSearchInput').addEventListener('input', (e) => {
   recipeSearchTerm = e.target.value;
+  recipeShowAll = false;
   buildRecipeHub();
 });
 
