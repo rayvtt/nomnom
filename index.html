@@ -54,6 +54,17 @@
   }
   .nav-cta:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,106,40,0.4); }
 
+  /* ===== LANG TOGGLE ===== */
+  .lang-toggle {
+    display: flex; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .lang-toggle button {
+    padding: 6px 14px; font-size: 12px; font-weight: 700; border: none; background: none;
+    color: var(--text-3); cursor: pointer; font-family: 'Outfit', sans-serif; transition: all 0.2s;
+  }
+  .lang-toggle button.active { background: var(--accent); color: white; border-radius: 99px; }
+
   /* ===== HERO ===== */
   .hero {
     min-height: 100vh; display: flex; flex-direction: column; align-items: center;
@@ -468,11 +479,12 @@
 
   .order-card.selected { border-color: var(--green); background: rgba(52,211,153,0.08); }
   .order-card.selected::before {
-    content: '🛵 Đang đặt...'; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    content: attr(data-order-status); position: absolute; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(52,211,153,0.12); display: flex; align-items: center; justify-content: center;
     font-weight: 700; font-size: 14px; color: var(--green); backdrop-filter: blur(4px);
     animation: fadeIn 0.3s ease;
   }
+
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
   /* ========================================== */
@@ -672,28 +684,32 @@
 <nav>
   <div class="nav-logo">Nom<span>Nom</span></div>
   <div class="nav-links">
-    <a href="#tracking">Tracking</a>
-    <a href="#gamify">Gamify</a>
-    <a href="#voice">Voice</a>
-    <a href="#order">Smart Order</a>
-    <a href="#group">Nhóm</a>
-    <a href="#cuisine">Ẩm thực</a>
-    <a href="#cta" class="nav-cta">Tham gia waitlist</a>
+    <a href="#tracking" data-vi="Tracking" data-en="Tracking">Tracking</a>
+    <a href="#gamify" data-vi="Gamify" data-en="Gamify">Gamify</a>
+    <a href="#voice" data-vi="Voice" data-en="Voice">Voice</a>
+    <a href="#order" data-vi="Smart Order" data-en="Smart Order">Smart Order</a>
+    <a href="#group" data-vi="Nhóm" data-en="Groups">Nhóm</a>
+    <a href="#cuisine" data-vi="Ẩm thực" data-en="Cuisine">Ẩm thực</a>
+    <div class="lang-toggle">
+      <button class="active" onclick="setLang('vi')">VN</button>
+      <button onclick="setLang('en')">EN</button>
+    </div>
+    <a href="#cta" class="nav-cta" data-vi="Tham gia waitlist" data-en="Join waitlist">Tham gia waitlist</a>
   </div>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-badge"><div class="pulse"></div> Đang phát triển tại Sài Gòn</div>
+  <div class="hero-badge"><div class="pulse"></div> <span data-vi="Đang phát triển tại Sài Gòn" data-en="Building in Saigon">Đang phát triển tại Sài Gòn</span></div>
   <h1>
-    <span class="line">Chuyên gia</span>
-    <span class="line"><span class="accent">dinh dưỡng</span></span>
-    <span class="line"><span class="serif-italic">cho tất cả</span></span>
+    <span class="line" data-vi="Chuyên gia" data-en="Your personal">Chuyên gia</span>
+    <span class="line"><span class="accent" data-vi="dinh dưỡng" data-en="nutrition">dinh dưỡng</span></span>
+    <span class="line"><span class="serif-italic" data-vi="cho tất cả" data-en="expert">cho tất cả</span></span>
   </h1>
-  <p class="hero-sub">Theo dõi dinh dưỡng. Tự động order. Hiểu ẩm thực Việt Nam. Một nutritionist thông minh trong túi bạn — không cần chi tiền triệu.</p>
+  <p class="hero-sub" data-vi="Theo dõi dinh dưỡng. Tự động order. Hiểu ẩm thực Việt Nam. Một nutritionist thông minh trong túi bạn — không cần chi tiền triệu." data-en="Track nutrition. Auto-order. Understand Vietnamese cuisine. A smart nutritionist in your pocket — no expensive consultants needed.">Theo dõi dinh dưỡng. Tự động order. Hiểu ẩm thực Việt Nam. Một nutritionist thông minh trong túi bạn — không cần chi tiền triệu.</p>
   <div class="hero-ctas">
-    <a href="#cta" class="btn-primary">Tham gia waitlist →</a>
-    <button class="btn-ghost" onclick="document.getElementById('tracking').scrollIntoView({behavior:'smooth'})">Xem tính năng ↓</button>
+    <a href="#cta" class="btn-primary" data-vi="Tham gia waitlist →" data-en="Join waitlist →">Tham gia waitlist →</a>
+    <button class="btn-ghost" onclick="document.getElementById('tracking').scrollIntoView({behavior:'smooth'})" data-vi="Xem tính năng ↓" data-en="See features ↓">Xem tính năng ↓</button>
   </div>
   <div class="scroll-hint"><span>Scroll</span><div class="scroll-line"></div></div>
 </section>
@@ -715,9 +731,9 @@
      1. INTERACTIVE MACRO TRACKING
      ========================================== -->
 <section class="tracking-section" id="tracking">
-  <div class="section-label reveal">Theo dõi real-time</div>
-  <h2 class="section-title reveal">Tap bữa ăn. <span style="color:var(--accent);">Xem macro chạy.</span></h2>
-  <p class="section-sub reveal">Chạm vào từng món để thêm vào nhật ký. Macro ring cập nhật ngay lập tức.</p>
+  <div class="section-label reveal" data-vi="Theo dõi real-time" data-en="Real-time tracking">Theo dõi real-time</div>
+  <h2 class="section-title reveal" id="trackingTitle">Tap bữa ăn. <span style="color:var(--accent);">Xem macro chạy.</span></h2>
+  <p class="section-sub reveal" data-vi="Chạm vào từng món để thêm vào nhật ký. Macro ring cập nhật ngay lập tức." data-en="Tap each dish to add to your log. Macro ring updates instantly.">Chạm vào từng món để thêm vào nhật ký. Macro ring cập nhật ngay lập tức.</p>
 
   <div class="tracking-demo" id="trackingDemo">
     <div class="tracking-left">
@@ -757,11 +773,11 @@
       </div>
     </div>
     <div class="tracking-right">
-      <div style="font-size:12px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:4px;">🍽️ Bữa ăn hôm nay — tap để thêm</div>
+      <div style="font-size:12px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:4px;" data-vi="🍽️ Bữa ăn hôm nay — tap để thêm" data-en="🍽️ Today's meals — tap to add">🍽️ Bữa ăn hôm nay — tap để thêm</div>
       <div class="meal-card-interactive" data-kcal="480" data-p="32" data-c="52" data-f="12" data-name="Phở bò tái chín" data-emoji="🍜">
         <div class="mci-emoji">🍜</div>
         <div class="mci-info">
-          <div class="mci-name">Phở bò tái chín</div>
+          <div class="mci-name" data-vi="Phở bò tái chín" data-en="Phở bò tái chín (Beef pho)">Phở bò tái chín</div>
           <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 32g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 52g C</span><span><span class="dot" style="background:var(--green);"></span> 12g F</span></div>
         </div>
         <div class="mci-kcal">480</div>
@@ -769,7 +785,7 @@
       <div class="meal-card-interactive" data-kcal="140" data-p="3" data-c="22" data-f="5" data-name="Cà phê sữa đá" data-emoji="🥤">
         <div class="mci-emoji">🥤</div>
         <div class="mci-info">
-          <div class="mci-name">Cà phê sữa đá</div>
+          <div class="mci-name" data-vi="Cà phê sữa đá" data-en="Cà phê sữa đá (Iced coffee)">Cà phê sữa đá</div>
           <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 3g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 22g C</span><span><span class="dot" style="background:var(--green);"></span> 5g F</span></div>
         </div>
         <div class="mci-kcal">140</div>
@@ -777,7 +793,7 @@
       <div class="meal-card-interactive" data-kcal="240" data-p="14" data-c="28" data-f="8" data-name="Gỏi cuốn tôm (2)" data-emoji="🥗">
         <div class="mci-emoji">🥗</div>
         <div class="mci-info">
-          <div class="mci-name">Gỏi cuốn tôm (2)</div>
+          <div class="mci-name" data-vi="Gỏi cuốn tôm (2)" data-en="Gỏi cuốn tôm (Spring rolls)">Gỏi cuốn tôm (2)</div>
           <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 14g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 28g C</span><span><span class="dot" style="background:var(--green);"></span> 8g F</span></div>
         </div>
         <div class="mci-kcal">240</div>
@@ -785,7 +801,7 @@
       <div class="meal-card-interactive" data-kcal="550" data-p="28" data-c="65" data-f="18" data-name="Cơm tấm sườn bì chả" data-emoji="🍚">
         <div class="mci-emoji">🍚</div>
         <div class="mci-info">
-          <div class="mci-name">Cơm tấm sườn bì chả</div>
+          <div class="mci-name" data-vi="Cơm tấm sườn bì chả" data-en="Cơm tấm sườn bì chả (Broken rice)">Cơm tấm sườn bì chả</div>
           <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 28g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 65g C</span><span><span class="dot" style="background:var(--green);"></span> 18g F</span></div>
         </div>
         <div class="mci-kcal">550</div>
@@ -793,12 +809,12 @@
       <div class="meal-card-interactive" data-kcal="320" data-p="22" data-c="38" data-f="9" data-name="Bún chả Hà Nội" data-emoji="🥢">
         <div class="mci-emoji">🥢</div>
         <div class="mci-info">
-          <div class="mci-name">Bún chả Hà Nội</div>
+          <div class="mci-name" data-vi="Bún chả Hà Nội" data-en="Bún chả Hà Nội (Grilled pork noodles)">Bún chả Hà Nội</div>
           <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 22g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 38g C</span><span><span class="dot" style="background:var(--green);"></span> 9g F</span></div>
         </div>
         <div class="mci-kcal">320</div>
       </div>
-      <div class="mci-add-hint">Tap từng món để thêm vào ring • Tap lại để bỏ</div>
+      <div class="mci-add-hint" data-vi="Tap từng món để thêm vào ring • Tap lại để bỏ" data-en="Tap each dish to add to ring • Tap again to remove">Tap từng món để thêm vào ring • Tap lại để bỏ</div>
     </div>
   </div>
 </section>
@@ -810,9 +826,9 @@
      2. GAMIFICATION SYSTEM
      ========================================== -->
 <section class="gamify-section" id="gamify">
-  <div class="section-label reveal">Gamification</div>
-  <h2 class="section-title reveal">Ăn lành. Tích điểm.<br><span style="color:var(--accent);">Mở khoá cheat meal.</span></h2>
-  <p class="section-sub reveal">Biến dinh dưỡng thành game. Streak, XP, badge — ăn healthy chưa bao giờ vui đến vậy.</p>
+  <div class="section-label reveal" data-vi="Gamification" data-en="Gamification">Gamification</div>
+  <h2 class="section-title reveal" id="gamifyTitle">Ăn lành. Tích điểm.<br><span style="color:var(--accent);">Mở khoá cheat meal.</span></h2>
+  <p class="section-sub reveal" data-vi="Biến dinh dưỡng thành game. Streak, XP, badge — ăn healthy chưa bao giờ vui đến vậy." data-en="Turn nutrition into a game. Streaks, XP, badges — eating healthy has never been this fun.">Biến dinh dưỡng thành game. Streak, XP, badge — ăn healthy chưa bao giờ vui đến vậy.</p>
 
   <div class="gamify-demo" id="gamifyDemo">
     <div class="gamify-profile">
@@ -824,20 +840,20 @@
         <div class="gp-level-num" id="gpLevel">7</div>
       </div>
       <div class="gp-title">Nutrition Warrior</div>
-      <div class="gp-subtitle">420 XP đến Level 8</div>
+      <div class="gp-subtitle" data-vi="420 XP đến Level 8" data-en="420 XP to Level 8">420 XP đến Level 8</div>
       <div class="gp-xp-bar"><div class="gp-xp-fill" id="gpXpBar" style="width:0%"></div></div>
       <div class="gp-xp-text"><span id="gpXpText">0</span> / 1000 XP</div>
       <div class="gp-streak">
         <div class="gp-streak-fire">🔥</div>
         <div>
           <div class="gp-streak-num" id="gpStreakNum">0</div>
-          <div class="gp-streak-label">ngày streak</div>
+          <div class="gp-streak-label" data-vi="ngày streak" data-en="day streak">ngày streak</div>
         </div>
       </div>
     </div>
 
     <div class="gamify-badges">
-      <div class="badges-title">Huy hiệu</div>
+      <div class="badges-title" data-vi="Huy hiệu" data-en="Badges">Huy hiệu</div>
       <div class="badges-grid" id="badgesGrid">
         <div class="badge-item unlocked"><div class="badge-emoji">🌱</div><div class="badge-name">Newbie</div></div>
         <div class="badge-item unlocked"><div class="badge-emoji">🥗</div><div class="badge-name">Salad Fan</div></div>
@@ -846,17 +862,17 @@
         <div class="badge-item locked" id="badge5"><div class="badge-emoji">🏆</div><div class="badge-name">Champion</div></div>
         <div class="badge-item locked" id="badge6"><div class="badge-emoji">⭐</div><div class="badge-name">All-Star</div></div>
       </div>
-      <div class="gc-btn" id="earnXpBtn">⚡ Hoàn thành challenge (+150 XP)</div>
+      <div class="gc-btn" id="earnXpBtn" data-vi="⚡ Hoàn thành challenge (+150 XP)" data-en="⚡ Complete challenge (+150 XP)">⚡ Hoàn thành challenge (+150 XP)</div>
     </div>
 
     <div class="gamify-unlock">
-      <div class="gu-title">🎁 Phần thưởng tiếp theo</div>
+      <div class="gu-title" data-vi="🎁 Phần thưởng tiếp theo" data-en="🎁 Next reward">🎁 Phần thưởng tiếp theo</div>
       <div class="gu-reward-icon" id="guRewardIcon">🍺</div>
-      <div class="gu-reward-name">Bia craft guilt-free</div>
-      <div class="gu-reward-sub">Hoàn thành 3 ngày lành mạnh liên tiếp</div>
+      <div class="gu-reward-name" data-vi="Bia craft guilt-free" data-en="Guilt-free craft beer">Bia craft guilt-free</div>
+      <div class="gu-reward-sub" data-vi="Hoàn thành 3 ngày lành mạnh liên tiếp" data-en="Complete 3 healthy days in a row">Hoàn thành 3 ngày lành mạnh liên tiếp</div>
       <div class="gu-meter"><div class="gu-meter-fill" id="guMeterFill" style="width:0%"></div></div>
-      <div class="gu-meter-text"><span id="guMeterText">0</span> / 3 ngày</div>
-      <button class="gu-btn" id="guClaimBtn" style="display:none;">🎉 Claim phần thưởng!</button>
+      <div class="gu-meter-text"><span id="guMeterText">0</span> <span data-vi="/ 3 ngày" data-en="/ 3 days">/ 3 ngày</span></div>
+      <button class="gu-btn" id="guClaimBtn" style="display:none;" data-vi="🎉 Claim phần thưởng!" data-en="🎉 Claim reward!">🎉 Claim phần thưởng!</button>
     </div>
   </div>
 </section>
@@ -867,15 +883,15 @@
      3. VOICE LOG INTERACTIVE
      ========================================== -->
 <section class="voice-section" id="voice">
-  <div class="section-label reveal">Voice log</div>
-  <h2 class="section-title reveal">Nói là xong.<br><span style="color:var(--accent);">Không cần gõ.</span></h2>
-  <p class="section-sub reveal">Bữa ăn tự phát? Tap mic, nói, xong. AI phân tích và log tự động.</p>
+  <div class="section-label reveal" data-vi="Voice log" data-en="Voice log">Voice log</div>
+  <h2 class="section-title reveal" id="voiceTitle">Nói là xong.<br><span style="color:var(--accent);">Không cần gõ.</span></h2>
+  <p class="section-sub reveal" data-vi="Bữa ăn tự phát? Tap mic, nói, xong. AI phân tích và log tự động." data-en="Spontaneous meal? Tap mic, speak, done. AI analyzes and logs automatically.">Bữa ăn tự phát? Tap mic, nói, xong. AI phân tích và log tự động.</p>
 
   <div class="voice-demo reveal">
     <div class="voice-mic-btn" id="voiceMicBtn">
       <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
     </div>
-    <div class="voice-mic-label" id="voiceMicLabel">Tap để demo voice log</div>
+    <div class="voice-mic-label" id="voiceMicLabel" data-vi="Tap để demo voice log" data-en="Tap to demo voice log">Tap để demo voice log</div>
     <div class="voice-wave" id="voiceWave">
       <div class="bar" style="animation-delay:0s;"></div><div class="bar" style="animation-delay:0.1s;"></div>
       <div class="bar" style="animation-delay:0.2s;"></div><div class="bar" style="animation-delay:0.3s;"></div>
@@ -887,7 +903,7 @@
       <div class="bar" style="animation-delay:0.38s;"></div>
     </div>
     <div class="voice-transcript" id="voiceTranscript">
-      <div class="vt-placeholder">Nhấn mic và xem AI nhận diện bữa ăn</div>
+      <div class="vt-placeholder" data-vi="Nhấn mic và xem AI nhận diện bữa ăn" data-en="Press mic and watch AI identify your meal">Nhấn mic và xem AI nhận diện bữa ăn</div>
     </div>
   </div>
 </section>
@@ -896,13 +912,13 @@
      4. SMART ORDER RECOMMENDATION
      ========================================== -->
 <section class="order-section" id="order">
-  <div class="section-label reveal">Smart Order</div>
-  <h2 class="section-title reveal">AI chọn bữa.<br><span style="color:var(--green);">Fit macro. Fit ví.</span></h2>
-  <p class="section-sub reveal">Dựa trên macro còn thiếu + ngân sách + khẩu vị, NomNom gợi ý bữa ăn perfect từ delivery app.</p>
+  <div class="section-label reveal" data-vi="Smart Order" data-en="Smart Order">Smart Order</div>
+  <h2 class="section-title reveal" id="orderTitle">AI chọn bữa.<br><span style="color:var(--green);">Fit macro. Fit ví.</span></h2>
+  <p class="section-sub reveal" data-vi="Dựa trên macro còn thiếu + ngân sách + khẩu vị, NomNom gợi ý bữa ăn perfect từ delivery app." data-en="Based on remaining macros + budget + taste, NomNom suggests perfect meals from delivery apps.">Dựa trên macro còn thiếu + ngân sách + khẩu vị, NomNom gợi ý bữa ăn perfect từ delivery app.</p>
 
   <div class="order-demo" id="orderDemo">
     <div class="order-remaining">
-      <div class="or-title">Macro còn thiếu hôm nay</div>
+      <div class="or-title" data-vi="Macro còn thiếu hôm nay" data-en="Remaining macros today">Macro còn thiếu hôm nay</div>
       <div class="or-item"><div class="or-item-name"><span class="dot" style="background:var(--accent);"></span> Protein</div><div class="or-item-val" style="color:var(--accent);">46g</div></div>
       <div class="or-item"><div class="or-item-name"><span class="dot" style="background:var(--accent-2);"></span> Carbs</div><div class="or-item-val" style="color:var(--accent-2);">48g</div></div>
       <div class="or-item"><div class="or-item-name"><span class="dot" style="background:var(--green);"></span> Fat</div><div class="or-item-val" style="color:var(--green);">21g</div></div>
@@ -911,19 +927,19 @@
     </div>
 
     <div class="order-cards" id="orderCards">
-      <div class="order-card" data-delay="0">
+      <div class="order-card" data-delay="0" data-order-vi="🛵 Đang đặt..." data-order-en="🛵 Ordering...">
         <div class="oc-rank gold">1</div>
         <div class="oc-emoji">🍖</div>
         <div class="oc-info"><div class="oc-name">Bún thịt nướng chả giò</div><div class="oc-restaurant">Quán Bà Năm · 1.2km · GrabFood</div></div>
         <div class="oc-right"><div class="oc-match">96%</div><div class="oc-price">45,000đ</div><div class="oc-match-bar"><div class="oc-match-fill" data-w="96%"></div></div></div>
       </div>
-      <div class="order-card" data-delay="150">
+      <div class="order-card" data-delay="150" data-order-vi="🛵 Đang đặt..." data-order-en="🛵 Ordering...">
         <div class="oc-rank silver">2</div>
         <div class="oc-emoji">🥘</div>
         <div class="oc-info"><div class="oc-name">Cá kho tộ + canh rau</div><div class="oc-restaurant">Cơm nhà Lan · 0.8km · ShopeeFood</div></div>
         <div class="oc-right"><div class="oc-match">89%</div><div class="oc-price">50,000đ</div><div class="oc-match-bar"><div class="oc-match-fill" data-w="89%"></div></div></div>
       </div>
-      <div class="order-card" data-delay="300">
+      <div class="order-card" data-delay="300" data-order-vi="🛵 Đang đặt..." data-order-en="🛵 Ordering...">
         <div class="oc-rank bronze">3</div>
         <div class="oc-emoji">🥗</div>
         <div class="oc-info"><div class="oc-name">Salad ức gà + gạo lứt</div><div class="oc-restaurant">Healthy Box · 2.1km · GrabFood</div></div>
@@ -937,45 +953,45 @@
      5. GROUP CHALLENGE LEADERBOARD
      ========================================== -->
 <section class="group-section" id="group">
-  <div class="section-label reveal">Nhóm & Thách thức</div>
-  <h2 class="section-title reveal">Ăn lành cùng nhau.<br><span style="color:var(--accent);">Biến nó thành sport.</span></h2>
-  <p class="section-sub reveal">Lập nhóm, đặt goal, bảng xếp hạng live. Cùng streak, cùng thưởng.</p>
+  <div class="section-label reveal" data-vi="Nhóm & Thách thức" data-en="Groups & Challenges">Nhóm & Thách thức</div>
+  <h2 class="section-title reveal" id="groupTitle">Ăn lành cùng nhau.<br><span style="color:var(--accent);">Biến nó thành sport.</span></h2>
+  <p class="section-sub reveal" data-vi="Lập nhóm, đặt goal, bảng xếp hạng live. Cùng streak, cùng thưởng." data-en="Create groups, set goals, live leaderboard. Shared streaks, shared rewards.">Lập nhóm, đặt goal, bảng xếp hạng live. Cùng streak, cùng thưởng.</p>
 
   <div class="group-demo" id="groupDemo">
     <div class="group-leaderboard">
       <div class="gl-header">
-        <div class="gl-title">🏆 Bảng xếp hạng</div>
-        <div class="gl-week">Tuần 19</div>
+        <div class="gl-title" data-vi="🏆 Bảng xếp hạng" data-en="🏆 Leaderboard">🏆 Bảng xếp hạng</div>
+        <div class="gl-week" data-vi="Tuần 19" data-en="Week 19">Tuần 19</div>
       </div>
       <div id="leaderboardRows">
         <div class="gl-row highlight" data-uid="0">
           <div class="gl-pos">1</div>
           <div class="gl-avatar" style="background:rgba(255,106,40,0.2);">😎</div>
-          <div class="gl-info"><div class="gl-name">Bạn</div><div class="gl-streak-small">🔥 12 ngày</div></div>
+          <div class="gl-info"><div class="gl-name" data-vi="Bạn" data-en="You">Bạn</div><div class="gl-streak-small" data-vi="🔥 12 ngày" data-en="🔥 12 days">🔥 12 ngày</div></div>
           <div><div class="gl-score" id="myScore">2,450</div><div class="gl-score-change" id="myScoreChange" style="color:var(--green);">+120</div></div>
         </div>
         <div class="gl-row" data-uid="1">
           <div class="gl-pos">2</div>
           <div class="gl-avatar" style="background:rgba(167,139,250,0.2);">👩</div>
-          <div class="gl-info"><div class="gl-name">Linh</div><div class="gl-streak-small">🔥 9 ngày</div></div>
+          <div class="gl-info"><div class="gl-name">Linh</div><div class="gl-streak-small" data-vi="🔥 9 ngày" data-en="🔥 9 days">🔥 9 ngày</div></div>
           <div><div class="gl-score">2,380</div><div class="gl-score-change" style="color:var(--green);"></div></div>
         </div>
         <div class="gl-row" data-uid="2">
           <div class="gl-pos">3</div>
           <div class="gl-avatar" style="background:rgba(96,165,250,0.2);">🧑</div>
-          <div class="gl-info"><div class="gl-name">Minh</div><div class="gl-streak-small">🔥 6 ngày</div></div>
+          <div class="gl-info"><div class="gl-name">Minh</div><div class="gl-streak-small" data-vi="🔥 6 ngày" data-en="🔥 6 days">🔥 6 ngày</div></div>
           <div><div class="gl-score">2,210</div><div class="gl-score-change" style="color:var(--green);"></div></div>
         </div>
         <div class="gl-row" data-uid="3">
           <div class="gl-pos">4</div>
           <div class="gl-avatar" style="background:rgba(52,211,153,0.2);">👦</div>
-          <div class="gl-info"><div class="gl-name">Hùng</div><div class="gl-streak-small">🔥 4 ngày</div></div>
+          <div class="gl-info"><div class="gl-name">Hùng</div><div class="gl-streak-small" data-vi="🔥 4 ngày" data-en="🔥 4 days">🔥 4 ngày</div></div>
           <div><div class="gl-score">1,890</div><div class="gl-score-change" style="color:var(--green);"></div></div>
         </div>
         <div class="gl-row" data-uid="4">
           <div class="gl-pos">5</div>
           <div class="gl-avatar" style="background:rgba(255,159,28,0.2);">👧</div>
-          <div class="gl-info"><div class="gl-name">Trang</div><div class="gl-streak-small">🔥 3 ngày</div></div>
+          <div class="gl-info"><div class="gl-name">Trang</div><div class="gl-streak-small" data-vi="🔥 3 ngày" data-en="🔥 3 days">🔥 3 ngày</div></div>
           <div><div class="gl-score">1,720</div><div class="gl-score-change" style="color:var(--green);"></div></div>
         </div>
       </div>
@@ -983,25 +999,25 @@
 
     <div class="group-challenge">
       <div class="gc-card">
-        <div class="gc-card-header"><div class="gc-card-icon">🥦</div><div class="gc-card-badge active">Đang diễn ra</div></div>
-        <div class="gc-card-title">Tuần rau xanh</div>
-        <div class="gc-card-desc">Ăn ít nhất 3 phần rau mỗi ngày trong 7 ngày liên tiếp.</div>
+        <div class="gc-card-header"><div class="gc-card-icon">🥦</div><div class="gc-card-badge active" data-vi="Đang diễn ra" data-en="Active">Đang diễn ra</div></div>
+        <div class="gc-card-title" data-vi="Tuần rau xanh" data-en="Green Veggie Week">Tuần rau xanh</div>
+        <div class="gc-card-desc" data-vi="Ăn ít nhất 3 phần rau mỗi ngày trong 7 ngày liên tiếp." data-en="Eat at least 3 servings of veggies daily for 7 consecutive days.">Ăn ít nhất 3 phần rau mỗi ngày trong 7 ngày liên tiếp.</div>
         <div class="gc-progress-bar"><div class="gc-progress-fill" id="gcProgress1" style="width:0%;background:var(--green);"></div></div>
-        <div class="gc-progress-text"><span>5 / 7 ngày</span><span>+200 XP</span></div>
+        <div class="gc-progress-text"><span data-vi="5 / 7 ngày" data-en="5 / 7 days">5 / 7 ngày</span><span>+200 XP</span></div>
       </div>
       <div class="gc-card">
-        <div class="gc-card-header"><div class="gc-card-icon">💧</div><div class="gc-card-badge active">Đang diễn ra</div></div>
-        <div class="gc-card-title">Uống đủ nước</div>
-        <div class="gc-card-desc">2L nước mỗi ngày. Không tính trà đá hay cà phê!</div>
+        <div class="gc-card-header"><div class="gc-card-icon">💧</div><div class="gc-card-badge active" data-vi="Đang diễn ra" data-en="Active">Đang diễn ra</div></div>
+        <div class="gc-card-title" data-vi="Uống đủ nước" data-en="Stay Hydrated">Uống đủ nước</div>
+        <div class="gc-card-desc" data-vi="2L nước mỗi ngày. Không tính trà đá hay cà phê!" data-en="2L water daily. Iced tea and coffee don't count!">2L nước mỗi ngày. Không tính trà đá hay cà phê!</div>
         <div class="gc-progress-bar"><div class="gc-progress-fill" id="gcProgress2" style="width:0%;background:var(--blue);"></div></div>
-        <div class="gc-progress-text"><span>3 / 7 ngày</span><span>+150 XP</span></div>
+        <div class="gc-progress-text"><span data-vi="3 / 7 ngày" data-en="3 / 7 days">3 / 7 ngày</span><span>+150 XP</span></div>
       </div>
       <div class="gc-card">
-        <div class="gc-card-header"><div class="gc-card-icon">🏃</div><div class="gc-card-badge upcoming">Sắp tới</div></div>
+        <div class="gc-card-header"><div class="gc-card-icon">🏃</div><div class="gc-card-badge upcoming" data-vi="Sắp tới" data-en="Upcoming">Sắp tới</div></div>
         <div class="gc-card-title">Protein Week</div>
-        <div class="gc-card-desc">Đạt 100% protein target mỗi ngày trong 5 ngày.</div>
+        <div class="gc-card-desc" data-vi="Đạt 100% protein target mỗi ngày trong 5 ngày." data-en="Hit 100% protein target daily for 5 days.">Đạt 100% protein target mỗi ngày trong 5 ngày.</div>
         <div class="gc-progress-bar"><div class="gc-progress-fill" style="width:0%;background:var(--accent);"></div></div>
-        <div class="gc-progress-text"><span>Bắt đầu thứ 2</span><span>+300 XP</span></div>
+        <div class="gc-progress-text"><span data-vi="Bắt đầu thứ 2" data-en="Starts Monday">Bắt đầu thứ 2</span><span>+300 XP</span></div>
       </div>
     </div>
   </div>
@@ -1011,9 +1027,9 @@
      6. CUISINE DATABASE EXPLORER
      ========================================== -->
 <section class="cuisine-section" id="cuisine">
-  <div class="section-label reveal">Database ẩm thực Việt</div>
-  <h2 class="section-title reveal">Xây từ đầu.<br><span style="color:var(--accent);">Vì chưa ai làm.</span></h2>
-  <p class="section-sub reveal">Tap vào bất kỳ món nào để xem macro chi tiết, health score, và thành phần.</p>
+  <div class="section-label reveal" data-vi="Database ẩm thực Việt" data-en="Vietnamese Cuisine Database">Database ẩm thực Việt</div>
+  <h2 class="section-title reveal" id="cuisineTitle">Xây từ đầu.<br><span style="color:var(--accent);">Vì chưa ai làm.</span></h2>
+  <p class="section-sub reveal" data-vi="Tap vào bất kỳ món nào để xem macro chi tiết, health score, và thành phần." data-en="Tap any dish to see detailed macros, health score, and ingredients.">Tap vào bất kỳ món nào để xem macro chi tiết, health score, và thành phần.</p>
 
   <div class="cuisine-explorer" id="cuisineExplorer"></div>
 </section>
@@ -1023,36 +1039,155 @@
   <div class="stats-grid">
     <div class="stat-item reveal">
       <div class="stat-number" data-target="1200" id="stat1">0</div>
-      <div class="stat-label">Món Việt phân tích</div>
+      <div class="stat-label" data-vi="Món Việt phân tích" data-en="Vietnamese dishes analyzed">Món Việt phân tích</div>
     </div>
     <div class="stat-item reveal">
       <div class="stat-number" data-target="67" id="stat2">0</div>
-      <div class="stat-label">Vi chất theo dõi</div>
+      <div class="stat-label" data-vi="Vi chất theo dõi" data-en="Micronutrients tracked">Vi chất theo dõi</div>
     </div>
     <div class="stat-item reveal">
       <div class="stat-number" data-target="30" id="stat3">0</div>
-      <div class="stat-label">Quận hỗ trợ tại Sài Gòn</div>
+      <div class="stat-label" data-vi="Quận hỗ trợ tại Sài Gòn" data-en="Districts covered in Saigon">Quận hỗ trợ tại Sài Gòn</div>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
 <section class="cta-section" id="cta">
-  <div class="cta-title reveal">Sẵn sàng ăn <span style="color:var(--accent);"><em>thông minh</em></span> hơn?</div>
-  <div class="cta-sub reveal">Tham gia waitlist. Bạn sẽ là những người đầu tiên trải nghiệm NomNom tại Sài Gòn.</div>
+  <div class="cta-title reveal" id="ctaTitle">Sẵn sàng ăn <span style="color:var(--accent);"><em>thông minh</em></span> hơn?</div>
+  <div class="cta-sub reveal" data-vi="Tham gia waitlist. Bạn sẽ là những người đầu tiên trải nghiệm NomNom tại Sài Gòn." data-en="Join the waitlist. Be among the first to experience NomNom in Saigon.">Tham gia waitlist. Bạn sẽ là những người đầu tiên trải nghiệm NomNom tại Sài Gòn.</div>
   <div class="waitlist-form reveal">
-    <input class="waitlist-input" type="email" placeholder="Email của bạn">
-    <button class="btn-primary">Đăng ký →</button>
+    <input class="waitlist-input" type="email" placeholder="Email của bạn" id="waitlistInput">
+    <button class="btn-primary" data-vi="Đăng ký →" data-en="Sign up →">Đăng ký →</button>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
   <div class="ft-logo">Nom<span style="color:var(--accent);">Nom</span></div>
-  <p>Built with 🍜 in Sài Gòn · 2026</p>
+  <p data-vi="Built with 🍜 in Sài Gòn · 2026" data-en="Built with 🍜 in Saigon · 2026">Built with 🍜 in Sài Gòn · 2026</p>
 </footer>
 
 <script>
+// =============================================
+// LANGUAGE SYSTEM
+// =============================================
+let currentLang = 'vi';
+
+const statementWords = {
+  vi: {
+    words: ['Mỗi','ngày,','bạn','ăn','3','bữa.','Nhưng','bạn','có','thật','sự','biết','mình','đang','nạp','gì','vào','cơ','thể','không?'],
+    highlights: [11, 15] // "biết" and "gì"
+  },
+  en: {
+    words: ['Every','day,','you','eat','3','meals.','But','do','you','really','know','what','you\'re','putting','into','your','body?'],
+    highlights: [10, 11] // "know" and "what"
+  }
+};
+
+const sectionTitles = {
+  tracking: {
+    vi: 'Tap bữa ăn. <span style="color:var(--accent);">Xem macro chạy.</span>',
+    en: 'Tap a meal. <span style="color:var(--accent);">Watch macros move.</span>'
+  },
+  gamify: {
+    vi: 'Ăn lành. Tích điểm.<br><span style="color:var(--accent);">Mở khoá cheat meal.</span>',
+    en: 'Eat clean. Earn points.<br><span style="color:var(--accent);">Unlock cheat meals.</span>'
+  },
+  voice: {
+    vi: 'Nói là xong.<br><span style="color:var(--accent);">Không cần gõ.</span>',
+    en: 'Just speak.<br><span style="color:var(--accent);">No typing needed.</span>'
+  },
+  order: {
+    vi: 'AI chọn bữa.<br><span style="color:var(--green);">Fit macro. Fit ví.</span>',
+    en: 'AI picks your meal.<br><span style="color:var(--green);">Fits macros. Fits budget.</span>'
+  },
+  group: {
+    vi: 'Ăn lành cùng nhau.<br><span style="color:var(--accent);">Biến nó thành sport.</span>',
+    en: 'Eat healthy together.<br><span style="color:var(--accent);">Make it a sport.</span>'
+  },
+  cuisine: {
+    vi: 'Xây từ đầu.<br><span style="color:var(--accent);">Vì chưa ai làm.</span>',
+    en: 'Built from scratch.<br><span style="color:var(--accent);">Because nobody has.</span>'
+  },
+  cta: {
+    vi: 'Sẵn sàng ăn <span style="color:var(--accent);"><em>thông minh</em></span> hơn?',
+    en: 'Ready to eat <span style="color:var(--accent);"><em>smarter</em></span>?'
+  }
+};
+
+const pageTitles = {
+  vi: 'NomNom – Chuyên gia dinh dưỡng trong túi bạn',
+  en: 'NomNom – Your pocket nutrition expert'
+};
+
+const placeholders = {
+  vi: 'Email của bạn',
+  en: 'Your email'
+};
+
+function setLang(lang) {
+  currentLang = lang;
+
+  // Toggle button active state
+  document.querySelectorAll('.lang-toggle button').forEach(btn => {
+    btn.classList.toggle('active', (btn.textContent === 'VN' && lang === 'vi') || (btn.textContent === 'EN' && lang === 'en'));
+  });
+
+  // Swap all data-en / data-vi elements
+  document.querySelectorAll('[data-en]').forEach(el => {
+    el.textContent = el.getAttribute('data-' + lang);
+  });
+
+  // Page title
+  document.title = pageTitles[lang];
+
+  // Section titles (innerHTML)
+  document.getElementById('trackingTitle').innerHTML = sectionTitles.tracking[lang];
+  document.getElementById('gamifyTitle').innerHTML = sectionTitles.gamify[lang];
+  document.getElementById('voiceTitle').innerHTML = sectionTitles.voice[lang];
+  document.getElementById('orderTitle').innerHTML = sectionTitles.order[lang];
+  document.getElementById('groupTitle').innerHTML = sectionTitles.group[lang];
+  document.getElementById('cuisineTitle').innerHTML = sectionTitles.cuisine[lang];
+  document.getElementById('ctaTitle').innerHTML = sectionTitles.cta[lang];
+
+  // Statement words
+  rebuildStatement(lang);
+
+  // Placeholder
+  document.getElementById('waitlistInput').placeholder = placeholders[lang];
+
+  // Rebuild cuisine cards
+  rebuildCuisine();
+
+  // Update order card status attributes
+  document.querySelectorAll('.order-card').forEach(card => {
+    card.setAttribute('data-order-status', card.getAttribute('data-order-' + lang));
+  });
+
+  // Set html lang
+  document.documentElement.lang = lang === 'vi' ? 'vi' : 'en';
+}
+
+function rebuildStatement(lang) {
+  const data = statementWords[lang];
+  const container = document.getElementById('statement');
+  container.innerHTML = '';
+  data.words.forEach((word, i) => {
+    const span = document.createElement('span');
+    span.className = 'word' + (data.highlights.includes(i) ? ' highlight' : '');
+    span.textContent = word;
+    container.appendChild(span);
+    if (i < data.words.length - 1) container.appendChild(document.createTextNode(' '));
+  });
+  // Re-run scroll reveal for statement
+  const words = container.querySelectorAll('.word');
+  const rect = container.getBoundingClientRect();
+  const progress = Math.max(0, Math.min(1, 1 - (rect.top / (window.innerHeight * 0.5))));
+  const count = Math.floor(progress * words.length);
+  words.forEach((w, i) => w.classList.toggle('visible', i < count));
+}
+
 // =============================================
 // GLOBAL HELPERS
 // =============================================
@@ -1076,8 +1211,8 @@ function animateCounter(el, target, duration = 1500, suffix = '') {
 // STATEMENT SCROLL REVEAL
 // =============================================
 const statementEl = document.getElementById('statement');
-const words = statementEl.querySelectorAll('.word');
 window.addEventListener('scroll', () => {
+  const words = statementEl.querySelectorAll('.word');
   const rect = statementEl.getBoundingClientRect();
   const progress = Math.max(0, Math.min(1, 1 - (rect.top / (window.innerHeight * 0.5))));
   const count = Math.floor(progress * words.length);
@@ -1214,7 +1349,7 @@ document.getElementById('earnXpBtn').addEventListener('click', () => {
 });
 
 document.getElementById('guClaimBtn').addEventListener('click', function() {
-  this.textContent = '✅ Đã claim!';
+  this.textContent = currentLang === 'en' ? '✅ Claimed!' : '✅ Đã claim!';
   this.classList.add('claimed');
   spawnConfetti();
 });
@@ -1239,19 +1374,28 @@ function spawnConfetti() {
 // =============================================
 // 3. VOICE LOG INTERACTIVE
 // =============================================
-const voicePhrases = [
-  { text: '"Vừa ăn tô bún bò ở quán cô Ba quận 3"', food: '🍲 Bún bò Huế', kcal: '520 kcal', protein: '32g protein', color1: 'rgba(255,106,40,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,159,28,0.1)', tc1: 'var(--accent)', tc2: 'var(--green)', tc3: 'var(--accent-2)' },
-  { text: '"Trưa nay ăn cơm tấm sườn bì ở Nguyễn Trãi"', food: '🍚 Cơm tấm sườn bì', kcal: '620 kcal', protein: '35g protein', color1: 'rgba(255,159,28,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,106,40,0.1)', tc1: 'var(--accent-2)', tc2: 'var(--green)', tc3: 'var(--accent)' },
-  { text: '"Mới uống ly sinh tố bơ ở quán đầu hẻm"', food: '🥑 Sinh tố bơ', kcal: '340 kcal', protein: '6g protein', color1: 'rgba(52,211,153,0.1)', color2: 'rgba(255,106,40,0.1)', color3: 'rgba(255,159,28,0.1)', tc1: 'var(--green)', tc2: 'var(--accent)', tc3: 'var(--accent-2)' },
-  { text: '"Ăn 2 cái bánh xèo ở quán Đinh Công Tráng"', food: '🧆 Bánh xèo', kcal: '480 kcal', protein: '18g protein', color1: 'rgba(255,159,28,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,106,40,0.1)', tc1: 'var(--accent-2)', tc2: 'var(--green)', tc3: 'var(--accent)' },
-];
+const voicePhrases = {
+  vi: [
+    { text: '"Vừa ăn tô bún bò ở quán cô Ba quận 3"', food: '🍲 Bún bò Huế', kcal: '520 kcal', protein: '32g protein', color1: 'rgba(255,106,40,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,159,28,0.1)', tc1: 'var(--accent)', tc2: 'var(--green)', tc3: 'var(--accent-2)' },
+    { text: '"Trưa nay ăn cơm tấm sườn bì ở Nguyễn Trãi"', food: '🍚 Cơm tấm sườn bì', kcal: '620 kcal', protein: '35g protein', color1: 'rgba(255,159,28,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,106,40,0.1)', tc1: 'var(--accent-2)', tc2: 'var(--green)', tc3: 'var(--accent)' },
+    { text: '"Mới uống ly sinh tố bơ ở quán đầu hẻm"', food: '🥑 Sinh tố bơ', kcal: '340 kcal', protein: '6g protein', color1: 'rgba(52,211,153,0.1)', color2: 'rgba(255,106,40,0.1)', color3: 'rgba(255,159,28,0.1)', tc1: 'var(--green)', tc2: 'var(--accent)', tc3: 'var(--accent-2)' },
+    { text: '"Ăn 2 cái bánh xèo ở quán Đinh Công Tráng"', food: '🧆 Bánh xèo', kcal: '480 kcal', protein: '18g protein', color1: 'rgba(255,159,28,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,106,40,0.1)', tc1: 'var(--accent-2)', tc2: 'var(--green)', tc3: 'var(--accent)' },
+  ],
+  en: [
+    { text: '"Just had a bowl of bún bò at Auntie Ba\'s in District 3"', food: '🍲 Bún bò Huế', kcal: '520 kcal', protein: '32g protein', color1: 'rgba(255,106,40,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,159,28,0.1)', tc1: 'var(--accent)', tc2: 'var(--green)', tc3: 'var(--accent-2)' },
+    { text: '"Had cơm tấm for lunch on Nguyễn Trãi street"', food: '🍚 Cơm tấm sườn bì', kcal: '620 kcal', protein: '35g protein', color1: 'rgba(255,159,28,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,106,40,0.1)', tc1: 'var(--accent-2)', tc2: 'var(--green)', tc3: 'var(--accent)' },
+    { text: '"Just drank an avocado smoothie from the alley shop"', food: '🥑 Sinh tố bơ', kcal: '340 kcal', protein: '6g protein', color1: 'rgba(52,211,153,0.1)', color2: 'rgba(255,106,40,0.1)', color3: 'rgba(255,159,28,0.1)', tc1: 'var(--green)', tc2: 'var(--accent)', tc3: 'var(--accent-2)' },
+    { text: '"Ate 2 bánh xèo at the Đinh Công Tráng spot"', food: '🧆 Bánh xèo', kcal: '480 kcal', protein: '18g protein', color1: 'rgba(255,159,28,0.1)', color2: 'rgba(52,211,153,0.1)', color3: 'rgba(255,106,40,0.1)', tc1: 'var(--accent-2)', tc2: 'var(--green)', tc3: 'var(--accent)' },
+  ]
+};
 let voiceIdx = 0;
 let voiceAnimating = false;
 
 document.getElementById('voiceMicBtn').addEventListener('click', () => {
   if (voiceAnimating) return;
   voiceAnimating = true;
-  const phrase = voicePhrases[voiceIdx % voicePhrases.length];
+  const phrases = voicePhrases[currentLang];
+  const phrase = phrases[voiceIdx % phrases.length];
   voiceIdx++;
 
   const mic = document.getElementById('voiceMicBtn');
@@ -1261,7 +1405,7 @@ document.getElementById('voiceMicBtn').addEventListener('click', () => {
 
   mic.classList.add('recording');
   wave.classList.add('active');
-  label.textContent = 'Đang nghe...';
+  label.textContent = currentLang === 'en' ? 'Listening...' : 'Đang nghe...';
 
   transcript.innerHTML = '<div class="vt-text"><span class="vt-cursor"></span></div><div class="vt-result" id="vtResult"></div>';
 
@@ -1277,7 +1421,7 @@ document.getElementById('voiceMicBtn').addEventListener('click', () => {
       textEl.innerHTML = phrase.text;
       mic.classList.remove('recording');
       wave.classList.remove('active');
-      label.textContent = 'Tap để thử câu khác';
+      label.textContent = currentLang === 'en' ? 'Tap to try another' : 'Tap để thử câu khác';
 
       // Show AI results
       setTimeout(() => {
@@ -1300,6 +1444,11 @@ document.getElementById('voiceMicBtn').addEventListener('click', () => {
 // =============================================
 // 4. SMART ORDER CARDS ANIMATION
 // =============================================
+// Initialize order status attributes
+document.querySelectorAll('.order-card').forEach(card => {
+  card.setAttribute('data-order-status', card.getAttribute('data-order-vi'));
+});
+
 let orderAnimated = false;
 const orderObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => {
@@ -1360,86 +1509,125 @@ groupObserver.observe(document.getElementById('groupDemo'));
 // 6. CUISINE DATABASE EXPLORER
 // =============================================
 const cuisineData = [
-  { emoji: '🍜', name: 'Phở bò', region: 'Hà Nội', kcal: 480, p: 32, c: 52, f: 12, score: 78, ingredients: ['Bánh phở','Bò tái','Hành','Rau quế','Nước dùng xương'] },
-  { emoji: '🥖', name: 'Bánh mì thịt', region: 'Sài Gòn', kcal: 520, p: 22, c: 58, f: 18, score: 62, ingredients: ['Bánh mì','Chả lụa','Pa-tê','Đồ chua','Dưa leo'] },
-  { emoji: '🍚', name: 'Cơm tấm sườn', region: 'Sài Gòn', kcal: 650, p: 35, c: 68, f: 22, score: 58, ingredients: ['Gạo tấm','Sườn nướng','Bì','Chả','Mỡ hành'] },
-  { emoji: '🍲', name: 'Bún bò Huế', region: 'Huế', kcal: 520, p: 30, c: 48, f: 16, score: 72, ingredients: ['Bún','Bò bắp','Giò heo','Sả','Mắm ruốc'] },
-  { emoji: '🥗', name: 'Gỏi cuốn', region: 'Miền Nam', kcal: 120, p: 8, c: 14, f: 3, score: 92, ingredients: ['Bánh tráng','Tôm','Bún','Rau sống','Bún tàu'] },
-  { emoji: '🧆', name: 'Bánh xèo', region: 'Miền Nam', kcal: 380, p: 15, c: 32, f: 22, score: 65, ingredients: ['Bột gạo','Nghệ','Tôm','Giá đỗ','Nước cốt dừa'] },
-  { emoji: '🥘', name: 'Canh chua cá', region: 'Miền Tây', kcal: 180, p: 22, c: 12, f: 5, score: 88, ingredients: ['Cá lóc','Me','Thơm','Đậu bắp','Rau om'] },
-  { emoji: '🍛', name: 'Cà ri gà', region: 'Miền Nam', kcal: 420, p: 28, c: 30, f: 20, score: 70, ingredients: ['Gà','Khoai','Cà rốt','Nước cốt dừa','Sả'] },
+  { emoji: '🍜', name: 'Phở bò', region: 'Hà Nội', regionEn: 'Hanoi', kcal: 480, p: 32, c: 52, f: 12, score: 78,
+    ingredients: ['Bánh phở','Bò tái','Hành','Rau quế','Nước dùng xương'],
+    ingredientsEn: ['Rice noodles','Rare beef','Onion','Thai basil','Bone broth'] },
+  { emoji: '🥖', name: 'Bánh mì thịt', region: 'Sài Gòn', regionEn: 'Saigon', kcal: 520, p: 22, c: 58, f: 18, score: 62,
+    ingredients: ['Bánh mì','Chả lụa','Pa-tê','Đồ chua','Dưa leo'],
+    ingredientsEn: ['Baguette','Pork sausage','Pâté','Pickled veggies','Cucumber'] },
+  { emoji: '🍚', name: 'Cơm tấm sườn', region: 'Sài Gòn', regionEn: 'Saigon', kcal: 650, p: 35, c: 68, f: 22, score: 58,
+    ingredients: ['Gạo tấm','Sườn nướng','Bì','Chả','Mỡ hành'],
+    ingredientsEn: ['Broken rice','Grilled pork chop','Pork skin','Meatloaf','Scallion oil'] },
+  { emoji: '🍲', name: 'Bún bò Huế', region: 'Huế', regionEn: 'Hue', kcal: 520, p: 30, c: 48, f: 16, score: 72,
+    ingredients: ['Bún','Bò bắp','Giò heo','Sả','Mắm ruốc'],
+    ingredientsEn: ['Vermicelli','Beef shank','Pork knuckle','Lemongrass','Shrimp paste'] },
+  { emoji: '🥗', name: 'Gỏi cuốn', region: 'Miền Nam', regionEn: 'Southern VN', kcal: 120, p: 8, c: 14, f: 3, score: 92,
+    ingredients: ['Bánh tráng','Tôm','Bún','Rau sống','Bún tàu'],
+    ingredientsEn: ['Rice paper','Shrimp','Vermicelli','Fresh herbs','Glass noodles'] },
+  { emoji: '🧆', name: 'Bánh xèo', region: 'Miền Nam', regionEn: 'Southern VN', kcal: 380, p: 15, c: 32, f: 22, score: 65,
+    ingredients: ['Bột gạo','Nghệ','Tôm','Giá đỗ','Nước cốt dừa'],
+    ingredientsEn: ['Rice flour','Turmeric','Shrimp','Bean sprouts','Coconut milk'] },
+  { emoji: '🥘', name: 'Canh chua cá', region: 'Miền Tây', regionEn: 'Mekong Delta', kcal: 180, p: 22, c: 12, f: 5, score: 88,
+    ingredients: ['Cá lóc','Me','Thơm','Đậu bắp','Rau om'],
+    ingredientsEn: ['Snakehead fish','Tamarind','Pineapple','Okra','Rice paddy herb'] },
+  { emoji: '🍛', name: 'Cà ri gà', region: 'Miền Nam', regionEn: 'Southern VN', kcal: 420, p: 28, c: 30, f: 20, score: 70,
+    ingredients: ['Gà','Khoai','Cà rốt','Nước cốt dừa','Sả'],
+    ingredientsEn: ['Chicken','Potato','Carrot','Coconut milk','Lemongrass'] },
 ];
+
+const healthScoreText = {
+  vi: { high: 'Rất tốt', mid: 'Ổn', low: 'Hạn chế' },
+  en: { high: 'Excellent', mid: 'Good', low: 'Moderate' }
+};
+
+const ingredientsTitleText = {
+  vi: 'Thành phần chính',
+  en: 'Key ingredients'
+};
 
 const explorer = document.getElementById('cuisineExplorer');
 let expandedIdx = -1;
 
-cuisineData.forEach((dish, idx) => {
-  const card = document.createElement('div');
-  card.className = 'cuisine-card reveal';
-  card.dataset.idx = idx;
-  const scoreColor = dish.score >= 80 ? 'var(--green)' : dish.score >= 65 ? 'var(--accent-2)' : 'var(--accent)';
-  const scoreCirc = 2 * Math.PI * 16;
-  const scoreOffset = scoreCirc * (1 - dish.score / 100);
+function rebuildCuisine() {
+  explorer.innerHTML = '';
+  expandedIdx = -1;
 
-  card.innerHTML = `
-    <div class="cc-emoji">${dish.emoji}</div>
-    <div class="cc-name">${dish.name}</div>
-    <div class="cc-region">${dish.region}</div>
-    <div class="cc-kcal">${dish.kcal} kcal</div>
-    <div class="cc-expanded-info">
-      <div class="cc-macro-row">
-        <div class="cc-macro-item">
-          <div class="cc-macro-label" style="color:var(--accent);">Protein</div>
-          <div class="cc-macro-val" style="color:var(--accent);">${dish.p}g</div>
-          <div class="cc-macro-bar"><div class="cc-macro-bar-fill" style="background:var(--accent);" data-w="${(dish.p/50)*100}%"></div></div>
-        </div>
-        <div class="cc-macro-item">
-          <div class="cc-macro-label" style="color:var(--accent-2);">Carbs</div>
-          <div class="cc-macro-val" style="color:var(--accent-2);">${dish.c}g</div>
-          <div class="cc-macro-bar"><div class="cc-macro-bar-fill" style="background:var(--accent-2);" data-w="${(dish.c/80)*100}%"></div></div>
-        </div>
-        <div class="cc-macro-item">
-          <div class="cc-macro-label" style="color:var(--green);">Fat</div>
-          <div class="cc-macro-val" style="color:var(--green);">${dish.f}g</div>
-          <div class="cc-macro-bar"><div class="cc-macro-bar-fill" style="background:var(--green);" data-w="${(dish.f/30)*100}%"></div></div>
-        </div>
-      </div>
-      <div class="cc-health-score">
-        <div class="cc-hs-ring">
-          <svg viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
-            <circle cx="20" cy="20" r="16" fill="none" stroke="${scoreColor}" stroke-width="3" stroke-linecap="round"
-              stroke-dasharray="${scoreCirc}" stroke-dashoffset="${scoreOffset}" style="transform:rotate(-90deg);transform-origin:center;"/>
-          </svg>
-          <div class="cc-hs-num" style="color:${scoreColor};">${dish.score}</div>
-        </div>
-        <div class="cc-hs-text">Health Score — ${dish.score >= 80 ? 'Rất tốt' : dish.score >= 65 ? 'Ổn' : 'Hạn chế'}</div>
-      </div>
-      <div class="cc-ingredients">
-        <div class="cc-ingredients-title">Thành phần chính</div>
-        <div class="cc-ingredient-tags">${dish.ingredients.map(i => `<span class="cc-ingredient-tag">${i}</span>`).join('')}</div>
-      </div>
-    </div>
-  `;
+  cuisineData.forEach((dish, idx) => {
+    const card = document.createElement('div');
+    card.className = 'cuisine-card reveal';
+    card.dataset.idx = idx;
+    const scoreColor = dish.score >= 80 ? 'var(--green)' : dish.score >= 65 ? 'var(--accent-2)' : 'var(--accent)';
+    const scoreCirc = 2 * Math.PI * 16;
+    const scoreOffset = scoreCirc * (1 - dish.score / 100);
+    const region = currentLang === 'en' ? dish.regionEn : dish.region;
+    const ingredients = currentLang === 'en' ? dish.ingredientsEn : dish.ingredients;
+    const hsLabels = healthScoreText[currentLang];
+    const hsText = dish.score >= 80 ? hsLabels.high : dish.score >= 65 ? hsLabels.mid : hsLabels.low;
+    const ingTitle = ingredientsTitleText[currentLang];
 
-  card.addEventListener('click', () => {
-    if (expandedIdx === idx) {
-      card.classList.remove('expanded');
-      expandedIdx = -1;
-    } else {
-      document.querySelectorAll('.cuisine-card.expanded').forEach(c => c.classList.remove('expanded'));
-      card.classList.add('expanded');
-      expandedIdx = idx;
-      // Animate bars
-      setTimeout(() => {
-        card.querySelectorAll('.cc-macro-bar-fill').forEach(f => f.style.width = f.dataset.w);
-      }, 100);
-    }
+    card.innerHTML = `
+      <div class="cc-emoji">${dish.emoji}</div>
+      <div class="cc-name">${dish.name}</div>
+      <div class="cc-region">${region}</div>
+      <div class="cc-kcal">${dish.kcal} kcal</div>
+      <div class="cc-expanded-info">
+        <div class="cc-macro-row">
+          <div class="cc-macro-item">
+            <div class="cc-macro-label" style="color:var(--accent);">Protein</div>
+            <div class="cc-macro-val" style="color:var(--accent);">${dish.p}g</div>
+            <div class="cc-macro-bar"><div class="cc-macro-bar-fill" style="background:var(--accent);" data-w="${(dish.p/50)*100}%"></div></div>
+          </div>
+          <div class="cc-macro-item">
+            <div class="cc-macro-label" style="color:var(--accent-2);">Carbs</div>
+            <div class="cc-macro-val" style="color:var(--accent-2);">${dish.c}g</div>
+            <div class="cc-macro-bar"><div class="cc-macro-bar-fill" style="background:var(--accent-2);" data-w="${(dish.c/80)*100}%"></div></div>
+          </div>
+          <div class="cc-macro-item">
+            <div class="cc-macro-label" style="color:var(--green);">Fat</div>
+            <div class="cc-macro-val" style="color:var(--green);">${dish.f}g</div>
+            <div class="cc-macro-bar"><div class="cc-macro-bar-fill" style="background:var(--green);" data-w="${(dish.f/30)*100}%"></div></div>
+          </div>
+        </div>
+        <div class="cc-health-score">
+          <div class="cc-hs-ring">
+            <svg viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="16" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+              <circle cx="20" cy="20" r="16" fill="none" stroke="${scoreColor}" stroke-width="3" stroke-linecap="round"
+                stroke-dasharray="${scoreCirc}" stroke-dashoffset="${scoreOffset}" style="transform:rotate(-90deg);transform-origin:center;"/>
+            </svg>
+            <div class="cc-hs-num" style="color:${scoreColor};">${dish.score}</div>
+          </div>
+          <div class="cc-hs-text">Health Score — ${hsText}</div>
+        </div>
+        <div class="cc-ingredients">
+          <div class="cc-ingredients-title">${ingTitle}</div>
+          <div class="cc-ingredient-tags">${ingredients.map(i => `<span class="cc-ingredient-tag">${i}</span>`).join('')}</div>
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', () => {
+      if (expandedIdx === idx) {
+        card.classList.remove('expanded');
+        expandedIdx = -1;
+      } else {
+        document.querySelectorAll('.cuisine-card.expanded').forEach(c => c.classList.remove('expanded'));
+        card.classList.add('expanded');
+        expandedIdx = idx;
+        // Animate bars
+        setTimeout(() => {
+          card.querySelectorAll('.cc-macro-bar-fill').forEach(f => f.style.width = f.dataset.w);
+        }, 100);
+      }
+    });
+
+    explorer.appendChild(card);
+    revealObserver.observe(card);
   });
+}
 
-  explorer.appendChild(card);
-  revealObserver.observe(card);
-});
+// Initial build
+rebuildCuisine();
 
 // =============================================
 // STATS COUNTER
