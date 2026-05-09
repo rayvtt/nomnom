@@ -1348,6 +1348,231 @@
   .do-result-rtag.macro { background: rgba(52,211,153,0.1); color: var(--green); }
   .do-result-rtag.cat { background: var(--bg-3); color: var(--text-3); }
 
+  /* ==========================================
+     AUTO-ORDER SETUP MODULE
+     ========================================== */
+  .setup-section {
+    padding: 120px 24px 140px; display: flex; flex-direction: column; align-items: center;
+    position: relative; overflow: hidden;
+  }
+  .setup-section::before {
+    content: ''; position: absolute; width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(52,211,153,0.08) 0%, transparent 70%);
+    top: 30%; right: 5%; pointer-events: none;
+  }
+  .setup-container {
+    max-width: 1100px; width: 100%; margin-top: 32px;
+    display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: start;
+  }
+  .setup-wizard {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 24px; padding: 32px;
+  }
+  .setup-header {
+    display: flex; gap: 16px; align-items: center; margin-bottom: 28px;
+    padding-bottom: 22px; border-bottom: 1px solid var(--card-border);
+  }
+  .setup-icon {
+    width: 48px; height: 48px; border-radius: 14px;
+    background: rgba(52,211,153,0.12); display: flex; align-items: center;
+    justify-content: center; font-size: 24px; flex-shrink: 0;
+  }
+  .setup-title { font-family: 'Lora', serif; font-size: 22px; line-height: 1.2; margin-bottom: 4px; }
+  .setup-sub { font-size: 12px; color: var(--text-3); }
+  .setup-step { margin-bottom: 24px; }
+  .setup-step:last-of-type { margin-bottom: 28px; }
+  .setup-step-label-row {
+    display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; gap: 10px;
+  }
+  .setup-step-label {
+    font-size: 11px; color: var(--text-3); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 10px;
+  }
+  .setup-step-label-row .setup-step-label { margin-bottom: 0; }
+  .setup-step-val { font-family: 'Lora', serif; font-size: 22px; color: var(--green); font-feature-settings: 'tnum'; }
+  .setup-step-hint { font-size: 11px; color: var(--text-3); margin-top: 8px; line-height: 1.5; }
+
+  /* Eating times */
+  .setup-meals { display: flex; gap: 10px; flex-wrap: wrap; }
+  .setup-meal {
+    flex: 1; min-width: 130px; display: flex; gap: 12px; align-items: center;
+    padding: 12px 14px; background: var(--bg-2); border: 1.5px solid var(--card-border);
+    border-radius: 14px; transition: all 0.25s; position: relative;
+  }
+  .setup-meal:hover { border-color: var(--green); }
+  .setup-meal.has-time { border-color: rgba(52,211,153,0.5); background: rgba(52,211,153,0.04); }
+  .setup-meal-icon { font-size: 22px; flex-shrink: 0; }
+  .setup-meal-info { flex: 1; min-width: 0; }
+  .setup-meal-name {
+    font-size: 10px; color: var(--text-3); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;
+  }
+  .setup-meal-time {
+    font-family: 'Lora', serif; font-size: 17px; color: var(--text);
+    background: none; border: none; padding: 0; outline: none;
+    font-feature-settings: 'tnum'; cursor: pointer; width: 100%;
+    color-scheme: dark;
+  }
+  body.light-mode .setup-meal-time { color-scheme: light; }
+  .setup-meal-remove {
+    width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--card-border);
+    background: var(--bg); color: var(--text-3); font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.2s; line-height: 1;
+  }
+  .setup-meal-remove:hover { color: var(--red); border-color: var(--red); }
+  .setup-meal-add {
+    flex: 0 0 auto; padding: 12px 16px; background: transparent;
+    border: 1.5px dashed var(--card-border); color: var(--text-3);
+    border-radius: 14px; font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.25s;
+  }
+  .setup-meal-add:hover { border-color: var(--green); color: var(--green); }
+  .setup-meal-add:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* Segmented control */
+  .setup-segment {
+    display: inline-flex; gap: 2px; padding: 4px;
+    background: var(--bg-2); border: 1px solid var(--card-border);
+    border-radius: 12px;
+  }
+  .setup-seg-btn {
+    padding: 8px 22px; border: none; background: none;
+    font-family: 'Be Vietnam Pro', sans-serif; font-weight: 700;
+    font-size: 14px; color: var(--text-2); cursor: pointer;
+    border-radius: 8px; transition: all 0.25s;
+    font-feature-settings: 'tnum';
+  }
+  .setup-seg-btn.active { background: var(--green); color: white; }
+  .setup-seg-btn:not(.active):hover { color: var(--text); }
+
+  /* Slider (reuses do-slider style) */
+  .setup-slider {
+    width: 100%; -webkit-appearance: none; appearance: none;
+    height: 6px; border-radius: 99px; background: var(--card-border);
+    outline: none; cursor: pointer;
+  }
+  .setup-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+    cursor: pointer; border: 2px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--card-border); transition: transform 0.2s;
+  }
+  .setup-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
+  .setup-slider::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; cursor: pointer; border: 2px solid var(--bg); }
+  .setup-slider[data-color="green"]::-webkit-slider-thumb { background: var(--green); }
+  .setup-slider[data-color="orange"]::-webkit-slider-thumb { background: var(--accent); }
+  .setup-slider[data-color="green"]::-moz-range-thumb { background: var(--green); }
+  .setup-slider[data-color="orange"]::-moz-range-thumb { background: var(--accent); }
+  .setup-slider[data-color="green"] {
+    background: linear-gradient(to right, var(--green) 0%, var(--green) var(--pct, 50%), var(--card-border) var(--pct, 50%), var(--card-border) 100%);
+  }
+  .setup-slider[data-color="orange"] {
+    background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--pct, 50%), var(--card-border) var(--pct, 50%), var(--card-border) 100%);
+  }
+
+  /* Goal pills (reuse style) */
+  .setup-goals { display: flex; gap: 8px; flex-wrap: wrap; }
+  .setup-goal-btn {
+    padding: 9px 18px; border-radius: 99px; border: 1px solid var(--card-border);
+    background: var(--bg-2); color: var(--text-2);
+    font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all 0.25s;
+  }
+  .setup-goal-btn.active { background: var(--green); border-color: var(--green); color: white; }
+  .setup-goal-btn:hover:not(.active) { border-color: var(--green); color: var(--green); }
+
+  /* Notification toggles */
+  .setup-toggles { display: flex; gap: 10px; }
+  .setup-toggle {
+    flex: 1; display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; background: var(--bg-2); border: 1.5px solid var(--card-border);
+    border-radius: 12px; cursor: pointer; transition: all 0.25s;
+    font-size: 13px; font-weight: 600; user-select: none;
+  }
+  .setup-toggle:hover { border-color: var(--text-3); }
+  .setup-toggle.active { border-color: var(--green); background: rgba(52,211,153,0.06); }
+  .setup-toggle-check {
+    width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--card-border);
+    display: flex; align-items: center; justify-content: center; font-size: 10px;
+    color: transparent; flex-shrink: 0; transition: all 0.2s; font-weight: 900;
+  }
+  .setup-toggle.active .setup-toggle-check {
+    background: var(--green); border-color: var(--green); color: white;
+  }
+  .setup-toggle-icon { font-size: 16px; }
+
+  /* Activate button */
+  .setup-activate-btn {
+    width: 100%; padding: 16px; border-radius: 14px; border: none;
+    background: linear-gradient(135deg, var(--green), #28b87b); color: white;
+    font-family: 'Be Vietnam Pro', sans-serif; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: all 0.3s; letter-spacing: 0.02em;
+  }
+  .setup-activate-btn:hover:not(.activated) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(52,211,153,0.35); }
+  .setup-activate-btn.activated {
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 32px rgba(255,106,40,0.25);
+  }
+
+  /* Side: How it works + stats */
+  .setup-side { display: flex; flex-direction: column; gap: 16px; }
+  .how-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 22px; padding: 24px;
+  }
+  .how-title {
+    font-size: 11px; color: var(--green); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 16px;
+  }
+  .how-step {
+    display: flex; gap: 14px; padding: 14px 0;
+    border-bottom: 1px solid var(--card-border); align-items: flex-start;
+  }
+  .how-step:last-child { border-bottom: none; padding-bottom: 0; }
+  .how-step:first-of-type { padding-top: 0; }
+  .how-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(52,211,153,0.12); color: var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Lora', serif; font-size: 15px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .how-content { flex: 1; min-width: 0; }
+  .how-step-title { font-size: 13.5px; font-weight: 700; margin-bottom: 4px; line-height: 1.3; }
+  .how-step-desc { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  .setup-stats-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 20px; padding: 22px;
+  }
+  .setup-stats-label {
+    font-size: 10px; color: var(--text-3); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 14px;
+  }
+  .setup-stat-item {
+    display: flex; align-items: baseline; gap: 14px;
+    padding: 10px 0; border-bottom: 1px solid var(--card-border);
+  }
+  .setup-stat-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .setup-stat-item:first-of-type { padding-top: 0; }
+  .setup-stat-num {
+    font-family: 'Lora', serif; font-size: 26px; color: var(--green);
+    line-height: 1; min-width: 56px;
+  }
+  .setup-stat-text { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+
+  /* Live preview badge on existing Smart Order */
+  .live-preview-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 14px; border-radius: 99px;
+    background: rgba(52,211,153,0.1); border: 1px solid rgba(52,211,153,0.25);
+    font-size: 11px; font-weight: 700; color: var(--green);
+    letter-spacing: 0.06em; margin-bottom: 14px; text-transform: uppercase;
+  }
+  .live-preview-badge .lp-pulse {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--green);
+    animation: blink 2s infinite;
+  }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {
     nav { padding: 14px 20px 14px 76px; }
@@ -1397,6 +1622,54 @@
     .an-processing { min-height: 200px; }
     /* Audience card text */
     .aud-name { font-size: 18px; }
+    /* Missing section padding overrides */
+    .statement { padding: 72px 20px; }
+    .stats-section { padding: 72px 20px; }
+    .stats-grid { gap: 24px; }
+    .cta-section { padding: 72px 20px 80px; }
+    .cta-sub { font-size: 16px; margin-bottom: 32px; }
+    /* Section sub tighter */
+    .section-sub { margin-bottom: 32px; }
+    /* Hero tighter */
+    .hero { padding: 88px 20px 48px; }
+    .hero-sub { font-size: 15px; margin-bottom: 28px; }
+    .hero-badge { margin-bottom: 24px; }
+    /* Hero h1 smaller on mobile */
+    .hero h1 { font-size: clamp(40px, 10vw, 140px); }
+    /* Proof counter cap */
+    .proof-counter { font-size: clamp(56px, 14vw, 120px); }
+    .testimonial-track { margin-bottom: 32px; }
+    /* Tracking section compact */
+    .tracking-demo { gap: 28px; }
+    .ring-container { width: 210px; height: 210px; }
+    .macro-bar-track { width: 52px; height: 84px; }
+    .macro-bar-val { font-size: 14px; }
+    .profile-module { padding: 18px 20px; }
+    /* Gamify compact */
+    .gamify-profile, .gamify-unlock { padding: 22px; }
+    .gamify-profile, .gamify-badges, .gamify-unlock { max-width: 420px; }
+    /* Voice compact */
+    .voice-transcript { padding: 20px 22px; min-height: 110px; }
+    /* Smart Order compact */
+    .so-panel { padding: 16px 18px; }
+    .so-notif-title { font-size: 18px; }
+    /* Dine-out results compact */
+    .do-result { padding: 14px 16px; gap: 14px; }
+    .do-score-num { font-size: 28px; }
+    .do-result-name { font-size: 17px; }
+    /* Vendor compact */
+    .vendor-menu-editor, .vendor-stats-panel { max-width: 420px; }
+    /* Setup wizard mobile */
+    .setup-section { padding-top: 72px; padding-bottom: 80px; }
+    .setup-container { grid-template-columns: 1fr; gap: 18px; }
+    .setup-wizard { padding: 22px 20px; }
+    .setup-header { padding-bottom: 18px; margin-bottom: 22px; }
+    .setup-meals { flex-direction: column; gap: 8px; }
+    .setup-meal { min-width: 100%; }
+    .setup-meal-add { width: 100%; }
+    .setup-toggles { flex-direction: column; }
+    .setup-segment { width: 100%; }
+    .setup-seg-btn { flex: 1; padding: 8px 0; }
   }
   @media (max-width: 600px) {
     .audience-grid { grid-template-columns: 1fr; }
@@ -1404,6 +1677,56 @@
     .timeline-chart { padding: 20px 16px; }
     .do-result { grid-template-columns: 44px 1fr auto; gap: 12px; }
     .do-result-emoji { font-size: 28px; }
+  }
+  @media (max-width: 480px) {
+    /* iPhone SE / mini — very tight */
+    .hero h1 { font-size: 38px; }
+    .section-title { font-size: 26px; }
+    .stat-number { font-size: 52px; }
+    .proof-counter { font-size: 60px; }
+    /* Tracking */
+    .ring-container { width: 190px; height: 190px; }
+    .ring-number { font-size: 40px; }
+    .macro-bar-track { width: 46px; height: 72px; }
+    .macro-bar-val { font-size: 13px; }
+    .profile-module { padding: 14px 16px; }
+    .bmi-number { font-size: 32px; }
+    .ct-value { font-size: 18px; }
+    /* Gamify */
+    .gamify-profile, .gamify-unlock { padding: 18px; }
+    .gp-level-ring { width: 88px; height: 88px; }
+    .gp-level-num { font-size: 28px; }
+    .gp-streak-num { font-size: 22px; }
+    .gu-reward-icon { font-size: 44px; }
+    .gu-reward-name { font-size: 18px; }
+    .badge-item { width: 64px; height: 64px; border-radius: 16px; }
+    .badge-emoji { font-size: 20px; }
+    /* Voice */
+    .vt-text { font-size: 18px; }
+    .voice-transcript { padding: 16px 18px; }
+    /* Smart Order */
+    .so-panel { padding: 14px 16px; }
+    .so-notif-title { font-size: 16px; }
+    .so-option { padding: 11px 14px; gap: 10px; }
+    .so-opt-emoji { font-size: 22px; }
+    .so-wmacro { min-width: 60px; padding: 8px 10px; }
+    .so-wmacro-val { font-size: 16px; }
+    /* Analyzer */
+    .an-macro-val { font-size: 18px; }
+    .an-result-name { font-size: 20px; }
+    /* Cuisine */
+    .cc-name { font-size: 17px; }
+    /* Section sub */
+    .section-sub { font-size: 14px; }
+    /* Testimonial */
+    .tm-quote { font-size: 16px; }
+    .testimonial { padding: 18px; }
+    /* Setup at very small */
+    .setup-wizard { padding: 18px 16px; }
+    .setup-stat-num { font-size: 22px; min-width: 48px; }
+    .setup-step-val { font-size: 18px; }
+    .setup-icon { width: 40px; height: 40px; font-size: 20px; }
+    .setup-title { font-size: 18px; }
   }
 </style>
 </head>
@@ -1453,7 +1776,8 @@
   <a href="#timeline" class="float-nav-item"><span class="fn-icon">📅</span><span data-vi="Lịch sử dinh dưỡng" data-en="Nutrition Timeline">Lịch sử dinh dưỡng</span></a>
   <a href="#gamify" class="float-nav-item"><span class="fn-icon">🏆</span><span data-vi="Gamification" data-en="Gamification">Gamification</span></a>
   <a href="#voice" class="float-nav-item"><span class="fn-icon">🎤</span><span data-vi="Voice Log" data-en="Voice Log">Voice Log</span></a>
-  <a href="#order" class="float-nav-item"><span class="fn-icon">🗺️</span><span data-vi="Smart Order" data-en="Smart Order">Smart Order</span></a>
+  <a href="#setup" class="float-nav-item"><span class="fn-icon">⚙️</span><span data-vi="Auto-Order Setup" data-en="Auto-Order Setup">Auto-Order Setup</span></a>
+  <a href="#order" class="float-nav-item"><span class="fn-icon">🗺️</span><span data-vi="Smart Order Preview" data-en="Smart Order Preview">Smart Order Preview</span></a>
   <a href="#dineout" class="float-nav-item"><span class="fn-icon">🍜</span><span data-vi="Tìm món fit macro" data-en="Dine-Out Matcher">Tìm món fit macro</span></a>
   <a href="#group" class="float-nav-item"><span class="fn-icon">🤝</span><span data-vi="Thách thức nhóm" data-en="Group Challenge">Thách thức nhóm</span></a>
   <a href="#cuisine" class="float-nav-item"><span class="fn-icon">🇻🇳</span><span data-vi="Ẩm thực Việt Nam" data-en="Vietnamese Cuisine">Ẩm thực Việt Nam</span></a>
@@ -1968,10 +2292,144 @@
 </section>
 
 <!-- ==========================================
-     4. SMART ORDER RECOMMENDATION
+     3.8 AUTO-ORDER SETUP (CORE FEATURE)
+     ========================================== -->
+<section class="setup-section" id="setup">
+  <div class="section-label reveal" data-vi="Tính năng cốt lõi" data-en="Core feature">Tính năng cốt lõi</div>
+  <h2 class="section-title reveal" id="setupTitle">Một lần cài đặt.<br><span style="color:var(--green);">NN lo cả tháng.</span></h2>
+  <p class="section-sub reveal" data-vi="30 phút trước mỗi bữa: bạn nhận push notification với 3 lựa chọn fit macro. Tap để duyệt. Đơn về tận cửa qua GrabFood/ShopeeFood." data-en="30 minutes before each meal: receive a push with 3 macro-fit options. Tap to approve. Delivered to your door via GrabFood/ShopeeFood.">30 phút trước mỗi bữa: bạn nhận push notification với 3 lựa chọn fit macro. Tap để duyệt. Đơn về tận cửa qua GrabFood/ShopeeFood.</p>
+
+  <div class="setup-container reveal">
+    <!-- WIZARD -->
+    <div class="setup-wizard">
+      <div class="setup-header">
+        <div class="setup-icon">⚙️</div>
+        <div>
+          <div class="setup-title" data-vi="Thiết lập Smart Order" data-en="Set up Smart Order">Thiết lập Smart Order</div>
+          <div class="setup-sub" data-vi="Cài một lần, áp dụng cho cả tháng" data-en="Configure once, runs all month">Cài một lần, áp dụng cho cả tháng</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Eating times -->
+      <div class="setup-step">
+        <div class="setup-step-label" data-vi="⏰ Lịch ăn trong ngày" data-en="⏰ Daily eating schedule">⏰ Lịch ăn trong ngày</div>
+        <div class="setup-meals" id="setupMeals"></div>
+        <div class="setup-step-hint" data-vi="Tap giờ để chỉnh — push notification sẽ đến 30' trước mỗi bữa." data-en="Tap a time to edit — push notification arrives 30 min before each meal.">Tap giờ để chỉnh — push notification sẽ đến 30' trước mỗi bữa.</div>
+      </div>
+
+      <!-- Step 2: Meals/day -->
+      <div class="setup-step">
+        <div class="setup-step-label" data-vi="🍽️ Số bữa / ngày" data-en="🍽️ Meals per day">🍽️ Số bữa / ngày</div>
+        <div class="setup-segment" id="setupMealsDay">
+          <button class="setup-seg-btn" data-mealsday="2">2</button>
+          <button class="setup-seg-btn active" data-mealsday="3">3</button>
+          <button class="setup-seg-btn" data-mealsday="4">4</button>
+          <button class="setup-seg-btn" data-mealsday="5">5</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Budget -->
+      <div class="setup-step">
+        <div class="setup-step-label-row">
+          <div class="setup-step-label" data-vi="💰 Ngân sách / bữa" data-en="💰 Budget per meal">💰 Ngân sách / bữa</div>
+          <div class="setup-step-val" id="setupBudgetVal">85,000 ₫</div>
+        </div>
+        <input type="range" class="setup-slider" id="setupBudgetSlider" data-color="green" min="40" max="300" value="85" step="5">
+        <div class="setup-step-hint" id="setupBudgetHint">≈ 7.65M ₫ / tháng (90 bữa)</div>
+      </div>
+
+      <!-- Step 4: Delivery time -->
+      <div class="setup-step">
+        <div class="setup-step-label-row">
+          <div class="setup-step-label" data-vi="📍 Thời gian giao tối đa" data-en="📍 Max delivery time">📍 Thời gian giao tối đa</div>
+          <div class="setup-step-val" id="setupDeliveryVal">25'</div>
+        </div>
+        <input type="range" class="setup-slider" id="setupDeliverySlider" data-color="orange" min="20" max="40" value="25">
+        <div class="setup-step-hint" id="setupDeliveryHint" data-vi="Trong vòng ~3.0km gần bạn" data-en="Within ~3.0km of your location">Trong vòng ~3.0km gần bạn</div>
+      </div>
+
+      <!-- Step 5: Goal -->
+      <div class="setup-step">
+        <div class="setup-step-label" data-vi="🎯 Mục tiêu dinh dưỡng" data-en="🎯 Nutrition goal">🎯 Mục tiêu dinh dưỡng</div>
+        <div class="setup-goals" id="setupGoals">
+          <button class="setup-goal-btn" data-goal="loss" data-vi="⚡ Giảm cân" data-en="⚡ Lose weight">⚡ Giảm cân</button>
+          <button class="setup-goal-btn active" data-goal="maintain" data-vi="⚖️ Duy trì" data-en="⚖️ Maintain">⚖️ Duy trì</button>
+          <button class="setup-goal-btn" data-goal="gain" data-vi="💪 Tăng cơ" data-en="💪 Gain muscle">💪 Tăng cơ</button>
+        </div>
+      </div>
+
+      <!-- Step 6: Notification channels -->
+      <div class="setup-step">
+        <div class="setup-step-label" data-vi="📲 Nhận thông báo trên" data-en="📲 Notify me on">📲 Nhận thông báo trên</div>
+        <div class="setup-toggles" id="setupToggles">
+          <div class="setup-toggle active" data-ch="phone">
+            <span class="setup-toggle-check">✓</span>
+            <span class="setup-toggle-icon">📱</span>
+            <span data-vi="Điện thoại" data-en="Phone">Điện thoại</span>
+          </div>
+          <div class="setup-toggle active" data-ch="desktop">
+            <span class="setup-toggle-check">✓</span>
+            <span class="setup-toggle-icon">💻</span>
+            <span data-vi="Desktop" data-en="Desktop">Desktop</span>
+          </div>
+        </div>
+      </div>
+
+      <button class="setup-activate-btn" id="setupActivateBtn" data-vi="Kích hoạt Smart Order →" data-en="Activate Smart Order →">Kích hoạt Smart Order →</button>
+    </div>
+
+    <!-- SIDE -->
+    <div class="setup-side">
+      <div class="how-card">
+        <div class="how-title" data-vi="Quy trình" data-en="How it works">Quy trình</div>
+        <div class="how-step">
+          <div class="how-num">1</div>
+          <div class="how-content">
+            <div class="how-step-title" data-vi="📅 NN lên kế hoạch tuần" data-en="📅 NN plans your week">📅 NN lên kế hoạch tuần</div>
+            <div class="how-step-desc" data-vi="Mỗi tuần, NN tính macro bạn cần và phân bổ vào các bữa." data-en="Each week, NN calculates your macros and distributes them across meals.">Mỗi tuần, NN tính macro bạn cần và phân bổ vào các bữa.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">2</div>
+          <div class="how-content">
+            <div class="how-step-title" data-vi="🔔 Push 30' trước bữa" data-en="🔔 Push 30 min before meal">🔔 Push 30' trước bữa</div>
+            <div class="how-step-desc" data-vi="3 lựa chọn fit macro nhất, ưu tiên gần bạn & trong ngân sách." data-en="3 best macro-fit picks, prioritized by proximity and budget.">3 lựa chọn fit macro nhất, ưu tiên gần bạn & trong ngân sách.</div>
+          </div>
+        </div>
+        <div class="how-step">
+          <div class="how-num">3</div>
+          <div class="how-content">
+            <div class="how-step-title" data-vi="✓ Bạn duyệt 1 chạm" data-en="✓ Approve in one tap">✓ Bạn duyệt 1 chạm</div>
+            <div class="how-step-desc" data-vi="NN tự đặt qua GrabFood/ShopeeFood. Đơn về tận cửa." data-en="NN places the order via GrabFood/ShopeeFood. Delivered to your door.">NN tự đặt qua GrabFood/ShopeeFood. Đơn về tận cửa.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-stats-card">
+        <div class="setup-stats-label" data-vi="Trung bình mỗi user" data-en="Average per user">Trung bình mỗi user</div>
+        <div class="setup-stat-item">
+          <div class="setup-stat-num">87%</div>
+          <div class="setup-stat-text" data-vi="macro hit rate / tuần" data-en="macro hit rate / week">macro hit rate / tuần</div>
+        </div>
+        <div class="setup-stat-item">
+          <div class="setup-stat-num">23'</div>
+          <div class="setup-stat-text" data-vi="thời gian giao trung bình" data-en="avg delivery time">thời gian giao trung bình</div>
+        </div>
+        <div class="setup-stat-item">
+          <div class="setup-stat-num">4h</div>
+          <div class="setup-stat-text" data-vi="tiết kiệm lên kế hoạch / tuần" data-en="saved planning time / week">tiết kiệm lên kế hoạch / tuần</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     4. SMART ORDER LIVE PREVIEW
      ========================================== -->
 <section class="order-section" id="order">
-  <div class="section-label reveal" data-vi="Smart Order" data-en="Smart Order">Smart Order</div>
+  <div class="live-preview-badge reveal"><span class="lp-pulse"></span><span data-vi="LIVE PREVIEW · Sau khi kích hoạt" data-en="LIVE PREVIEW · After activation">LIVE PREVIEW · Sau khi kích hoạt</span></div>
+  <div class="section-label reveal" data-vi="Smart Order đang chạy" data-en="Smart Order in action">Smart Order đang chạy</div>
   <h2 class="section-title reveal" id="orderTitle">AI chọn bữa.<br><span style="color:var(--green);">Fit macro. Fit ví.</span></h2>
   <p class="section-sub reveal" data-vi="Dựa trên macro còn thiếu + ngân sách + khẩu vị, NomNom gợi ý bữa ăn perfect từ delivery app." data-en="Based on remaining macros + budget + taste, NomNom suggests perfect meals from delivery apps.">Dựa trên macro còn thiếu + ngân sách + khẩu vị, NomNom gợi ý bữa ăn perfect từ delivery app.</p>
 
@@ -2359,6 +2817,10 @@ const sectionTitles = {
     vi: 'Nói là xong.<br><span style="color:var(--accent);">Không cần gõ.</span>',
     en: 'Just speak.<br><span style="color:var(--accent);">No typing needed.</span>'
   },
+  setup: {
+    vi: 'Một lần cài đặt.<br><span style="color:var(--green);">NN lo cả tháng.</span>',
+    en: 'Configure once.<br><span style="color:var(--green);">NN runs all month.</span>'
+  },
   order: {
     vi: 'AI chọn bữa.<br><span style="color:var(--green);">Fit macro. Fit ví.</span>',
     en: 'AI picks your meal.<br><span style="color:var(--green);">Fits macros. Fits budget.</span>'
@@ -2436,6 +2898,8 @@ function setLang(lang) {
   document.getElementById('trackingTitle').innerHTML = sectionTitles.tracking[lang];
   document.getElementById('gamifyTitle').innerHTML = sectionTitles.gamify[lang];
   document.getElementById('voiceTitle').innerHTML = sectionTitles.voice[lang];
+  const setupT = document.getElementById('setupTitle');
+  if (setupT) setupT.innerHTML = sectionTitles.setup[lang];
   document.getElementById('orderTitle').innerHTML = sectionTitles.order[lang];
   document.getElementById('groupTitle').innerHTML = sectionTitles.group[lang];
   document.getElementById('cuisineTitle').innerHTML = sectionTitles.cuisine[lang];
@@ -2477,6 +2941,9 @@ function setLang(lang) {
   if (typeof renderTestimonials === 'function') renderTestimonials();
   if (typeof renderSmartOrder === 'function' && soAnimated) renderSmartOrder();
   if (typeof buildDoPrefPills === 'function') buildDoPrefPills();
+  if (typeof renderSetupMeals === 'function') renderSetupMeals();
+  if (typeof updateSetupBudget === 'function') updateSetupBudget();
+  if (typeof updateSetupDelivery === 'function') updateSetupDelivery();
 
   // Set html lang
   document.documentElement.lang = lang === 'vi' ? 'vi' : 'en';
@@ -3125,6 +3592,194 @@ const soObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.2 });
 const soPanel = document.getElementById('soSetupPanel');
 if (soPanel) soObserver.observe(soPanel);
+
+// =============================================
+// 4.B AUTO-ORDER SETUP WIZARD
+// =============================================
+const setupState = {
+  meals: [
+    { vi: 'Sáng', en: 'Breakfast', icon: '🌅', time: '07:30' },
+    { vi: 'Trưa', en: 'Lunch', icon: '☀️', time: '12:30' },
+    { vi: 'Tối', en: 'Dinner', icon: '🌙', time: '19:00' }
+  ],
+  mealsPerDay: 3,
+  budget: 85,        // thousand VND per meal
+  delivery: 25,      // minutes
+  goal: 'maintain',
+  channels: { phone: true, desktop: true },
+  activated: false
+};
+
+const mealPresets = [
+  { vi: 'Sáng', en: 'Breakfast', icon: '🌅', time: '07:30' },
+  { vi: 'Phụ sáng', en: 'Brunch', icon: '🥐', time: '10:00' },
+  { vi: 'Trưa', en: 'Lunch', icon: '☀️', time: '12:30' },
+  { vi: 'Phụ chiều', en: 'Snack', icon: '🍵', time: '15:30' },
+  { vi: 'Tối', en: 'Dinner', icon: '🌙', time: '19:00' }
+];
+
+function formatVNDk(thousands) {
+  if (thousands >= 1000) return (thousands / 1000).toFixed(2).replace(/\.?0+$/, '') + 'M ₫';
+  return thousands.toLocaleString('vi-VN') + 'k ₫';
+}
+
+function renderSetupMeals() {
+  const wrap = document.getElementById('setupMeals');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  setupState.meals.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = 'setup-meal has-time';
+    const lbl = currentLang === 'en' ? m.en : m.vi;
+    div.innerHTML = `
+      <div class="setup-meal-icon">${m.icon}</div>
+      <div class="setup-meal-info">
+        <div class="setup-meal-name">${lbl}</div>
+        <input type="time" class="setup-meal-time" value="${m.time}" data-idx="${i}">
+      </div>
+      ${setupState.meals.length > 1 ? `<button class="setup-meal-remove" data-idx="${i}" aria-label="Remove">×</button>` : ''}
+    `;
+    wrap.appendChild(div);
+  });
+  // Add button if room
+  if (setupState.meals.length < setupState.mealsPerDay) {
+    const addBtn = document.createElement('button');
+    addBtn.className = 'setup-meal-add';
+    addBtn.textContent = currentLang === 'en' ? '+ Add meal' : '+ Thêm bữa';
+    addBtn.addEventListener('click', addSetupMeal);
+    wrap.appendChild(addBtn);
+  }
+  // Time inputs
+  wrap.querySelectorAll('.setup-meal-time').forEach(inp => {
+    inp.addEventListener('change', e => {
+      const idx = parseInt(e.target.dataset.idx);
+      setupState.meals[idx].time = e.target.value;
+    });
+  });
+  // Remove buttons
+  wrap.querySelectorAll('.setup-meal-remove').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const idx = parseInt(e.target.dataset.idx);
+      setupState.meals.splice(idx, 1);
+      if (setupState.mealsPerDay > setupState.meals.length) {
+        // sync mealsPerDay segment
+      }
+      renderSetupMeals();
+    });
+  });
+}
+
+function addSetupMeal() {
+  // Pick a preset that's not already in meals (by time roughly)
+  const usedTimes = new Set(setupState.meals.map(m => m.time));
+  const next = mealPresets.find(p => !usedTimes.has(p.time)) || mealPresets[setupState.meals.length % mealPresets.length];
+  setupState.meals.push({ ...next });
+  renderSetupMeals();
+}
+
+function updateSetupBudget() {
+  const slider = document.getElementById('setupBudgetSlider');
+  const val = document.getElementById('setupBudgetVal');
+  const hint = document.getElementById('setupBudgetHint');
+  if (!slider || !val) return;
+  setupState.budget = parseInt(slider.value);
+  const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+  slider.style.setProperty('--pct', pct + '%');
+  val.textContent = (setupState.budget * 1000).toLocaleString('vi-VN') + ' ₫';
+  const monthlyMeals = setupState.mealsPerDay * 30;
+  const monthlyTotal = monthlyMeals * setupState.budget;
+  const monthlyStr = formatVNDk(monthlyTotal);
+  hint.textContent = currentLang === 'en'
+    ? `≈ ${monthlyStr} / month (${monthlyMeals} meals)`
+    : `≈ ${monthlyStr} / tháng (${monthlyMeals} bữa)`;
+}
+
+function updateSetupDelivery() {
+  const slider = document.getElementById('setupDeliverySlider');
+  const val = document.getElementById('setupDeliveryVal');
+  const hint = document.getElementById('setupDeliveryHint');
+  if (!slider || !val) return;
+  setupState.delivery = parseInt(slider.value);
+  const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+  slider.style.setProperty('--pct', pct + '%');
+  val.textContent = setupState.delivery + "'";
+  const km = (setupState.delivery * 0.12).toFixed(1);
+  hint.textContent = currentLang === 'en'
+    ? `Within ~${km}km of your location`
+    : `Trong vòng ~${km}km gần bạn`;
+}
+
+// Init setup wizard
+(function initSetupWizard() {
+  if (!document.getElementById('setupMeals')) return;
+  renderSetupMeals();
+  updateSetupBudget();
+  updateSetupDelivery();
+
+  document.getElementById('setupBudgetSlider').addEventListener('input', updateSetupBudget);
+  document.getElementById('setupDeliverySlider').addEventListener('input', updateSetupDelivery);
+
+  document.querySelectorAll('#setupMealsDay .setup-seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#setupMealsDay .setup-seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      setupState.mealsPerDay = parseInt(btn.dataset.mealsday);
+      // Trim or extend meals
+      while (setupState.meals.length > setupState.mealsPerDay) setupState.meals.pop();
+      while (setupState.meals.length < setupState.mealsPerDay) {
+        const usedTimes = new Set(setupState.meals.map(m => m.time));
+        const next = mealPresets.find(p => !usedTimes.has(p.time)) || mealPresets[setupState.meals.length % mealPresets.length];
+        setupState.meals.push({ ...next });
+      }
+      renderSetupMeals();
+      updateSetupBudget();
+    });
+  });
+
+  document.querySelectorAll('#setupGoals .setup-goal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#setupGoals .setup-goal-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      setupState.goal = btn.dataset.goal;
+    });
+  });
+
+  document.querySelectorAll('#setupToggles .setup-toggle').forEach(t => {
+    t.addEventListener('click', () => {
+      t.classList.toggle('active');
+      const ch = t.dataset.ch;
+      setupState.channels[ch] = t.classList.contains('active');
+    });
+  });
+
+  // Activate
+  document.getElementById('setupActivateBtn').addEventListener('click', () => {
+    const btn = document.getElementById('setupActivateBtn');
+    if (setupState.activated) return;
+    setupState.activated = true;
+    btn.classList.add('activated');
+    btn.setAttribute('data-vi', '✓ Đã kích hoạt — xem preview ↓');
+    btn.setAttribute('data-en', '✓ Activated — see live preview ↓');
+    btn.textContent = currentLang === 'en'
+      ? '✓ Activated — see live preview ↓'
+      : '✓ Đã kích hoạt — xem preview ↓';
+    // Confetti burst
+    if (typeof spawnConfetti === 'function') spawnConfetti();
+    // Sync goal to existing Smart Order
+    if (typeof soActiveGoal !== 'undefined') {
+      soActiveGoal = setupState.goal;
+      document.querySelectorAll('#soGoalBtns .so-goal-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.goal === setupState.goal);
+      });
+      if (typeof renderSmartOrder === 'function' && soAnimated) renderSmartOrder();
+    }
+    // Scroll to live preview after a beat
+    setTimeout(() => {
+      const order = document.getElementById('order');
+      if (order) order.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 700);
+  });
+})();
 
 // =============================================
 // 5. GROUP LEADERBOARD ANIMATION
