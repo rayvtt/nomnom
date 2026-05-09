@@ -60,7 +60,7 @@
   /* ===== NAV ===== */
   nav {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    padding: 20px 48px;
+    padding: 20px 48px 20px 80px;
     display: flex; justify-content: space-between; align-items: center;
     backdrop-filter: blur(20px) saturate(1.6);
     background: var(--nav-bg);
@@ -1247,9 +1247,49 @@
   .ref-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 99px; transition: width 1.4s cubic-bezier(0.4,0,0.2,1); }
   .ref-progress-text { font-weight: 700; color: var(--text); white-space: nowrap; }
 
+  /* ===== FLOAT NAV ===== */
+  .float-nav-btn { position: fixed; top: 20px; left: 20px; z-index: 1002; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--card-border); cursor: pointer; background: var(--nav-bg); backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+  .float-nav-btn:hover { transform: scale(1.08); border-color: var(--accent); }
+  .fnb-icon { display: flex; flex-direction: column; gap: 4.5px; }
+  .fnb-bar { width: 18px; height: 2px; background: var(--text); border-radius: 99px; transition: all 0.3s; transform-origin: center; }
+  .float-nav-btn.open .fnb-bar:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .float-nav-btn.open .fnb-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .float-nav-btn.open .fnb-bar:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .float-nav-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.35s; }
+  .float-nav-overlay.open { opacity: 1; pointer-events: all; }
+  .float-nav-drawer { position: fixed; top: 0; left: 0; z-index: 1001; width: 280px; height: 100vh; background: var(--bg-2); border-right: 1px solid var(--card-border); padding: 72px 16px 32px; transform: translateX(-110%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1); overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+  .float-nav-drawer.open { transform: translateX(0); box-shadow: 6px 0 48px rgba(0,0,0,0.35); }
+  .fnd-heading { font-size: 10px; text-transform: uppercase; letter-spacing: 0.22em; color: var(--text-3); font-weight: 700; margin-bottom: 10px; padding: 0 10px; }
+  .float-nav-item { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 12px; text-decoration: none; color: var(--text); font-size: 14px; font-weight: 600; transition: all 0.2s; }
+  .float-nav-item:hover { background: var(--card-hover); }
+  .fn-icon { font-size: 19px; width: 28px; text-align: center; flex-shrink: 0; }
+  .fnd-divider { height: 1px; background: var(--card-border); margin: 8px 0; }
+  .fnd-cta-wrap { padding-top: 16px; border-top: 1px solid var(--card-border); margin-top: 8px; }
+  .fnd-join-btn { display: block; background: var(--accent); color: white; text-align: center; padding: 12px 16px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; transition: all 0.3s; }
+  .fnd-join-btn:hover { box-shadow: 0 6px 24px rgba(255,106,40,0.35); }
+
+  /* ===== DINEOUT EXPANDED ===== */
+  .do-timeframe { display: flex; gap: 8px; margin-bottom: 22px; }
+  .do-tf-btn { flex: 1; padding: 9px 12px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 10px; color: var(--text-2); font-family: 'Be Vietnam Pro', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.25s; }
+  .do-tf-btn.active { background: rgba(255,106,40,0.1); border-color: var(--accent); color: var(--accent); }
+  .do-pref-label { font-size: 10px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 10px; }
+  .do-pref-pills { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 22px; }
+  .do-pref-pill { padding: 5px 12px; border-radius: 99px; border: 1px solid var(--card-border); background: var(--bg-2); color: var(--text-2); font-size: 12px; font-weight: 600; font-family: 'Be Vietnam Pro', sans-serif; cursor: pointer; transition: all 0.22s; user-select: none; }
+  .do-pref-pill:hover { border-color: var(--text-3); color: var(--text); }
+  .do-pref-pill.love { background: rgba(255,106,40,0.12); border-color: var(--accent); color: var(--accent); }
+  .do-pref-pill.avoid { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.3); color: var(--text-3); text-decoration: line-through; }
+  .do-weight-row { margin-bottom: 22px; }
+  .do-weight-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-3); margin-bottom: 4px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+  .do-weight-center { text-align: center; font-size: 11px; color: var(--text-2); font-weight: 700; margin-bottom: 8px; }
+  .do-result-tags { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+  .do-result-rtag { font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 700; letter-spacing: 0.06em; }
+  .do-result-rtag.love { background: rgba(255,106,40,0.12); color: var(--accent); }
+  .do-result-rtag.macro { background: rgba(52,211,153,0.1); color: var(--green); }
+  .do-result-rtag.cat { background: var(--bg-3); color: var(--text-3); }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {
-    nav { padding: 14px 20px; }
+    nav { padding: 14px 20px 14px 76px; }
     .nav-links { display: none; }
     .nav-mobile { display: flex; }
     .tracking-demo, .gamify-demo, .order-demo, .group-demo, .vendor-demo { flex-direction: column; align-items: center; }
@@ -1329,6 +1369,36 @@
     <a href="#cta" class="nav-mobile-cta" data-vi="Đăng ký" data-en="Sign up">Đăng ký</a>
   </div>
 </nav>
+
+<!-- FLOATING NAV BUTTON -->
+<button class="float-nav-btn" id="floatNavBtn" aria-label="Menu">
+  <div class="fnb-icon">
+    <div class="fnb-bar"></div>
+    <div class="fnb-bar"></div>
+    <div class="fnb-bar"></div>
+  </div>
+</button>
+
+<!-- FLOATING NAV OVERLAY + DRAWER -->
+<div class="float-nav-overlay" id="floatNavOverlay"></div>
+<div class="float-nav-drawer" id="floatNavDrawer">
+  <div class="fnd-heading" data-vi="KHÁM PHÁ" data-en="EXPLORE">KHÁM PHÁ</div>
+  <a href="#tracking" class="float-nav-item"><span class="fn-icon">📊</span><span data-vi="Theo dõi dinh dưỡng" data-en="Nutrition Tracking">Theo dõi dinh dưỡng</span></a>
+  <a href="#audience" class="float-nav-item"><span class="fn-icon">👥</span><span data-vi="Dành cho ai?" data-en="Who's It For?">Dành cho ai?</span></a>
+  <a href="#timeline" class="float-nav-item"><span class="fn-icon">📅</span><span data-vi="Lịch sử dinh dưỡng" data-en="Nutrition Timeline">Lịch sử dinh dưỡng</span></a>
+  <a href="#gamify" class="float-nav-item"><span class="fn-icon">🏆</span><span data-vi="Gamification" data-en="Gamification">Gamification</span></a>
+  <a href="#voice" class="float-nav-item"><span class="fn-icon">🎤</span><span data-vi="Voice Log" data-en="Voice Log">Voice Log</span></a>
+  <a href="#order" class="float-nav-item"><span class="fn-icon">🗺️</span><span data-vi="Smart Order" data-en="Smart Order">Smart Order</span></a>
+  <a href="#dineout" class="float-nav-item"><span class="fn-icon">🍜</span><span data-vi="Tìm món fit macro" data-en="Dine-Out Matcher">Tìm món fit macro</span></a>
+  <a href="#group" class="float-nav-item"><span class="fn-icon">🤝</span><span data-vi="Thách thức nhóm" data-en="Group Challenge">Thách thức nhóm</span></a>
+  <a href="#cuisine" class="float-nav-item"><span class="fn-icon">🇻🇳</span><span data-vi="Ẩm thực Việt Nam" data-en="Vietnamese Cuisine">Ẩm thực Việt Nam</span></a>
+  <a href="#recipe" class="float-nav-item"><span class="fn-icon">📖</span><span data-vi="Recipe Hub" data-en="Recipe Hub">Recipe Hub</span></a>
+  <a href="#analyzer" class="float-nav-item"><span class="fn-icon">🤖</span><span data-vi="AI Phân tích" data-en="AI Analyzer">AI Phân tích</span></a>
+  <div class="fnd-divider"></div>
+  <div class="fnd-cta-wrap">
+    <a href="#cta" class="fnd-join-btn" data-vi="Tham gia waitlist →" data-en="Join waitlist →">Tham gia waitlist →</a>
+  </div>
+</div>
 
 <!-- THEME TOGGLE -->
 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
@@ -1889,8 +1959,14 @@
 
   <div class="dineout-container reveal">
     <div class="dineout-controls">
-      <div class="do-controls-title" data-vi="Macro còn lại trong ngày" data-en="Macros left for today">Macro còn lại trong ngày</div>
+      <!-- Timeframe toggle -->
+      <div class="do-controls-title" id="doControlsTitle" data-vi="Macro còn lại" data-en="Macros remaining">Macro còn lại</div>
+      <div class="do-timeframe">
+        <button class="do-tf-btn active" id="doTfDay" data-vi="Hôm nay" data-en="Today">Hôm nay</button>
+        <button class="do-tf-btn" id="doTfWeek" data-vi="Tuần này" data-en="This week">Tuần này</button>
+      </div>
 
+      <!-- Macro sliders -->
       <div class="do-slider-row">
         <div class="do-slider-label">
           <span class="do-slider-label-name" data-vi="Protein" data-en="Protein">Protein</span>
@@ -1915,11 +1991,25 @@
         <input type="range" class="do-slider" data-color="green" id="doFSlider" min="0" max="60" value="12">
       </div>
 
+      <!-- Cuisine preference pills -->
+      <div class="do-pref-label" data-vi="SỞ THÍCH ẨM THỰC" data-en="CUISINE PREFERENCES">SỞ THÍCH ẨM THỰC</div>
+      <div class="do-pref-pills" id="doPrefPills"></div>
+
+      <!-- Preference weight -->
+      <div class="do-weight-row">
+        <div class="do-weight-labels">
+          <span data-vi="Macro fit" data-en="Macro fit">Macro fit</span>
+          <span data-vi="Sở thích" data-en="Taste">Sở thích</span>
+        </div>
+        <div class="do-weight-center" id="doWeightLabel">50% Macro · 50% Sở thích</div>
+        <input type="range" class="do-slider" data-color="amber" id="doPrefWeight" min="0" max="100" value="50">
+      </div>
+
       <button class="do-match-btn" id="doMatchBtn" data-vi="🔍 Tìm món fit macro" data-en="🔍 Find matching dishes">🔍 Tìm món fit macro</button>
     </div>
 
     <div class="do-results" id="doResults">
-      <div class="do-status" id="doStatus" data-vi="Điều chỉnh slider, bấm tìm để xem kết quả" data-en="Adjust sliders, tap find to see results">Điều chỉnh slider, bấm tìm để xem kết quả</div>
+      <div class="do-status" id="doStatus" data-vi="Chọn sở thích, điều chỉnh macro, bấm tìm" data-en="Pick preferences, set macros, tap find">Chọn sở thích, điều chỉnh macro, bấm tìm</div>
     </div>
   </div>
 </section>
@@ -3675,12 +3765,13 @@ const tlSection = document.getElementById('timeline');
 if (tlSection) tlObserver.observe(tlSection);
 
 // =============================================
-// DINE-OUT MATCHER
+// DINE-OUT MATCHER (EXPANDED)
 // =============================================
 const doPSlider = document.getElementById('doPSlider');
 const doCSlider = document.getElementById('doCSlider');
 const doFSlider = document.getElementById('doFSlider');
 const doMatchBtn = document.getElementById('doMatchBtn');
+const doPrefWeight = document.getElementById('doPrefWeight');
 
 function updateSliderFill(slider) {
   if (!slider) return;
@@ -3697,6 +3788,91 @@ function updateSliderFill(slider) {
   updateSliderFill(sl);
 });
 
+// Cuisine categories
+const doCuisineCats = [
+  { cat:'soup',       vi:'Canh / Súp', en:'Soup' },
+  { cat:'noodle',     vi:'Bún / Phở',  en:'Noodle' },
+  { cat:'rice',       vi:'Cơm',        en:'Rice' },
+  { cat:'grilled',    vi:'Nướng',      en:'Grilled' },
+  { cat:'street',     vi:'Đường phố',  en:'Street food' },
+  { cat:'seafood',    vi:'Hải sản',    en:'Seafood' },
+  { cat:'vegetarian', vi:'Chay',       en:'Vegetarian' },
+  { cat:'dessert',    vi:'Tráng miệng',en:'Dessert' }
+];
+
+// Preference state: null | 'love' | 'avoid'
+const doPrefMap = {};
+doCuisineCats.forEach(c => { doPrefMap[c.cat] = null; });
+
+function buildDoPrefPills() {
+  const container = document.getElementById('doPrefPills');
+  if (!container) return;
+  container.innerHTML = '';
+  doCuisineCats.forEach(c => {
+    const btn = document.createElement('button');
+    const state = doPrefMap[c.cat];
+    btn.className = 'do-pref-pill' + (state ? ' ' + state : '');
+    btn.dataset.cat = c.cat;
+    const label = currentLang === 'en' ? c.en : c.vi;
+    btn.textContent = state === 'love' ? '❤️ ' + label : state === 'avoid' ? '✕ ' + label : label;
+    btn.addEventListener('click', () => {
+      doPrefMap[c.cat] = doPrefMap[c.cat] === null ? 'love' : doPrefMap[c.cat] === 'love' ? 'avoid' : null;
+      buildDoPrefPills();
+    });
+    container.appendChild(btn);
+  });
+}
+buildDoPrefPills();
+
+// Preference weight label
+function updateDoWeightLabel() {
+  const lbl = document.getElementById('doWeightLabel');
+  if (!lbl || !doPrefWeight) return;
+  const w = +doPrefWeight.value;
+  if (w === 0) {
+    lbl.textContent = '100% Macro fit';
+  } else if (w === 100) {
+    lbl.textContent = currentLang === 'en' ? '100% Taste' : '100% Sở thích';
+  } else {
+    lbl.textContent = `${100 - w}% Macro · ${w}% ${currentLang === 'en' ? 'Taste' : 'Sở thích'}`;
+  }
+  updateSliderFill(doPrefWeight);
+}
+if (doPrefWeight) {
+  doPrefWeight.addEventListener('input', updateDoWeightLabel);
+  updateDoWeightLabel();
+}
+
+// Timeframe toggle
+let doTimeframe = 'day';
+const doSliderConfig = {
+  day:  { p:[5,80,30],    c:[0,120,45],  f:[0,60,12] },
+  week: { p:[20,300,120], c:[50,600,200], f:[20,250,55] }
+};
+
+function setDoTimeframe(tf) {
+  doTimeframe = tf;
+  document.getElementById('doTfDay').classList.toggle('active', tf === 'day');
+  document.getElementById('doTfWeek').classList.toggle('active', tf === 'week');
+  const cfg = doSliderConfig[tf];
+  [[doPSlider,'doPVal',cfg.p],[doCSlider,'doCVal',cfg.c],[doFSlider,'doFVal',cfg.f]].forEach(([sl,valId,range]) => {
+    if (!sl) return;
+    sl.min = range[0]; sl.max = range[1]; sl.value = range[2];
+    document.getElementById(valId).textContent = range[2];
+    updateSliderFill(sl);
+  });
+  const titleEl = document.getElementById('doControlsTitle');
+  if (titleEl) {
+    titleEl.textContent = tf === 'day'
+      ? (currentLang === 'en' ? 'Macros remaining today' : 'Macro còn lại hôm nay')
+      : (currentLang === 'en' ? 'Macros remaining this week' : 'Macro còn lại tuần này');
+  }
+}
+
+document.getElementById('doTfDay') && document.getElementById('doTfDay').addEventListener('click', () => setDoTimeframe('day'));
+document.getElementById('doTfWeek') && document.getElementById('doTfWeek').addEventListener('click', () => setDoTimeframe('week'));
+
+// Restaurant pool
 const dineRestaurants = [
   { vi:'Quán Bà Năm', en:'Quán Bà Năm', dist:'320m' },
   { vi:'Phở Hòa Pasteur', en:'Phở Hòa Pasteur', dist:'450m' },
@@ -3705,17 +3881,25 @@ const dineRestaurants = [
   { vi:'Cơm Tấm Cali', en:'Cali Broken Rice', dist:'1.1km' }
 ];
 
-function dineMatchScore(dish, target) {
+// Scoring: returns null if avoided, else { score, macroScore, loved }
+function dineMatchScore(dish, target, prefMap, prefWeight) {
+  if (prefMap[dish.cat] === 'avoid') return null;
   const dp = Math.abs((dish.p || 0) - target.p);
   const dc = Math.abs((dish.c || 0) - target.c);
   const df = Math.abs((dish.f || 0) - target.f);
   const totalGap = dp * 1.4 + dc * 0.5 + df * 1.2;
-  return Math.max(20, Math.min(99, Math.round(100 - totalGap * 1.1)));
+  const macroScore = Math.max(0, Math.min(100, 100 - totalGap * 1.1));
+  const isLoved = prefMap[dish.cat] === 'love';
+  const prefScore = isLoved ? 90 : 52;
+  const w = prefWeight / 100;
+  const blended = macroScore * (1 - w) + prefScore * w;
+  return { score: Math.max(20, Math.min(99, Math.round(blended))), macroScore: Math.round(macroScore), loved: isLoved };
 }
 
 if (doMatchBtn) {
   doMatchBtn.addEventListener('click', () => {
     const target = { p:+doPSlider.value, c:+doCSlider.value, f:+doFSlider.value };
+    const prefWeight = doPrefWeight ? +doPrefWeight.value : 0;
     const results = document.getElementById('doResults');
     const loadingTxt = currentLang === 'en' ? 'Matching dishes...' : 'Đang khớp món...';
     results.innerHTML = `<div class="do-status"><div class="do-loading-dots"><span></span><span></span><span></span></div><div style="margin-top:14px;">${loadingTxt}</div></div>`;
@@ -3723,18 +3907,34 @@ if (doMatchBtn) {
     setTimeout(() => {
       if (typeof recipeDB === 'undefined') return;
       const scored = recipeDB
-        .map(d => ({ ...d, matchScore: dineMatchScore(d, target) }))
+        .map(d => {
+          const r = dineMatchScore(d, target, doPrefMap, prefWeight);
+          return r ? { ...d, matchScore: r.score, macroScore: r.macroScore, loved: r.loved } : null;
+        })
+        .filter(Boolean)
         .sort((a, b) => b.matchScore - a.matchScore)
         .slice(0, 5);
+
+      if (scored.length === 0) {
+        results.innerHTML = `<div class="do-status">${currentLang === 'en' ? 'No matches — try removing some avoid preferences.' : 'Không có kết quả — thử bỏ bớt mục tránh.'}</div>`;
+        return;
+      }
+
+      const catLabels = {};
+      doCuisineCats.forEach(c => { catLabels[c.cat] = currentLang === 'en' ? c.en : c.vi; });
 
       results.innerHTML = '';
       scored.forEach((d, i) => {
         const div = document.createElement('div');
         div.className = 'do-result';
         const name = currentLang === 'en' ? d.nameEn : d.name;
-        const r = dineRestaurants[i];
+        const r = dineRestaurants[i % dineRestaurants.length];
         const matchLabel = currentLang === 'en' ? 'match' : 'khớp';
         const scoreCls = d.matchScore >= 80 ? '' : d.matchScore >= 60 ? 'medium' : 'low';
+        const catLabel = catLabels[d.cat] || d.cat;
+        const lovedTag = d.loved ? `<span class="do-result-rtag love">❤️ ${currentLang === 'en' ? 'Fave' : 'Yêu thích'}</span>` : '';
+        const macroTag = `<span class="do-result-rtag macro">◎ ${d.macroScore}% macro</span>`;
+        const catTag = `<span class="do-result-rtag cat">${catLabel}</span>`;
         div.innerHTML = `
           <div class="do-result-emoji">${d.emoji}</div>
           <div class="do-result-info">
@@ -3749,6 +3949,7 @@ if (doMatchBtn) {
               <span class="do-result-macro" style="color:var(--accent-2);">C ${d.c}g</span>
               <span class="do-result-macro" style="color:var(--green);">F ${d.f}g</span>
             </div>
+            <div class="do-result-tags">${lovedTag}${macroTag}${catTag}</div>
           </div>
           <div class="do-result-score">
             <div class="do-score-num ${scoreCls}">${d.matchScore}</div>
@@ -4016,6 +4217,28 @@ if (refCopyBtn) {
     setTimeout(() => {
       refCopyBtn.textContent = currentLang === 'en' ? 'Copy' : 'Sao chép';
     }, 1800);
+  });
+}
+
+// =============================================
+// FLOATING NAV
+// =============================================
+const floatNavBtn = document.getElementById('floatNavBtn');
+const floatNavDrawer = document.getElementById('floatNavDrawer');
+const floatNavOverlay = document.getElementById('floatNavOverlay');
+
+function toggleFloatNav(forceOpen) {
+  const shouldOpen = forceOpen !== undefined ? forceOpen : !floatNavDrawer.classList.contains('open');
+  floatNavBtn.classList.toggle('open', shouldOpen);
+  floatNavDrawer.classList.toggle('open', shouldOpen);
+  floatNavOverlay.classList.toggle('open', shouldOpen);
+}
+
+if (floatNavBtn) {
+  floatNavBtn.addEventListener('click', () => toggleFloatNav());
+  floatNavOverlay.addEventListener('click', () => toggleFloatNav(false));
+  floatNavDrawer.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => toggleFloatNav(false));
   });
 }
 
