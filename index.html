@@ -1054,6 +1054,188 @@
   footer p { font-size: 13px; color: var(--text-3); }
   footer .ft-logo { font-family: 'Instrument Serif', serif; font-size: 18px; color: var(--text-2); margin-bottom: 12px; }
 
+  /* ========================================== */
+  /* 1.5 WHO'S IT FOR (AUDIENCE)               */
+  /* ========================================== */
+  .audience-section { padding: 100px 24px 120px; display: flex; flex-direction: column; align-items: center; }
+  .audience-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; max-width: 1100px; width: 100%; margin-top: 32px; }
+  .audience-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 22px; padding: 28px 24px; transition: all 0.4s; position: relative; overflow: hidden; }
+  .audience-card:hover { transform: translateY(-6px); border-color: rgba(255,106,40,0.3); background: var(--card-hover); }
+  .audience-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 140px; height: 140px; border-radius: 50%; opacity: 0.08; transition: opacity 0.4s; pointer-events: none; }
+  .audience-card:hover::before { opacity: 0.2; }
+  .audience-card[data-color="orange"]::before { background: var(--accent); }
+  .audience-card[data-color="amber"]::before { background: var(--accent-2); }
+  .audience-card[data-color="green"]::before { background: var(--green); }
+  .audience-card[data-color="purple"]::before { background: var(--purple); }
+  .aud-emoji { font-size: 44px; margin-bottom: 16px; display: block; transition: transform 0.4s; position: relative; }
+  .audience-card:hover .aud-emoji { transform: scale(1.15) rotate(-6deg); }
+  .aud-name { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 8px; line-height: 1.2; }
+  .aud-pain { font-size: 13px; color: var(--text-2); line-height: 1.5; margin-bottom: 16px; }
+  .aud-divider { height: 1px; background: var(--card-border); margin-bottom: 12px; }
+  .aud-help-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 6px; }
+  .aud-help { font-size: 13px; color: var(--text); line-height: 1.5; font-weight: 500; }
+
+  /* ========================================== */
+  /* 1.7 NUTRITION TIMELINE                    */
+  /* ========================================== */
+  .timeline-section { padding: 100px 24px 140px; display: flex; flex-direction: column; align-items: center; position: relative; }
+  .timeline-container { max-width: 900px; width: 100%; margin-top: 32px; }
+  .timeline-tabs { display: flex; gap: 4px; justify-content: center; margin-bottom: 28px; background: var(--card-bg); padding: 5px; border-radius: 99px; border: 1px solid var(--card-border); width: fit-content; margin-left: auto; margin-right: auto; }
+  .timeline-tab { padding: 9px 22px; border-radius: 99px; border: none; background: none; color: var(--text-2); font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+  .timeline-tab.active { background: var(--accent); color: white; }
+  .timeline-chart { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 32px; margin-bottom: 24px; position: relative; overflow: hidden; }
+  .tl-chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+  .tl-chart-stat { font-family: 'Instrument Serif', serif; font-size: 44px; line-height: 1; }
+  .tl-chart-stat-sub { font-size: 12px; color: var(--text-2); margin-top: 6px; }
+  .tl-chart-trend { font-size: 12px; padding: 8px 14px; border-radius: 99px; font-weight: 600; align-self: center; }
+  .tl-chart-trend.up { background: rgba(52,211,153,0.12); color: var(--green); }
+  .tl-chart-trend.down { background: rgba(239,68,68,0.12); color: var(--red); }
+  .tl-chart-svg { width: 100%; height: 220px; display: block; }
+  .tl-bar { transition: opacity 0.4s; }
+  .tl-bar:hover { opacity: 1 !important; }
+  .tl-day-labels { display: flex; justify-content: space-around; margin-top: 10px; padding: 0 8px; }
+  .tl-day-label { font-size: 11px; color: var(--text-3); font-weight: 600; flex: 1; text-align: center; }
+  .tl-insights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .tl-insight { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 20px; transition: all 0.3s; }
+  .tl-insight:hover { transform: translateY(-3px); border-color: rgba(255,106,40,0.25); }
+  .tl-insight-icon { font-size: 26px; margin-bottom: 10px; }
+  .tl-insight-title { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-bottom: 8px; }
+  .tl-insight-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .tl-insight-text strong { color: var(--accent); }
+
+  /* ========================================== */
+  /* 4.5 DINE-OUT MATCHER                       */
+  /* ========================================== */
+  .dineout-section { padding: 120px 24px 140px; display: flex; flex-direction: column; align-items: center; }
+  .dineout-container { max-width: 1080px; width: 100%; margin-top: 32px; display: grid; grid-template-columns: 360px 1fr; gap: 32px; }
+  .dineout-controls { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 28px; height: fit-content; position: sticky; top: 100px; }
+  .do-controls-title { font-size: 11px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 22px; }
+  .do-slider-row { margin-bottom: 22px; }
+  .do-slider-label { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; margin-bottom: 10px; font-weight: 600; }
+  .do-slider-label-name { color: var(--text); }
+  .do-slider-label-val { font-family: 'Instrument Serif', serif; font-size: 22px; }
+  .do-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 6px; border-radius: 99px; background: var(--card-border); outline: none; cursor: pointer; }
+  .do-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--card-border); transition: transform 0.2s; }
+  .do-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
+  .do-slider::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid var(--bg); }
+  .do-slider[data-color="orange"]::-webkit-slider-thumb { background: var(--accent); }
+  .do-slider[data-color="amber"]::-webkit-slider-thumb { background: var(--accent-2); }
+  .do-slider[data-color="green"]::-webkit-slider-thumb { background: var(--green); }
+  .do-slider[data-color="orange"]::-moz-range-thumb { background: var(--accent); }
+  .do-slider[data-color="amber"]::-moz-range-thumb { background: var(--accent-2); }
+  .do-slider[data-color="green"]::-moz-range-thumb { background: var(--green); }
+  .do-slider[data-color="orange"] { background: linear-gradient(to right, var(--accent) 0%, var(--accent) var(--pct, 50%), var(--card-border) var(--pct, 50%), var(--card-border) 100%); }
+  .do-slider[data-color="amber"] { background: linear-gradient(to right, var(--accent-2) 0%, var(--accent-2) var(--pct, 50%), var(--card-border) var(--pct, 50%), var(--card-border) 100%); }
+  .do-slider[data-color="green"] { background: linear-gradient(to right, var(--green) 0%, var(--green) var(--pct, 50%), var(--card-border) var(--pct, 50%), var(--card-border) 100%); }
+  .do-match-btn { width: 100%; background: var(--accent); color: white; border: none; padding: 14px; border-radius: 14px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 8px; transition: all 0.3s; }
+  .do-match-btn:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(255,106,40,0.35); }
+  .do-results { display: flex; flex-direction: column; gap: 14px; min-height: 200px; }
+  .do-result { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 18px 22px; display: grid; grid-template-columns: 60px 1fr auto; gap: 18px; align-items: center; opacity: 0; transform: translateY(20px); transition: all 0.5s; }
+  .do-result.visible { opacity: 1; transform: translateY(0); }
+  .do-result:hover { border-color: rgba(52,211,153,0.3); }
+  .do-result-emoji { font-size: 38px; }
+  .do-result-name { font-family: 'Instrument Serif', serif; font-size: 20px; margin-bottom: 6px; line-height: 1.2; }
+  .do-result-meta { display: flex; gap: 12px; font-size: 12px; color: var(--text-2); flex-wrap: wrap; }
+  .do-result-macros { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+  .do-result-macro { font-size: 11px; padding: 3px 9px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 6px; font-weight: 700; }
+  .do-result-score { text-align: center; }
+  .do-score-num { font-family: 'Instrument Serif', serif; font-size: 36px; line-height: 1; color: var(--green); }
+  .do-score-num.medium { color: var(--accent-2); }
+  .do-score-num.low { color: var(--text-2); }
+  .do-score-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-top: 4px; }
+  .do-status { text-align: center; padding: 60px 32px; color: var(--text-2); font-size: 14px; }
+  .do-loading-dots { display: inline-flex; gap: 6px; }
+  .do-loading-dots span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: doBounce 1.2s ease-in-out infinite; }
+  .do-loading-dots span:nth-child(2) { animation-delay: 0.18s; }
+  .do-loading-dots span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes doBounce { 0%, 100% { transform: translateY(0); opacity: 0.4; } 50% { transform: translateY(-8px); opacity: 1; } }
+
+  /* ========================================== */
+  /* 7.5 AI RECIPE ANALYZER                     */
+  /* ========================================== */
+  .analyzer-section { padding: 120px 24px 140px; display: flex; flex-direction: column; align-items: center; }
+  .analyzer-container { max-width: 1080px; width: 100%; margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .analyzer-input-card, .analyzer-output-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px; padding: 28px; }
+  .an-card-title { font-size: 11px; color: var(--purple); font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 16px; }
+  .an-textarea { width: 100%; min-height: 200px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px 16px; color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px; line-height: 1.5; resize: vertical; transition: border-color 0.3s; }
+  .an-textarea:focus { outline: none; border-color: var(--purple); }
+  .an-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; margin-bottom: 18px; }
+  .an-preset { background: var(--bg-2); color: var(--text-2); border: 1px solid var(--card-border); padding: 7px 14px; border-radius: 99px; font-size: 12px; font-family: 'Outfit', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+  .an-preset:hover { background: var(--purple); color: white; border-color: var(--purple); }
+  .an-analyze-btn { width: 100%; background: var(--purple); color: white; border: none; padding: 14px; border-radius: 14px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
+  .an-analyze-btn:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(167,139,250,0.35); }
+  .an-analyze-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .analyzer-output-card { min-height: 380px; position: relative; }
+  .an-empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 320px; text-align: center; }
+  .an-empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.4; }
+  .an-empty-text { color: var(--text-3); font-size: 14px; max-width: 240px; line-height: 1.5; }
+  .an-processing { display: flex; flex-direction: column; gap: 12px; min-height: 320px; justify-content: center; }
+  .an-step { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 12px; opacity: 0.4; transition: all 0.4s; }
+  .an-step.active { opacity: 1; border-color: var(--purple); background: rgba(167,139,250,0.08); }
+  .an-step.done { opacity: 0.75; border-color: var(--green); }
+  .an-step-icon { width: 26px; height: 26px; border-radius: 50%; background: var(--card-border); color: var(--text-2); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; transition: all 0.3s; }
+  .an-step.active .an-step-icon { background: var(--purple); color: white; animation: anPulse 1.2s infinite; }
+  .an-step.done .an-step-icon { background: var(--green); color: white; }
+  .an-step-label { font-size: 13px; color: var(--text); font-weight: 500; }
+  @keyframes anPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(167,139,250,0.5); } 50% { box-shadow: 0 0 0 10px rgba(167,139,250,0); } }
+  .an-result { display: none; }
+  .an-result.visible { display: block; animation: fadeInUp 0.6s; }
+  .an-result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 14px; }
+  .an-result-name { font-family: 'Instrument Serif', serif; font-size: 26px; line-height: 1.2; margin-bottom: 4px; }
+  .an-result-tag { font-size: 12px; color: var(--text-2); }
+  .an-score-badge { background: var(--green); color: white; padding: 8px 14px; border-radius: 12px; text-align: center; min-width: 68px; flex-shrink: 0; }
+  .an-score-badge.medium { background: var(--accent-2); }
+  .an-score-badge.low { background: var(--red); }
+  .an-score-num { font-family: 'Instrument Serif', serif; font-size: 26px; line-height: 1; }
+  .an-score-text { font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 700; margin-top: 2px; }
+  .an-macros-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px; }
+  .an-macro { background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px 8px; text-align: center; }
+  .an-macro-val { font-family: 'Instrument Serif', serif; font-size: 22px; line-height: 1; }
+  .an-macro-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-top: 6px; }
+  .an-macro[data-c="kcal"] .an-macro-val { color: var(--text); }
+  .an-macro[data-c="p"] .an-macro-val { color: var(--accent); }
+  .an-macro[data-c="c"] .an-macro-val { color: var(--accent-2); }
+  .an-macro[data-c="f"] .an-macro-val { color: var(--green); }
+  .an-warnings { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+  .an-warning { display: flex; gap: 10px; padding: 10px 14px; border-radius: 10px; font-size: 12.5px; line-height: 1.5; align-items: flex-start; }
+  .an-warning[data-t="good"] { background: rgba(52,211,153,0.08); color: var(--green); }
+  .an-warning[data-t="warn"] { background: rgba(255,159,28,0.08); color: var(--accent-2); }
+  .an-warning[data-t="bad"] { background: rgba(239,68,68,0.08); color: var(--red); }
+  .an-warning-icon { flex-shrink: 0; font-weight: 700; }
+  .an-suggestion { background: var(--bg-2); border: 1px dashed var(--card-border); border-radius: 12px; padding: 14px 16px; font-size: 13px; color: var(--text-2); line-height: 1.6; }
+  .an-suggestion strong { color: var(--purple); }
+
+  /* ========================================== */
+  /* SOCIAL PROOF + REFERRAL                    */
+  /* ========================================== */
+  .proof-section { padding: 100px 24px 80px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+  .proof-counter { font-family: 'Instrument Serif', serif; font-size: clamp(72px, 13vw, 140px); line-height: 1; color: var(--accent); margin-bottom: 8px; letter-spacing: -0.04em; }
+  .proof-counter-sub { font-size: 12px; color: var(--text-2); margin-bottom: 56px; text-transform: uppercase; letter-spacing: 0.22em; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .proof-counter-pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 1.6s infinite; }
+  @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(52,211,153,0.5); } 50% { box-shadow: 0 0 0 8px rgba(52,211,153,0); } }
+  .testimonial-track { max-width: 760px; width: 100%; overflow: hidden; position: relative; margin-bottom: 56px; }
+  .testimonial-list { display: flex; gap: 0; transition: transform 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .testimonial { min-width: 100%; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 22px; padding: 36px; text-align: left; box-sizing: border-box; }
+  .tm-quote { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 22px; line-height: 1.5; color: var(--text); margin-bottom: 24px; }
+  .tm-author { display: flex; align-items: center; gap: 14px; }
+  .tm-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 18px; flex-shrink: 0; font-family: 'Outfit', sans-serif; }
+  .tm-name { font-size: 14px; font-weight: 700; color: var(--text); }
+  .tm-role { font-size: 12px; color: var(--text-2); }
+  .testimonial-dots { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
+  .tm-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--card-border); border: none; cursor: pointer; padding: 0; transition: all 0.3s; }
+  .tm-dot.active { background: var(--accent); width: 24px; border-radius: 99px; }
+  .referral-card { max-width: 540px; width: 100%; background: linear-gradient(135deg, rgba(255,106,40,0.10), rgba(255,159,28,0.04)); border: 1px solid rgba(255,106,40,0.22); border-radius: 22px; padding: 30px; text-align: left; }
+  .ref-title { font-family: 'Instrument Serif', serif; font-size: 24px; margin-bottom: 8px; line-height: 1.2; }
+  .ref-sub { font-size: 13px; color: var(--text-2); margin-bottom: 18px; line-height: 1.5; }
+  .ref-row { display: flex; gap: 8px; margin-bottom: 14px; }
+  .ref-link { flex: 1; padding: 12px 16px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 10px; color: var(--text); font-family: monospace; font-size: 13px; user-select: all; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ref-copy-btn { padding: 12px 18px; background: var(--accent); color: white; border: none; border-radius: 10px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
+  .ref-copy-btn:hover { transform: scale(1.05); }
+  .ref-progress { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--bg-2); border-radius: 10px; font-size: 12px; color: var(--text-2); flex-wrap: wrap; }
+  .ref-progress-bar { flex: 1; min-width: 100px; height: 6px; background: var(--card-border); border-radius: 99px; overflow: hidden; }
+  .ref-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: 99px; transition: width 1.4s cubic-bezier(0.4,0,0.2,1); }
+  .ref-progress-text { font-weight: 700; color: var(--text); white-space: nowrap; }
+
   /* ===== RESPONSIVE ===== */
   @media (max-width: 768px) {
     nav { padding: 16px 20px; }
@@ -1070,6 +1252,16 @@
     .waitlist-input { width: 100%; }
     .theme-toggle { bottom: 20px; right: 20px; width: 44px; height: 44px; }
     .order-map { height: 260px; }
+    .audience-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dineout-container, .analyzer-container { grid-template-columns: 1fr; }
+    .dineout-controls { position: relative; top: 0; }
+    .tl-insights { grid-template-columns: 1fr; }
+    .an-macros-grid { grid-template-columns: repeat(2, 1fr); }
+    .testimonial { padding: 24px; }
+    .tm-quote { font-size: 18px; }
+  }
+  @media (max-width: 600px) {
+    .audience-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -1417,6 +1609,99 @@
 <div class="particle-container" id="particleContainer"></div>
 
 <!-- ==========================================
+     1.5 WHO'S IT FOR
+     ========================================== -->
+<section class="audience-section" id="audience">
+  <div class="section-label reveal" data-vi="Dành cho ai" data-en="Built for">Dành cho ai</div>
+  <h2 class="section-title reveal" id="audienceTitle">Bạn ăn nhiều. <span style="color:var(--accent);">Cần biết rõ.</span></h2>
+  <p class="section-sub reveal" data-vi="NomNom được xây cho những người Việt thật, với những vấn đề thật về dinh dưỡng — không phải copy-paste app Mỹ." data-en="NomNom is built for real Vietnamese people, with real nutrition problems — not a copy-paste of US apps.">NomNom được xây cho những người Việt thật, với những vấn đề thật về dinh dưỡng — không phải copy-paste app Mỹ.</p>
+
+  <div class="audience-grid">
+    <div class="audience-card reveal" data-color="orange">
+      <span class="aud-emoji">💼</span>
+      <div class="aud-name" data-vi="Nhân viên văn phòng" data-en="Office Workers">Nhân viên văn phòng</div>
+      <div class="aud-pain" data-vi="Cơm hộp 5 ngày/tuần. Không biết món nào ổn, món nào âm thầm hại sức khoẻ." data-en="Boxed lunch 5 days a week. No idea which is healthy or what's quietly harmful.">Cơm hộp 5 ngày/tuần. Không biết món nào ổn, món nào âm thầm hại sức khoẻ.</div>
+      <div class="aud-divider"></div>
+      <div class="aud-help-label" data-vi="NomNom giúp" data-en="NomNom helps">NomNom giúp</div>
+      <div class="aud-help" data-vi="Auto-order từ GrabFood theo macro target. Không suy nghĩ. Không sai." data-en="Auto-orders from GrabFood matching your macros. No thinking. No mistakes.">Auto-order từ GrabFood theo macro target. Không suy nghĩ. Không sai.</div>
+    </div>
+    <div class="audience-card reveal" data-color="amber">
+      <span class="aud-emoji">⚖️</span>
+      <div class="aud-name" data-vi="Người giảm cân" data-en="Dieters">Người giảm cân</div>
+      <div class="aud-pain" data-vi="Đếm calo bằng app Mỹ — món Việt không có. Đếm sai 30%, nản, bỏ cuộc." data-en="Counting calories on US apps — Vietnamese food missing. Off by 30%, demotivated, quit.">Đếm calo bằng app Mỹ — món Việt không có. Đếm sai 30%, nản, bỏ cuộc.</div>
+      <div class="aud-divider"></div>
+      <div class="aud-help-label" data-vi="NomNom giúp" data-en="NomNom helps">NomNom giúp</div>
+      <div class="aud-help" data-vi="1,200+ món Việt với dữ liệu chính xác. Voice log 5 giây xong bữa ăn." data-en="1,200+ Vietnamese dishes, accurate data. Voice-log a meal in 5 seconds.">1,200+ món Việt với dữ liệu chính xác. Voice log 5 giây xong bữa ăn.</div>
+    </div>
+    <div class="audience-card reveal" data-color="green">
+      <span class="aud-emoji">💪</span>
+      <div class="aud-name" data-vi="Vận động viên" data-en="Athletes & Lifters">Vận động viên</div>
+      <div class="aud-pain" data-vi="Cần 180g protein/ngày. Cơm tấm + phở không đủ. Không biết tìm protein ở menu Việt." data-en="Need 180g protein daily. Cơm tấm + phở isn't enough. No clue where to find protein in Vietnamese menus.">Cần 180g protein/ngày. Cơm tấm + phở không đủ. Không biết tìm protein ở menu Việt.</div>
+      <div class="aud-divider"></div>
+      <div class="aud-help-label" data-vi="NomNom giúp" data-en="NomNom helps">NomNom giúp</div>
+      <div class="aud-help" data-vi="Lọc theo protein/serving. Dine-out matcher tìm món fit macro còn lại." data-en="Filter by protein/serving. Dine-out matcher finds dishes that fit your remaining macros.">Lọc theo protein/serving. Dine-out matcher tìm món fit macro còn lại.</div>
+    </div>
+    <div class="audience-card reveal" data-color="purple">
+      <span class="aud-emoji">🌏</span>
+      <div class="aud-name" data-vi="Việt kiều xa quê" data-en="Vietnamese Abroad">Việt kiều xa quê</div>
+      <div class="aud-pain" data-vi="Nhớ món quê. Nấu lại nhưng không biết homemade so sánh thế nào về dinh dưỡng." data-en="Miss home cooking. Recreate dishes but don't know how homemade compares nutritionally.">Nhớ món quê. Nấu lại nhưng không biết homemade so sánh thế nào về dinh dưỡng.</div>
+      <div class="aud-divider"></div>
+      <div class="aud-help-label" data-vi="NomNom giúp" data-en="NomNom helps">NomNom giúp</div>
+      <div class="aud-help" data-vi="AI Recipe Analyzer dán nhãn món homemade. Nhập nguyên liệu, ra kết quả." data-en="AI Recipe Analyzer labels homemade. Paste ingredients, get nutrition.">AI Recipe Analyzer dán nhãn món homemade. Nhập nguyên liệu, ra kết quả.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     1.7 NUTRITION TIMELINE
+     ========================================== -->
+<section class="timeline-section" id="timeline">
+  <div class="section-label reveal" data-vi="Lịch sử dinh dưỡng" data-en="Nutrition history">Lịch sử dinh dưỡng</div>
+  <h2 class="section-title reveal" id="timelineTitle">Bạn ăn gì <span style="color:var(--accent);">tuần này?</span></h2>
+  <p class="section-sub reveal" data-vi="Theo dõi xu hướng — không phải khoảnh khắc. Một bữa lệch không sao. Một tuần lệch là vấn đề." data-en="Track trends, not moments. One off-meal is fine. One off-week is a problem.">Theo dõi xu hướng — không phải khoảnh khắc. Một bữa lệch không sao. Một tuần lệch là vấn đề.</p>
+
+  <div class="timeline-container reveal">
+    <div class="timeline-tabs">
+      <button class="timeline-tab active" data-period="week" data-vi="Tuần" data-en="Week">Tuần</button>
+      <button class="timeline-tab" data-period="month" data-vi="Tháng" data-en="Month">Tháng</button>
+      <button class="timeline-tab" data-period="quarter" data-vi="3 tháng" data-en="3 months">3 tháng</button>
+    </div>
+
+    <div class="timeline-chart">
+      <div class="tl-chart-header">
+        <div>
+          <div class="tl-chart-stat" id="tlAvgKcal">1,840</div>
+          <div class="tl-chart-stat-sub" data-vi="kcal trung bình / ngày" data-en="avg kcal / day">kcal trung bình / ngày</div>
+        </div>
+        <div class="tl-chart-trend up" id="tlTrend">
+          <span id="tlTrendText">↑ 8% chất lượng</span>
+        </div>
+      </div>
+      <svg class="tl-chart-svg" viewBox="0 0 700 220" id="tlChartSvg" preserveAspectRatio="none"></svg>
+      <div class="tl-day-labels" id="tlDayLabels"></div>
+    </div>
+
+    <div class="tl-insights">
+      <div class="tl-insight">
+        <div class="tl-insight-icon">🔥</div>
+        <div class="tl-insight-title" data-vi="Streak hiện tại" data-en="Current streak">Streak hiện tại</div>
+        <div class="tl-insight-text"><span class="lang-html" data-vi="<strong>5 ngày</strong> đạt protein target" data-en="<strong>5 days</strong> hitting protein target"><strong>5 ngày</strong> đạt protein target</span></div>
+      </div>
+      <div class="tl-insight">
+        <div class="tl-insight-icon">⚠️</div>
+        <div class="tl-insight-title" data-vi="Pattern phát hiện" data-en="Pattern detected">Pattern phát hiện</div>
+        <div class="tl-insight-text"><span class="lang-html" data-vi="Đường <strong>+34%</strong> vào thứ 7" data-en="Sugar <strong>+34%</strong> on Saturdays">Đường <strong>+34%</strong> vào thứ 7</span></div>
+      </div>
+      <div class="tl-insight">
+        <div class="tl-insight-icon">📈</div>
+        <div class="tl-insight-title" data-vi="Đà tiến triển" data-en="Momentum">Đà tiến triển</div>
+        <div class="tl-insight-text"><span class="lang-html" data-vi="Quality <strong>+12 điểm</strong> tháng này" data-en="Quality <strong>+12 pts</strong> this month">Quality <strong>+12 điểm</strong> tháng này</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
      2. GAMIFICATION SYSTEM
      ========================================== -->
 <section class="gamify-section" id="gamify">
@@ -1550,6 +1835,51 @@
 </section>
 
 <!-- ==========================================
+     4.5 DINE-OUT MATCHER
+     ========================================== -->
+<section class="dineout-section" id="dineout">
+  <div class="section-label reveal" data-vi="Khớp macro còn lại" data-en="Match remaining macros">Khớp macro còn lại</div>
+  <h2 class="section-title reveal" id="dineoutTitle">Còn 30g protein. <span style="color:var(--green);">Tìm món gì?</span></h2>
+  <p class="section-sub reveal" data-vi="Đã ăn 2 bữa, chưa đủ macro? NomNom tìm món Việt fit chính xác lượng còn thiếu trong DB 1,200+ món." data-en="Two meals down, macros incomplete? NomNom finds Vietnamese dishes that fill the exact gap from our 1,200+ dish DB.">Đã ăn 2 bữa, chưa đủ macro? NomNom tìm món Việt fit chính xác lượng còn thiếu trong DB 1,200+ món.</p>
+
+  <div class="dineout-container reveal">
+    <div class="dineout-controls">
+      <div class="do-controls-title" data-vi="Macro còn lại trong ngày" data-en="Macros left for today">Macro còn lại trong ngày</div>
+
+      <div class="do-slider-row">
+        <div class="do-slider-label">
+          <span class="do-slider-label-name" data-vi="Protein" data-en="Protein">Protein</span>
+          <span class="do-slider-label-val"><span id="doPVal">30</span>g</span>
+        </div>
+        <input type="range" class="do-slider" data-color="orange" id="doPSlider" min="5" max="80" value="30">
+      </div>
+
+      <div class="do-slider-row">
+        <div class="do-slider-label">
+          <span class="do-slider-label-name" data-vi="Carb" data-en="Carbs">Carb</span>
+          <span class="do-slider-label-val"><span id="doCVal">45</span>g</span>
+        </div>
+        <input type="range" class="do-slider" data-color="amber" id="doCSlider" min="0" max="120" value="45">
+      </div>
+
+      <div class="do-slider-row">
+        <div class="do-slider-label">
+          <span class="do-slider-label-name" data-vi="Chất béo" data-en="Fat">Chất béo</span>
+          <span class="do-slider-label-val"><span id="doFVal">12</span>g</span>
+        </div>
+        <input type="range" class="do-slider" data-color="green" id="doFSlider" min="0" max="60" value="12">
+      </div>
+
+      <button class="do-match-btn" id="doMatchBtn" data-vi="🔍 Tìm món fit macro" data-en="🔍 Find matching dishes">🔍 Tìm món fit macro</button>
+    </div>
+
+    <div class="do-results" id="doResults">
+      <div class="do-status" id="doStatus" data-vi="Điều chỉnh slider, bấm tìm để xem kết quả" data-en="Adjust sliders, tap find to see results">Điều chỉnh slider, bấm tìm để xem kết quả</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
      5. GROUP CHALLENGE LEADERBOARD
      ========================================== -->
 <section class="group-section" id="group">
@@ -1655,6 +1985,44 @@
 </section>
 
 <!-- ==========================================
+     7.5 AI RECIPE ANALYZER
+     ========================================== -->
+<section class="analyzer-section" id="analyzer">
+  <div class="section-label reveal" data-vi="AI phân tích recipe" data-en="AI recipe analysis">AI phân tích recipe</div>
+  <h2 class="section-title reveal" id="analyzerTitle">Nhập nguyên liệu. <span style="color:var(--purple);">AI dán nhãn.</span></h2>
+  <p class="section-sub reveal" data-vi="Nấu món homemade hay món lạ ngoài DB? Paste recipe, NomNom tính calo, macro, cảnh báo dinh dưỡng — trong 3 giây." data-en="Cooking homemade or a dish not in our DB? Paste the recipe, NomNom computes calories, macros, nutrition warnings — in 3 seconds.">Nấu món homemade hay món lạ ngoài DB? Paste recipe, NomNom tính calo, macro, cảnh báo dinh dưỡng — trong 3 giây.</p>
+
+  <div class="analyzer-container reveal">
+    <div class="analyzer-input-card">
+      <div class="an-card-title" data-vi="📝 Recipe của bạn" data-en="📝 Your recipe">📝 Recipe của bạn</div>
+      <textarea class="an-textarea" id="anTextarea" data-ph-vi="Ví dụ: 200g thịt bò, 300g bánh phở tươi, 1 củ hành tây, 50g rau quế, 1.5L nước hầm xương bò..." data-ph-en="e.g.: 200g beef, 300g fresh rice noodles, 1 onion, 50g basil, 1.5L beef bone broth..."></textarea>
+
+      <div class="an-presets">
+        <button class="an-preset" data-preset="0" data-vi="🍜 Phở bò homemade" data-en="🍜 Homemade beef pho">🍜 Phở bò homemade</button>
+        <button class="an-preset" data-preset="1" data-vi="🥗 Bún chả Hà Nội" data-en="🥗 Hanoi bun cha">🥗 Bún chả Hà Nội</button>
+        <button class="an-preset" data-preset="2" data-vi="🍤 Bánh xèo tôm thịt" data-en="🍤 Crispy banh xeo">🍤 Bánh xèo tôm thịt</button>
+      </div>
+
+      <button class="an-analyze-btn" id="anBtn" data-vi="✨ Phân tích bằng AI" data-en="✨ Analyze with AI">✨ Phân tích bằng AI</button>
+    </div>
+
+    <div class="analyzer-output-card">
+      <div class="an-empty-state" id="anEmpty">
+        <div class="an-empty-icon">🤖</div>
+        <div class="an-empty-text" data-vi="Chọn preset hoặc paste recipe, bấm phân tích để xem kết quả." data-en="Pick a preset or paste a recipe, hit analyze to see results.">Chọn preset hoặc paste recipe, bấm phân tích để xem kết quả.</div>
+      </div>
+      <div class="an-processing" id="anProcessing" style="display:none;">
+        <div class="an-step" id="anStep1"><div class="an-step-icon">1</div><div class="an-step-label" data-vi="Phân tích nguyên liệu" data-en="Parsing ingredients">Phân tích nguyên liệu</div></div>
+        <div class="an-step" id="anStep2"><div class="an-step-icon">2</div><div class="an-step-label" data-vi="Tra cứu DB Việt Nam" data-en="Looking up Vietnam DB">Tra cứu DB Việt Nam</div></div>
+        <div class="an-step" id="anStep3"><div class="an-step-icon">3</div><div class="an-step-label" data-vi="Tính toán macro" data-en="Calculating macros">Tính toán macro</div></div>
+        <div class="an-step" id="anStep4"><div class="an-step-icon">4</div><div class="an-step-label" data-vi="Đánh giá chất lượng" data-en="Quality scoring">Đánh giá chất lượng</div></div>
+      </div>
+      <div class="an-result" id="anResult"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
      8. RESTAURANT VENDOR HUB
      ========================================== -->
 <section class="vendor-section" id="vendors">
@@ -1710,6 +2078,35 @@
     <div class="stat-item reveal">
       <div class="stat-number" data-target="30" id="stat3">0</div>
       <div class="stat-label" data-vi="Quận hỗ trợ tại Sài Gòn" data-en="Districts covered in Saigon">Quận hỗ trợ tại Sài Gòn</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     SOCIAL PROOF + REFERRAL
+     ========================================== -->
+<section class="proof-section" id="proof">
+  <div class="section-label reveal" data-vi="Cộng đồng waitlist" data-en="Waitlist community">Cộng đồng waitlist</div>
+  <div class="proof-counter reveal" id="proofCounter">0</div>
+  <div class="proof-counter-sub reveal"><span class="proof-counter-pulse"></span><span data-vi="người đang chờ NomNom" data-en="people waiting for NomNom">người đang chờ NomNom</span></div>
+
+  <div class="testimonial-track reveal">
+    <div class="testimonial-list" id="testimonialList"></div>
+    <div class="testimonial-dots" id="testimonialDots"></div>
+  </div>
+
+  <div class="referral-card reveal">
+    <div class="ref-title" data-vi="🚀 Bỏ qua 2,438 người trước bạn" data-en="🚀 Skip 2,438 people ahead of you">🚀 Bỏ qua 2,438 người trước bạn</div>
+    <div class="ref-sub" data-vi="Mỗi bạn đăng ký = nhảy 50 chỗ trong queue. Bạn càng giới thiệu, càng được vào sớm." data-en="Each friend who signs up = jump 50 spots in queue. More invites, earlier access.">Mỗi bạn đăng ký = nhảy 50 chỗ trong queue. Bạn càng giới thiệu, càng được vào sớm.</div>
+    <div class="ref-row">
+      <div class="ref-link" id="refLink">nomnom.app/r/ban-cua-toi-2026</div>
+      <button class="ref-copy-btn" id="refCopyBtn" data-vi="Sao chép" data-en="Copy">Sao chép</button>
+    </div>
+    <div class="ref-progress">
+      <span data-vi="Vị trí" data-en="Spot">Vị trí</span>
+      <strong style="color:var(--accent);">#3,672</strong>
+      <div class="ref-progress-bar"><div class="ref-progress-fill" id="refProgressFill" style="width:0%;"></div></div>
+      <span class="ref-progress-text" data-vi="42% queue" data-en="42% through">42% queue</span>
     </div>
   </div>
 </section>
@@ -1783,6 +2180,22 @@ const sectionTitles = {
   cta: {
     vi: 'Sẵn sàng ăn <span style="color:var(--accent);"><em>thông minh</em></span> hơn?',
     en: 'Ready to eat <span style="color:var(--accent);"><em>smarter</em></span>?'
+  },
+  audience: {
+    vi: 'Bạn ăn nhiều. <span style="color:var(--accent);">Cần biết rõ.</span>',
+    en: 'You eat a lot. <span style="color:var(--accent);">Time to know more.</span>'
+  },
+  timeline: {
+    vi: 'Bạn ăn gì <span style="color:var(--accent);">tuần này?</span>',
+    en: 'What did you eat <span style="color:var(--accent);">this week?</span>'
+  },
+  dineout: {
+    vi: 'Còn 30g protein. <span style="color:var(--green);">Tìm món gì?</span>',
+    en: '30g protein left. <span style="color:var(--green);">What should you order?</span>'
+  },
+  analyzer: {
+    vi: 'Nhập nguyên liệu. <span style="color:var(--purple);">AI dán nhãn.</span>',
+    en: 'Paste ingredients. <span style="color:var(--purple);">AI labels them.</span>'
   }
 };
 
@@ -1806,7 +2219,12 @@ function setLang(lang) {
 
   // Swap all data-en / data-vi elements
   document.querySelectorAll('[data-en]').forEach(el => {
-    el.textContent = el.getAttribute('data-' + lang);
+    const val = el.getAttribute('data-' + lang);
+    if (el.classList.contains('lang-html')) {
+      el.innerHTML = val;
+    } else {
+      el.textContent = val;
+    }
   });
 
   // Page title
@@ -1822,6 +2240,10 @@ function setLang(lang) {
   document.getElementById('recipeTitle').innerHTML = sectionTitles.recipe[lang];
   document.getElementById('vendorTitle').innerHTML = sectionTitles.vendor[lang];
   document.getElementById('ctaTitle').innerHTML = sectionTitles.cta[lang];
+  ['audience','timeline','dineout','analyzer'].forEach(k => {
+    const el = document.getElementById(k + 'Title');
+    if (el) el.innerHTML = sectionTitles[k][lang];
+  });
 
   // Recipe search placeholder
   const recipeInput = document.getElementById('recipeSearchInput');
@@ -1848,6 +2270,14 @@ function setLang(lang) {
   document.querySelectorAll('.order-card').forEach(card => {
     card.setAttribute('data-order-status', card.getAttribute('data-order-' + lang));
   });
+
+  // Analyzer textarea placeholder
+  const anTa = document.getElementById('anTextarea');
+  if (anTa) anTa.placeholder = anTa.getAttribute('data-ph-' + lang);
+
+  // Re-render new section content if functions exist
+  if (typeof renderTimeline === 'function') renderTimeline();
+  if (typeof renderTestimonials === 'function') renderTestimonials();
 
   // Set html lang
   document.documentElement.lang = lang === 'vi' ? 'vi' : 'en';
@@ -3103,6 +3533,446 @@ const mapObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 const mapEl = document.getElementById('orderMap');
 if (mapEl) mapObserver.observe(mapEl);
+
+// =============================================
+// NUTRITION TIMELINE
+// =============================================
+const tlSeed = (n, base, range) => Array.from({length:n}, (_, i) => base + Math.floor(Math.sin((i+1)*0.7)*range*0.6 + Math.cos(i*1.1)*range*0.4 + (i*range*0.02)));
+const tlData = {
+  week: {
+    avg: 1840, trend: 8, trendDir: 'up',
+    days: [
+      { lblVi:'T2', lblEn:'M', kcal:1750, score:78 },
+      { lblVi:'T3', lblEn:'T', kcal:1920, score:82 },
+      { lblVi:'T4', lblEn:'W', kcal:1680, score:85 },
+      { lblVi:'T5', lblEn:'T', kcal:1840, score:75 },
+      { lblVi:'T6', lblEn:'F', kcal:1990, score:68 },
+      { lblVi:'T7', lblEn:'S', kcal:2150, score:55 },
+      { lblVi:'CN', lblEn:'S', kcal:1750, score:80 }
+    ]
+  },
+  month: {
+    avg: 1880, trend: 5, trendDir: 'up',
+    days: tlSeed(30, 1820, 320).map((kcal, i) => ({
+      lblVi: (i+1)+'', lblEn: (i+1)+'',
+      kcal, score: 60 + (Math.floor(Math.sin(i*0.4)*15) + 18)
+    }))
+  },
+  quarter: {
+    avg: 1860, trend: 12, trendDir: 'up',
+    days: tlSeed(12, 1820, 220).map((kcal, i) => ({
+      lblVi: 'W'+(i+1), lblEn: 'W'+(i+1),
+      kcal, score: 62 + Math.floor(i*1.6)
+    }))
+  }
+};
+let tlPeriod = 'week';
+
+function renderTimeline() {
+  const data = tlData[tlPeriod];
+  const svg = document.getElementById('tlChartSvg');
+  if (!svg) return;
+  const days = data.days;
+  const w = 700, h = 220;
+  const pad = 12;
+  const slot = (w - pad*2) / days.length;
+  const barW = slot * 0.65;
+  const maxKcal = Math.max(...days.map(d => d.kcal)) * 1.12;
+
+  const isLight = document.body.classList.contains('light-mode');
+  let bars = '';
+  days.forEach((d, i) => {
+    const barH = (d.kcal / maxKcal) * (h - 30);
+    const x = pad + i * slot + (slot - barW) / 2;
+    const y = h - barH - 6;
+    const fill = d.score >= 75 ? 'rgb(52,211,153)' : d.score >= 60 ? 'rgb(255,159,28)' : 'rgb(239,68,68)';
+    bars += `<rect class="tl-bar" x="${x}" y="${y}" width="${barW}" height="${barH}" rx="6" fill="${fill}" opacity="0.85"></rect>`;
+    if (days.length <= 12) {
+      bars += `<text x="${x + barW/2}" y="${y - 6}" text-anchor="middle" font-size="10" fill="${isLight?'#6B6560':'#8A8070'}" font-family="Outfit" font-weight="600">${d.kcal.toLocaleString()}</text>`;
+    }
+  });
+  svg.innerHTML = bars;
+
+  const dl = document.getElementById('tlDayLabels');
+  if (days.length <= 12) {
+    dl.innerHTML = days.map(d => `<div class="tl-day-label">${currentLang === 'en' ? d.lblEn : d.lblVi}</div>`).join('');
+  } else {
+    // Show every 5th label for month view
+    dl.innerHTML = days.map((d, i) => `<div class="tl-day-label">${(i % 5 === 0 || i === days.length - 1) ? (currentLang === 'en' ? d.lblEn : d.lblVi) : ''}</div>`).join('');
+  }
+
+  document.getElementById('tlAvgKcal').textContent = data.avg.toLocaleString();
+  const trend = document.getElementById('tlTrend');
+  trend.className = 'tl-chart-trend ' + (data.trendDir === 'up' ? 'up' : 'down');
+  const arrow = data.trendDir === 'up' ? '↑' : '↓';
+  document.getElementById('tlTrendText').textContent = `${arrow} ${data.trend}% ` + (currentLang === 'en' ? 'quality' : 'chất lượng');
+}
+
+document.querySelectorAll('.timeline-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.timeline-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    tlPeriod = tab.dataset.period;
+    renderTimeline();
+  });
+});
+
+let tlAnimated = false;
+const tlObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !tlAnimated) {
+      tlAnimated = true;
+      renderTimeline();
+    }
+  });
+}, { threshold: 0.25 });
+const tlSection = document.getElementById('timeline');
+if (tlSection) tlObserver.observe(tlSection);
+
+// =============================================
+// DINE-OUT MATCHER
+// =============================================
+const doPSlider = document.getElementById('doPSlider');
+const doCSlider = document.getElementById('doCSlider');
+const doFSlider = document.getElementById('doFSlider');
+const doMatchBtn = document.getElementById('doMatchBtn');
+
+function updateSliderFill(slider) {
+  if (!slider) return;
+  const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+  slider.style.setProperty('--pct', pct + '%');
+}
+
+[[doPSlider,'doPVal'],[doCSlider,'doCVal'],[doFSlider,'doFVal']].forEach(([sl, valId]) => {
+  if (!sl) return;
+  sl.addEventListener('input', () => {
+    document.getElementById(valId).textContent = sl.value;
+    updateSliderFill(sl);
+  });
+  updateSliderFill(sl);
+});
+
+const dineRestaurants = [
+  { vi:'Quán Bà Năm', en:'Quán Bà Năm', dist:'320m' },
+  { vi:'Phở Hòa Pasteur', en:'Phở Hòa Pasteur', dist:'450m' },
+  { vi:'Bún Chả Hương Liên', en:'Bún Chả Hương Liên', dist:'680m' },
+  { vi:'Lẩu Thái Siam', en:'Siam Hotpot', dist:'890m' },
+  { vi:'Cơm Tấm Cali', en:'Cali Broken Rice', dist:'1.1km' }
+];
+
+function dineMatchScore(dish, target) {
+  const dp = Math.abs((dish.p || 0) - target.p);
+  const dc = Math.abs((dish.c || 0) - target.c);
+  const df = Math.abs((dish.f || 0) - target.f);
+  const totalGap = dp * 1.4 + dc * 0.5 + df * 1.2;
+  return Math.max(20, Math.min(99, Math.round(100 - totalGap * 1.1)));
+}
+
+if (doMatchBtn) {
+  doMatchBtn.addEventListener('click', () => {
+    const target = { p:+doPSlider.value, c:+doCSlider.value, f:+doFSlider.value };
+    const results = document.getElementById('doResults');
+    const loadingTxt = currentLang === 'en' ? 'Matching dishes...' : 'Đang khớp món...';
+    results.innerHTML = `<div class="do-status"><div class="do-loading-dots"><span></span><span></span><span></span></div><div style="margin-top:14px;">${loadingTxt}</div></div>`;
+
+    setTimeout(() => {
+      if (typeof recipeDB === 'undefined') return;
+      const scored = recipeDB
+        .map(d => ({ ...d, matchScore: dineMatchScore(d, target) }))
+        .sort((a, b) => b.matchScore - a.matchScore)
+        .slice(0, 5);
+
+      results.innerHTML = '';
+      scored.forEach((d, i) => {
+        const div = document.createElement('div');
+        div.className = 'do-result';
+        const name = currentLang === 'en' ? d.nameEn : d.name;
+        const r = dineRestaurants[i];
+        const matchLabel = currentLang === 'en' ? 'match' : 'khớp';
+        const scoreCls = d.matchScore >= 80 ? '' : d.matchScore >= 60 ? 'medium' : 'low';
+        div.innerHTML = `
+          <div class="do-result-emoji">${d.emoji}</div>
+          <div class="do-result-info">
+            <div class="do-result-name">${name}</div>
+            <div class="do-result-meta">
+              <span>📍 ${currentLang === 'en' ? r.en : r.vi}</span>
+              <span>🚶 ${r.dist}</span>
+              <span>${d.kcal} kcal</span>
+            </div>
+            <div class="do-result-macros">
+              <span class="do-result-macro" style="color:var(--accent);">P ${d.p}g</span>
+              <span class="do-result-macro" style="color:var(--accent-2);">C ${d.c}g</span>
+              <span class="do-result-macro" style="color:var(--green);">F ${d.f}g</span>
+            </div>
+          </div>
+          <div class="do-result-score">
+            <div class="do-score-num ${scoreCls}">${d.matchScore}</div>
+            <div class="do-score-label">${matchLabel}</div>
+          </div>
+        `;
+        results.appendChild(div);
+        setTimeout(() => div.classList.add('visible'), 60 + i * 90);
+      });
+    }, 750);
+  });
+}
+
+// =============================================
+// AI RECIPE ANALYZER
+// =============================================
+const anPresets = [
+  {
+    text: {
+      vi: '300g bánh phở tươi, 200g thịt bò tái, 100g nạm bò, 1 củ hành tây nướng, 1 nhánh gừng, hồi quế đinh hương thảo quả, 50g rau quế Thái, 30g hành lá, 20g rau mùi, 1.5L nước hầm xương bò 6 tiếng, 1 muỗng nước mắm, 1 muỗng đường phèn',
+      en: '300g fresh rice noodles, 200g rare beef, 100g brisket, 1 charred onion, 1 ginger root, star anise + cinnamon + cloves + cardamom, 50g Thai basil, 30g scallion, 20g cilantro, 1.5L 6-hour beef bone broth, 1 tbsp fish sauce, 1 tbsp rock sugar'
+    },
+    result: {
+      nameVi: 'Phở bò homemade', nameEn: 'Homemade beef pho',
+      kcal: 520, p: 38, c: 58, f: 12, score: 78, scoreClass: '',
+      tagVi: '1 tô lớn (~600g)', tagEn: '1 large bowl (~600g)',
+      warnings: [
+        { type:'good', vi:'Protein cao 38g — tuyệt cho phục hồi', en:'High protein 38g — great for recovery' },
+        { type:'warn', vi:'Natri cao do nước mắm + nước dùng (~1,400mg)', en:'High sodium from fish sauce + broth (~1,400mg)' },
+        { type:'good', vi:'Carb phức hợp từ bánh phở gạo, ít đường ẩn', en:'Complex carbs from rice noodles, minimal hidden sugar' }
+      ],
+      sugVi: 'Giảm <strong>50% nước mắm</strong> và thêm <strong>200g rau muống chần</strong> để tăng chất xơ và giảm natri xuống ~900mg.',
+      sugEn: 'Cut <strong>fish sauce by 50%</strong> and add <strong>200g blanched morning glory</strong> to boost fiber and drop sodium to ~900mg.'
+    }
+  },
+  {
+    text: {
+      vi: '200g thịt nạc vai băm, 50g mỡ heo, 1 muỗng đường, 2 muỗng nước mắm, 1 muỗng dầu hào, 200g bún tươi, 100g rau sống (xà lách rau thơm kinh giới), 1 củ đu đủ xanh bào sợi, 1 củ cà rốt bào sợi, 50ml giấm, 30g đường, 1 quả ớt',
+      en: '200g minced pork shoulder, 50g pork fat, 1 tbsp sugar, 2 tbsp fish sauce, 1 tbsp oyster sauce, 200g vermicelli, 100g fresh herbs (lettuce, basil, perilla), 1 green papaya julienned, 1 carrot julienned, 50ml vinegar, 30g sugar, 1 chili'
+    },
+    result: {
+      nameVi: 'Bún chả Hà Nội', nameEn: 'Hanoi bun cha',
+      kcal: 680, p: 32, c: 78, f: 26, score: 65, scoreClass: 'medium',
+      tagVi: '1 phần đầy đủ (~500g)', tagEn: '1 full serving (~500g)',
+      warnings: [
+        { type:'warn', vi:'Đường ẩn 30g — gần ngưỡng WHO/ngày (50g)', en:'Hidden sugar 30g — near WHO daily limit (50g)' },
+        { type:'bad', vi:'Mỡ heo + dầu hào = chất béo bão hoà cao', en:'Pork fat + oyster sauce = high saturated fat' },
+        { type:'good', vi:'Đu đủ xanh + cà rốt = chất xơ + vitamin C', en:'Green papaya + carrot = fiber + vitamin C' }
+      ],
+      sugVi: 'Thay <strong>mỡ heo bằng dầu olive</strong>, giảm đường nước chấm còn <strong>15g</strong>. Score sẽ lên ~78.',
+      sugEn: 'Swap <strong>pork fat for olive oil</strong>, cut dipping sauce sugar to <strong>15g</strong>. Score climbs to ~78.'
+    }
+  },
+  {
+    text: {
+      vi: '200g bột gạo, 50g bột nghệ, 400ml nước cốt dừa, 200g tôm sú lột vỏ, 150g thịt ba chỉ thái lát, 200g giá đỗ, 100g hành lá, 50g dầu ăn để chiên, rau sống ăn kèm (xà lách, rau thơm, rau diếp cá)',
+      en: '200g rice flour, 50g turmeric powder, 400ml coconut milk, 200g peeled tiger shrimp, 150g sliced pork belly, 200g bean sprouts, 100g scallion, 50g cooking oil for frying, fresh herbs (lettuce, basil, fish mint)'
+    },
+    result: {
+      nameVi: 'Bánh xèo tôm thịt', nameEn: 'Crispy banh xeo',
+      kcal: 740, p: 34, c: 62, f: 38, score: 58, scoreClass: 'medium',
+      tagVi: '2 cái lớn (~450g)', tagEn: '2 large pieces (~450g)',
+      warnings: [
+        { type:'bad', vi:'Chất béo 38g (51% kcal) — cao do chiên + nước cốt dừa', en:'Fat 38g (51% kcal) — high from frying + coconut milk' },
+        { type:'good', vi:'Protein 34g từ tôm + thịt ba chỉ — đầy đủ', en:'Protein 34g from shrimp + pork belly — complete' },
+        { type:'good', vi:'Bao quanh bằng rau sống = chất xơ + chống oxy hoá', en:'Wrapped in fresh herbs = fiber + antioxidants' }
+      ],
+      sugVi: 'Dùng <strong>nồi chống dính + 10g dầu</strong>, pha loãng <strong>nước cốt dừa 50%</strong>. Calo giảm ~30%.',
+      sugEn: 'Use a <strong>non-stick pan + 10g oil</strong>, dilute <strong>coconut milk 50%</strong>. Cuts calories ~30%.'
+    }
+  }
+];
+
+document.querySelectorAll('.an-preset').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const idx = +btn.dataset.preset;
+    const ta = document.getElementById('anTextarea');
+    ta.value = anPresets[idx].text[currentLang];
+    ta.dataset.preset = idx;
+  });
+});
+
+const anBtn = document.getElementById('anBtn');
+let anRunning = false;
+if (anBtn) {
+  anBtn.addEventListener('click', () => {
+    if (anRunning) return;
+    anRunning = true;
+    const ta = document.getElementById('anTextarea');
+    if (!ta.value.trim()) {
+      ta.value = anPresets[0].text[currentLang];
+      ta.dataset.preset = 0;
+    }
+    const presetIdx = ta.dataset.preset !== undefined ? +ta.dataset.preset : 0;
+    const result = anPresets[Math.min(presetIdx, anPresets.length - 1)].result;
+
+    document.getElementById('anEmpty').style.display = 'none';
+    const out = document.getElementById('anResult');
+    out.style.display = 'none';
+    out.classList.remove('visible');
+    const proc = document.getElementById('anProcessing');
+    proc.style.display = 'flex';
+
+    [1,2,3,4].forEach(i => document.getElementById('anStep' + i).classList.remove('active','done'));
+    anBtn.disabled = true;
+
+    const stepDelays = [120, 700, 1300, 1900];
+    stepDelays.forEach((delay, i) => {
+      setTimeout(() => {
+        if (i > 0) {
+          document.getElementById('anStep' + i).classList.remove('active');
+          document.getElementById('anStep' + i).classList.add('done');
+        }
+        document.getElementById('anStep' + (i + 1)).classList.add('active');
+      }, delay);
+    });
+
+    setTimeout(() => {
+      document.getElementById('anStep4').classList.remove('active');
+      document.getElementById('anStep4').classList.add('done');
+
+      proc.style.display = 'none';
+      const name = currentLang === 'en' ? result.nameEn : result.nameVi;
+      const tag = currentLang === 'en' ? result.tagEn : result.tagVi;
+      const sug = currentLang === 'en' ? result.sugEn : result.sugVi;
+      const scoreLbl = currentLang === 'en' ? 'SCORE' : 'ĐIỂM';
+      const proLbl = currentLang === 'en' ? 'Protein' : 'Đạm';
+      const fatLbl = currentLang === 'en' ? 'Fat' : 'Béo';
+      const tipLbl = currentLang === 'en' ? '💡 Tip: ' : '💡 Gợi ý: ';
+      out.innerHTML = `
+        <div class="an-result-header">
+          <div>
+            <div class="an-result-name">${name}</div>
+            <div class="an-result-tag">${tag}</div>
+          </div>
+          <div class="an-score-badge ${result.scoreClass}">
+            <div class="an-score-num">${result.score}</div>
+            <div class="an-score-text">${scoreLbl}</div>
+          </div>
+        </div>
+        <div class="an-macros-grid">
+          <div class="an-macro" data-c="kcal"><div class="an-macro-val">${result.kcal}</div><div class="an-macro-label">kcal</div></div>
+          <div class="an-macro" data-c="p"><div class="an-macro-val">${result.p}g</div><div class="an-macro-label">${proLbl}</div></div>
+          <div class="an-macro" data-c="c"><div class="an-macro-val">${result.c}g</div><div class="an-macro-label">Carb</div></div>
+          <div class="an-macro" data-c="f"><div class="an-macro-val">${result.f}g</div><div class="an-macro-label">${fatLbl}</div></div>
+        </div>
+        <div class="an-warnings">
+          ${result.warnings.map(w => `<div class="an-warning" data-t="${w.type}"><span class="an-warning-icon">${w.type === 'good' ? '✓' : w.type === 'warn' ? '⚠' : '✗'}</span><span>${w[currentLang]}</span></div>`).join('')}
+        </div>
+        <div class="an-suggestion"><strong>${tipLbl}</strong>${sug}</div>
+      `;
+      out.style.display = 'block';
+      out.classList.add('visible');
+      anBtn.disabled = false;
+      anRunning = false;
+    }, 2400);
+  });
+}
+
+// =============================================
+// SOCIAL PROOF + REFERRAL
+// =============================================
+const proofTestimonials = [
+  {
+    quoteVi: 'Cuối cùng cũng có app hiểu phở khác bún bò chỗ nào. Đếm calo bằng MyFitnessPal 3 năm — phở luôn sai 30%. NomNom dán nhãn từng món Việt một cách chính xác.',
+    quoteEn: "Finally an app that knows pho is different from bun bo. I tracked calories with MyFitnessPal for 3 years — pho was always 30% off. NomNom labels every Vietnamese dish accurately.",
+    name: 'Trần Minh Anh', roleVi: 'Marketer · Quận 7', roleEn: 'Marketer · District 7', avatar: 'M'
+  },
+  {
+    quoteVi: 'Tập gym 5 năm, ăn cơm hộp văn phòng 5 năm. Không bao giờ đủ protein. NomNom auto-order mỗi sáng — đúng macro, đúng ngân sách. Tăng 4kg cơ trong 6 tháng.',
+    quoteEn: "Lifted 5 years, ate office boxed meals 5 years. Never hit protein. NomNom auto-orders each morning — right macros, right budget. Added 4kg muscle in 6 months.",
+    name: 'Nguyễn Hữu Phúc', roleVi: 'Software Engineer · Bình Thạnh', roleEn: 'Software Engineer · Binh Thanh', avatar: 'P'
+  },
+  {
+    quoteVi: 'Mom nấu cơm cho cả nhà mỗi ngày. Mình không biết món homemade có healthy không. AI Recipe Analyzer giúp mình hiểu — và bây giờ mom đang giảm muối 30%.',
+    quoteEn: "Mom cooks for the family daily. I never knew if homemade was healthy. AI Recipe Analyzer made it clear — and now mom is cutting salt by 30%.",
+    name: 'Lê Bảo Châu', roleVi: 'Designer · Quận 3', roleEn: 'Designer · District 3', avatar: 'C'
+  },
+  {
+    quoteVi: 'Sống ở Mỹ 12 năm, vẫn nấu món Việt mỗi tuần. Không có app Mỹ nào hiểu mì Quảng. NomNom là database tôi đã chờ cả thập kỷ.',
+    quoteEn: "12 years in the US, still cook Vietnamese weekly. No US app understands mì Quảng. NomNom is the database I waited a decade for.",
+    name: 'David Pham', roleVi: 'Việt kiều · San Jose', roleEn: 'Vietnamese-American · San Jose', avatar: 'D'
+  }
+];
+
+let testimonialIdx = 0;
+function renderTestimonials() {
+  const list = document.getElementById('testimonialList');
+  if (!list) return;
+  list.innerHTML = proofTestimonials.map(t => `
+    <div class="testimonial">
+      <div class="tm-quote">"${currentLang === 'en' ? t.quoteEn : t.quoteVi}"</div>
+      <div class="tm-author">
+        <div class="tm-avatar">${t.avatar}</div>
+        <div>
+          <div class="tm-name">${t.name}</div>
+          <div class="tm-role">${currentLang === 'en' ? t.roleEn : t.roleVi}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  const dots = document.getElementById('testimonialDots');
+  dots.innerHTML = proofTestimonials.map((_, i) => `<button class="tm-dot${i === testimonialIdx ? ' active' : ''}" data-tm-idx="${i}" aria-label="Testimonial ${i+1}"></button>`).join('');
+  dots.querySelectorAll('.tm-dot').forEach(d => d.addEventListener('click', () => {
+    testimonialIdx = +d.dataset.tmIdx;
+    updateTestimonialPos();
+  }));
+  updateTestimonialPos();
+}
+
+function updateTestimonialPos() {
+  const list = document.getElementById('testimonialList');
+  if (!list) return;
+  list.style.transform = `translateX(-${testimonialIdx * 100}%)`;
+  document.querySelectorAll('.tm-dot').forEach((d, i) => d.classList.toggle('active', i === testimonialIdx));
+}
+
+setInterval(() => {
+  if (!document.getElementById('testimonialList')) return;
+  testimonialIdx = (testimonialIdx + 1) % proofTestimonials.length;
+  updateTestimonialPos();
+}, 5800);
+
+renderTestimonials();
+
+// Animated counter
+let proofCounterDone = false;
+const proofObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !proofCounterDone) {
+      proofCounterDone = true;
+      const el = document.getElementById('proofCounter');
+      const target = 6110;
+      let cur = 0;
+      const step = () => {
+        cur += Math.max(1, Math.ceil((target - cur) / 14));
+        if (cur >= target) cur = target;
+        el.textContent = cur.toLocaleString();
+        if (cur < target) requestAnimationFrame(step);
+      };
+      step();
+      // Drift +1-3 every few seconds for "live" feel
+      setInterval(() => {
+        if (!el) return;
+        const next = parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) + Math.floor(Math.random() * 3 + 1);
+        el.textContent = next.toLocaleString();
+      }, 4500);
+      // Animate referral progress
+      const fill = document.getElementById('refProgressFill');
+      if (fill) setTimeout(() => fill.style.width = '42%', 400);
+    }
+  });
+}, { threshold: 0.4 });
+const proofSection = document.getElementById('proof');
+if (proofSection) proofObserver.observe(proofSection);
+
+// Referral copy
+const refCopyBtn = document.getElementById('refCopyBtn');
+if (refCopyBtn) {
+  refCopyBtn.addEventListener('click', () => {
+    const link = document.getElementById('refLink').textContent;
+    if (navigator.clipboard) navigator.clipboard.writeText(link).catch(() => {});
+    refCopyBtn.textContent = currentLang === 'en' ? '✓ Copied' : '✓ Đã sao chép';
+    setTimeout(() => {
+      refCopyBtn.textContent = currentLang === 'en' ? 'Copy' : 'Sao chép';
+    }, 1800);
+  });
+}
 
 </script>
 </body>
