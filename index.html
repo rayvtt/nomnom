@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NomNom – Chuyên gia dinh dưỡng trong túi bạn</title>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --bg: #050505;
@@ -20,6 +22,23 @@
     --red: #EF4444;
     --purple: #A78BFA;
     --blue: #60A5FA;
+    --card-bg: rgba(255,255,255,0.03);
+    --card-border: rgba(255,255,255,0.06);
+    --card-hover: rgba(255,255,255,0.06);
+    --nav-bg: rgba(5,5,5,0.7);
+  }
+  body.light-mode {
+    --bg: #FAFAF7;
+    --bg-2: #F0EDE6;
+    --bg-3: #E8E4DC;
+    --text: #1A1814;
+    --text-2: #6B6560;
+    --text-3: #9A948E;
+    --green-dim: #A7F3D0;
+    --card-bg: rgba(0,0,0,0.03);
+    --card-border: rgba(0,0,0,0.08);
+    --card-hover: rgba(0,0,0,0.06);
+    --nav-bg: rgba(250,250,247,0.8);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -30,7 +49,12 @@
     font-family: 'Outfit', sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    transition: background 0.5s, color 0.5s;
   }
+  body.light-mode .hero::before { background: radial-gradient(circle, rgba(255,106,40,0.08) 0%, transparent 70%); }
+  body.light-mode .order-section::before { background: radial-gradient(circle, rgba(52,211,153,0.04) 0%, transparent 70%); }
+  body.light-mode .recipe-section::before { background: radial-gradient(circle, rgba(255,159,28,0.04) 0%, transparent 70%); }
+  body.light-mode .vendor-section::before { background: radial-gradient(circle, rgba(167,139,250,0.04) 0%, transparent 70%); }
   section { position: relative; }
 
   /* ===== NAV ===== */
@@ -39,8 +63,8 @@
     padding: 20px 48px;
     display: flex; justify-content: space-between; align-items: center;
     backdrop-filter: blur(20px) saturate(1.6);
-    background: rgba(5,5,5,0.7);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--card-border);
     transition: all 0.4s;
   }
   .nav-logo { font-family: 'Instrument Serif', serif; font-size: 24px; color: var(--text); letter-spacing: -0.02em; }
@@ -168,13 +192,114 @@
     padding: 120px 24px 160px;
     display: flex; flex-direction: column; align-items: center; position: relative;
   }
+  /* Profile Creation Module */
+  .profile-module {
+    max-width: 680px; width: 100%; margin: 0 auto 48px; padding: 32px 36px;
+    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 24px;
+    position: relative; overflow: hidden; transition: all 0.5s;
+  }
+  .profile-module::before {
+    content: ''; position: absolute; top: -80px; right: -80px; width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,106,40,0.08), transparent 70%); pointer-events: none;
+  }
+  .profile-module.collapsed {
+    padding: 16px 24px; cursor: pointer;
+  }
+  .profile-module.collapsed:hover { background: var(--card-hover); border-color: rgba(255,106,40,0.3); }
+  .profile-header {
+    display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+  }
+  .profile-module.collapsed .profile-header { margin-bottom: 0; }
+  .profile-module.collapsed .profile-form,
+  .profile-module.collapsed .profile-result { display: none; }
+  .profile-icon {
+    width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: rgba(255,106,40,0.12); font-size: 22px; flex-shrink: 0;
+  }
+  .profile-header-text { flex: 1; }
+  .profile-header-text h3 { font-family: 'Instrument Serif', serif; font-size: 20px; margin: 0; color: var(--text); }
+  .profile-header-text p { font-size: 12px; color: var(--text-3); margin: 2px 0 0; }
+  .profile-edit-btn {
+    background: none; border: 1px solid var(--card-border); border-radius: 8px;
+    color: var(--text-3); font-size: 11px; padding: 4px 12px; cursor: pointer; transition: all 0.3s;
+  }
+  .profile-edit-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .profile-form {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px;
+  }
+  .profile-field { display: flex; flex-direction: column; gap: 6px; }
+  .profile-field.full-width { grid-column: 1 / -1; }
+  .profile-field label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-3);
+  }
+  .profile-field input, .profile-field select {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+    padding: 10px 14px; color: var(--text); font-size: 14px; font-family: 'Outfit', sans-serif;
+    transition: all 0.3s; outline: none; width: 100%; box-sizing: border-box;
+  }
+  .profile-field input:focus, .profile-field select:focus {
+    border-color: var(--accent); box-shadow: 0 0 0 3px rgba(255,106,40,0.1);
+  }
+  .profile-field select { appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238A8070' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+  }
+  .profile-field select option { background: var(--bg-2); color: var(--text); }
+  .profile-submit-btn {
+    grid-column: 1 / -1; margin-top: 8px; padding: 14px 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff;
+    border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
+    font-family: 'Outfit', sans-serif; cursor: pointer; transition: all 0.3s;
+    letter-spacing: 0.02em;
+  }
+  .profile-submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,106,40,0.3); }
+  .profile-result {
+    display: none; margin-top: 20px; padding: 20px 24px; background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06); border-radius: 16px;
+  }
+  .profile-result.visible { display: block; animation: fadeInUp 0.5s ease; }
+  .bmi-display {
+    display: flex; align-items: center; gap: 20px; margin-bottom: 16px;
+  }
+  .bmi-number {
+    font-family: 'Instrument Serif', serif; font-size: 48px; line-height: 1;
+  }
+  .bmi-info { flex: 1; }
+  .bmi-category {
+    font-size: 14px; font-weight: 700; margin-bottom: 4px;
+  }
+  .bmi-bar-track {
+    width: 100%; height: 8px; border-radius: 4px; position: relative;
+    background: linear-gradient(to right, var(--blue) 0%, var(--green) 25%, #fbbf24 50%, var(--accent) 75%, var(--red) 100%);
+    overflow: visible;
+  }
+  .bmi-bar-marker {
+    position: absolute; top: -4px; width: 16px; height: 16px; border-radius: 50%;
+    border: 3px solid var(--bg); transform: translateX(-50%); transition: left 0.8s ease;
+  }
+  .calorie-targets {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px;
+  }
+  .calorie-target-card {
+    text-align: center; padding: 12px 8px; border-radius: 12px;
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+  }
+  .ct-value { font-family: 'Instrument Serif', serif; font-size: 22px; margin-bottom: 2px; }
+  .ct-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-3); font-weight: 700; }
+  .ct-unit { font-size: 10px; color: var(--text-3); }
+  @media (max-width: 600px) {
+    .profile-form { grid-template-columns: 1fr; }
+    .calorie-targets { grid-template-columns: repeat(2, 1fr); }
+    .bmi-number { font-size: 36px; }
+  }
+
   .tracking-demo {
-    display: flex; align-items: flex-start; gap: 60px; max-width: 1100px;
+    display: flex; align-items: flex-start; gap: 60px; max-width: 1200px;
     width: 100%; justify-content: center; flex-wrap: wrap;
   }
   .tracking-left { display: flex; flex-direction: column; align-items: center; gap: 24px; }
   .ring-container { position: relative; width: 260px; height: 260px; flex-shrink: 0; }
-  .ring-container svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-container svg { width: 100%; height: 100%; }
   .ring-bg { fill: none; stroke: rgba(255,255,255,0.04); stroke-width: 8; }
   .ring-fill {
     fill: none; stroke-width: 8; stroke-linecap: round;
@@ -193,29 +318,88 @@
     position: absolute; bottom: 0; left: 0; right: 0; border-radius: 12px;
     transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
+  .macro-bar-bad {
+    position: absolute; bottom: 0; left: 0; right: 0; border-radius: 0 0 12px 12px;
+    transition: height 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity: 0.6;
+  }
   .macro-bar-val { font-family: 'Instrument Serif', serif; font-size: 18px; margin-top: 6px; }
   .macro-bar-max { font-size: 10px; color: var(--text-3); }
+  .carb-split-label { font-size: 8px; margin-top: 2px; line-height: 1.3; }
+  .carb-split-label .good-c { color: var(--accent-2); }
+  .carb-split-label .bad-c { color: #f87171; }
 
-  .tracking-right { display: flex; flex-direction: column; gap: 12px; max-width: 400px; width: 100%; }
+  /* Quality score badge next to daily total */
+  .quality-score-wrap {
+    display: flex; align-items: center; gap: 12px; margin-top: 8px;
+    padding: 10px 16px; border-radius: 14px; background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06); transition: all 0.5s;
+  }
+  .quality-score-ring { width: 44px; height: 44px; flex-shrink: 0; }
+  .quality-score-ring svg { width: 100%; height: 100%; }
+  .qs-label { font-size: 11px; color: var(--text-3); line-height: 1.4; }
+  .qs-label strong { color: var(--text); font-size: 13px; }
+
+  .tracking-right { display: flex; flex-direction: column; gap: 10px; max-width: 440px; width: 100%; }
   .meal-card-interactive {
-    display: flex; align-items: center; gap: 14px; padding: 16px 20px;
+    display: flex; flex-direction: column; gap: 0;
     background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
     border-radius: 18px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
     user-select: none;
   }
   .meal-card-interactive:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,106,40,0.3); transform: translateY(-2px); }
   .meal-card-interactive.added { border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.05); }
-  .meal-card-interactive.added::after {
-    content: '✓'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
-    color: var(--green); font-weight: 700; font-size: 18px;
+  .meal-card-interactive.added .mci-check { opacity: 1; }
+  .mci-top {
+    display: flex; align-items: center; gap: 14px; padding: 14px 18px;
   }
-  .mci-emoji { font-size: 28px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border-radius: 12px; flex-shrink: 0; }
-  .mci-info { flex: 1; }
-  .mci-name { font-weight: 600; font-size: 14px; margin-bottom: 2px; }
-  .mci-macros { font-size: 11px; color: var(--text-3); display: flex; gap: 8px; }
+  .mci-emoji { font-size: 26px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.04); border-radius: 10px; flex-shrink: 0; }
+  .mci-info { flex: 1; min-width: 0; }
+  .mci-name { font-weight: 600; font-size: 13px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mci-macros { font-size: 10px; color: var(--text-3); display: flex; gap: 6px; flex-wrap: wrap; }
   .mci-macros span { display: inline-flex; align-items: center; gap: 3px; }
-  .mci-macros .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-  .mci-kcal { font-family: 'Instrument Serif', serif; font-size: 22px; color: var(--text-2); flex-shrink: 0; }
+  .mci-macros .dot { width: 5px; height: 5px; border-radius: 50%; display: inline-block; }
+  .mci-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .mci-kcal { font-family: 'Instrument Serif', serif; font-size: 20px; color: var(--text-2); }
+  .mci-check { color: var(--green); font-weight: 700; font-size: 16px; opacity: 0; transition: opacity 0.3s; }
+  .mci-warnings {
+    display: flex; gap: 4px; flex-wrap: wrap; padding: 0 18px 12px;
+  }
+  .mci-warn-tag {
+    font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+    display: inline-flex; align-items: center; gap: 3px; letter-spacing: 0.02em;
+  }
+  .mci-warn-tag.sugar { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
+  .mci-warn-tag.sodium { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+  .mci-warn-tag.good { background: rgba(52,211,153,0.1); color: var(--green); border: 1px solid rgba(52,211,153,0.2); }
+  .mci-warn-tag.nocomplex { background: rgba(168,85,247,0.1); color: #a855f7; border: 1px solid rgba(168,85,247,0.2); }
+
+  /* Expanded carb quality breakdown inside card */
+  .mci-breakdown {
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease;
+    padding: 0 18px; border-top: 1px solid transparent;
+  }
+  .meal-card-interactive.added .mci-breakdown {
+    max-height: 200px; padding: 10px 18px 14px; border-top-color: rgba(255,255,255,0.06);
+  }
+  .mci-bd-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 11px; padding: 3px 0;
+  }
+  .mci-bd-row .bd-label { color: var(--text-3); }
+  .mci-bd-row .bd-val { font-weight: 600; }
+  .mci-bd-bar {
+    width: 100%; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.05);
+    margin: 6px 0 4px; overflow: hidden; display: flex;
+  }
+  .mci-bd-bar .bd-good { background: var(--accent-2); height: 100%; transition: width 0.6s ease; }
+  .mci-bd-bar .bd-bad { background: #f87171; height: 100%; transition: width 0.6s ease; }
+  .mci-quality-verdict {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 10px; font-weight: 600; margin-top: 4px; padding: 4px 8px;
+    border-radius: 8px; background: rgba(255,255,255,0.03);
+  }
+
   .mci-add-hint { font-size: 10px; color: var(--text-3); text-align: center; margin-top: 8px; font-style: italic; }
 
   .meal-add-flash {
@@ -629,6 +813,213 @@
   }
   .stat-label { font-size: 14px; color: var(--text-3); margin-top: 8px; font-weight: 500; }
 
+  /* ===== THEME TOGGLE ===== */
+  .theme-toggle {
+    position: fixed; bottom: 32px; right: 32px; z-index: 999;
+    width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    backdrop-filter: blur(20px); display: flex; align-items: center; justify-content: center;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  }
+  .theme-toggle:hover { transform: scale(1.1) rotate(15deg); box-shadow: 0 8px 32px rgba(255,106,40,0.2); }
+  .theme-toggle svg { width: 22px; height: 22px; transition: all 0.4s; }
+  .theme-toggle .sun-icon { opacity: 0; transform: rotate(-90deg) scale(0); position: absolute; }
+  .theme-toggle .moon-icon { opacity: 1; transform: rotate(0) scale(1); }
+  body.light-mode .theme-toggle .sun-icon { opacity: 1; transform: rotate(0) scale(1); }
+  body.light-mode .theme-toggle .moon-icon { opacity: 0; transform: rotate(90deg) scale(0); }
+  body.light-mode .theme-toggle { box-shadow: 0 4px 24px rgba(0,0,0,0.1); }
+
+  /* ========================================== */
+  /* 7. RECIPE HUB                              */
+  /* ========================================== */
+  .recipe-section {
+    padding: 120px 24px 160px; display: flex; flex-direction: column; align-items: center;
+    position: relative;
+  }
+  .recipe-section::before {
+    content: ''; position: absolute; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(255,159,28,0.06) 0%, transparent 70%);
+    top: 30%; right: 10%; pointer-events: none;
+  }
+  .recipe-hub {
+    display: flex; flex-direction: column; gap: 16px; max-width: 1100px; width: 100%;
+  }
+  .recipe-search-bar {
+    display: flex; gap: 8px; margin-bottom: 8px;
+  }
+  .recipe-search {
+    flex: 1; background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 14px; padding: 14px 20px; font-size: 14px; color: var(--text);
+    outline: none; font-family: 'Outfit', sans-serif; transition: border-color 0.3s;
+  }
+  .recipe-search:focus { border-color: var(--accent); }
+  .recipe-search::placeholder { color: var(--text-3); }
+  .recipe-filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .recipe-pill {
+    padding: 8px 16px; border-radius: 99px; font-size: 12px; font-weight: 600;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    color: var(--text-2); cursor: pointer; transition: all 0.2s; border: none;
+    font-family: 'Outfit', sans-serif;
+  }
+  .recipe-pill.active { background: var(--accent); color: white; }
+  .recipe-pill:hover { color: var(--text); }
+  .recipe-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;
+  }
+  .recipe-card {
+    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px;
+    padding: 20px; cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+  }
+  .recipe-card:hover { transform: translateY(-3px); border-color: rgba(255,106,40,0.3); }
+  .recipe-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .recipe-card-emoji { font-size: 32px; }
+  .recipe-card-info { flex: 1; }
+  .recipe-card-name { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+  .recipe-card-region { font-size: 11px; color: var(--text-3); }
+  .recipe-card-score {
+    font-family: 'Instrument Serif', serif; font-size: 24px; flex-shrink: 0;
+  }
+  .recipe-card-macros { display: flex; gap: 12px; margin-bottom: 10px; }
+  .recipe-card-macro { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
+  .recipe-card-macro .dot { width: 5px; height: 5px; border-radius: 50%; }
+  .recipe-card-quality-bar {
+    width: 100%; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.05);
+    overflow: hidden; display: flex;
+  }
+  .recipe-card-quality-bar .rq-good { background: var(--accent-2); height: 100%; }
+  .recipe-card-quality-bar .rq-bad { background: #f87171; height: 100%; }
+  .recipe-card-warning {
+    margin-top: 8px; font-size: 10px; font-weight: 600; padding: 4px 10px;
+    border-radius: 10px; display: inline-block;
+  }
+  .recipe-card-ingredients {
+    max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+  }
+  .recipe-card.expanded .recipe-card-ingredients {
+    max-height: 160px; margin-top: 12px; padding-top: 12px;
+    border-top: 1px solid var(--card-border);
+  }
+  .recipe-card-ingredients ul {
+    list-style: none; display: flex; flex-wrap: wrap; gap: 6px;
+  }
+  .recipe-card-ingredients li {
+    font-size: 10px; padding: 4px 10px; border-radius: 99px;
+    background: rgba(255,255,255,0.04); color: var(--text-2);
+  }
+  .recipe-contribute {
+    text-align: center; padding: 32px; border: 2px dashed var(--card-border);
+    border-radius: 20px; color: var(--text-3); font-size: 14px; cursor: pointer;
+    transition: all 0.3s;
+  }
+  .recipe-contribute:hover { border-color: var(--accent); color: var(--text-2); }
+  .recipe-contribute-icon { font-size: 32px; margin-bottom: 8px; }
+
+  /* ========================================== */
+  /* 8. RESTAURANT VENDOR HUB                   */
+  /* ========================================== */
+  .vendor-section {
+    padding: 120px 24px 160px; display: flex; flex-direction: column; align-items: center;
+    position: relative;
+  }
+  .vendor-section::before {
+    content: ''; position: absolute; width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 70%);
+    top: 30%; left: 20%; pointer-events: none;
+  }
+  .vendor-demo {
+    display: flex; gap: 40px; max-width: 1100px; width: 100%;
+    justify-content: center; flex-wrap: wrap; align-items: flex-start;
+  }
+  .vendor-menu-editor {
+    flex: 1; min-width: 320px; max-width: 540px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 24px; overflow: hidden;
+  }
+  .vendor-tabs {
+    display: flex; gap: 0; border-bottom: 1px solid var(--card-border); overflow-x: auto;
+  }
+  .vendor-tab {
+    flex: 1; padding: 12px 16px; font-size: 12px; font-weight: 600; font-family: 'Outfit', sans-serif;
+    background: none; border: none; color: var(--text-3); cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all 0.3s; white-space: nowrap;
+  }
+  .vendor-tab:hover { color: var(--text-2); background: rgba(255,255,255,0.02); }
+  .vendor-tab.active { color: var(--purple); border-bottom-color: var(--purple); background: rgba(167,139,250,0.04); }
+  .vendor-editor-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 22px; border-bottom: 1px solid var(--card-border);
+  }
+  .vendor-editor-title { font-weight: 600; font-size: 14px; }
+  .vendor-editor-badge {
+    font-size: 10px; font-weight: 700; padding: 4px 12px; border-radius: 99px;
+    background: rgba(167,139,250,0.12); color: var(--purple);
+  }
+  .vendor-menu-item {
+    display: flex; align-items: center; gap: 14px; padding: 16px 22px;
+    border-bottom: 1px solid rgba(255,255,255,0.03); transition: all 0.3s;
+    cursor: pointer;
+  }
+  .vendor-menu-item:hover { background: var(--card-hover); }
+  .vendor-menu-item.analyzing { opacity: 0.6; }
+  .vendor-menu-item.analyzed { }
+  .vmi-emoji { font-size: 24px; flex-shrink: 0; }
+  .vmi-info { flex: 1; }
+  .vmi-name { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .vmi-price { font-size: 11px; color: var(--text-3); }
+  .vmi-label-status {
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  }
+  .vmi-label-dot {
+    width: 8px; height: 8px; border-radius: 50%; transition: background 0.5s;
+  }
+  .vmi-label-dot.pending { background: var(--text-3); }
+  .vmi-label-dot.analyzing { background: var(--accent-2); animation: pulse 1s infinite; }
+  .vmi-label-dot.done { background: var(--green); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .vmi-label-text { font-size: 10px; color: var(--text-3); font-weight: 600; }
+
+  .vendor-stats-panel {
+    width: 280px; display: flex; flex-direction: column; gap: 16px; flex-shrink: 0;
+  }
+  .vendor-stat-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 18px; padding: 20px; text-align: center;
+  }
+  .vendor-stat-num {
+    font-family: 'Instrument Serif', serif; font-size: 36px; line-height: 1;
+    margin-bottom: 4px;
+  }
+  .vendor-stat-label { font-size: 11px; color: var(--text-3); font-weight: 500; }
+  .vendor-progress-bar {
+    width: 100%; height: 6px; background: rgba(255,255,255,0.05);
+    border-radius: 3px; overflow: hidden; margin-top: 10px;
+  }
+  .vendor-progress-fill {
+    height: 100%; border-radius: 3px; transition: width 1s ease;
+    background: linear-gradient(90deg, var(--purple), var(--accent));
+  }
+  .vendor-cta-badge {
+    padding: 16px; background: rgba(167,139,250,0.06); border: 1px solid rgba(167,139,250,0.15);
+    border-radius: 18px; text-align: center;
+  }
+  .vendor-cta-badge p { font-size: 12px; color: var(--purple); font-weight: 600; line-height: 1.5; }
+
+  /* ===== SMART ORDER MAP ===== */
+  .order-map-wrap {
+    width: 100%; max-width: 1000px; margin-top: 32px;
+    border-radius: 20px; overflow: hidden; border: 1px solid var(--card-border);
+    position: relative;
+  }
+  .order-map { width: 100%; height: 360px; background: #111; }
+  .order-map-label {
+    position: absolute; top: 14px; left: 14px; z-index: 500;
+    background: var(--bg); padding: 8px 16px; border-radius: 12px;
+    font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 0.1em;
+    text-transform: uppercase; border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+  }
+
   /* ===== CTA ===== */
   .cta-section {
     padding: 160px 24px; display: flex; flex-direction: column; align-items: center;
@@ -667,14 +1058,18 @@
   @media (max-width: 768px) {
     nav { padding: 16px 20px; }
     .nav-links { display: none; }
-    .tracking-demo, .gamify-demo, .order-demo, .group-demo { flex-direction: column; align-items: center; }
+    .tracking-demo, .gamify-demo, .order-demo, .group-demo, .vendor-demo { flex-direction: column; align-items: center; }
     .tracking-right, .order-cards, .group-leaderboard, .group-challenge,
-    .gamify-profile, .gamify-unlock, .gamify-badges, .order-remaining { width: 100%; max-width: 360px; }
+    .gamify-profile, .gamify-unlock, .gamify-badges, .order-remaining,
+    .vendor-menu-editor, .vendor-stats-panel { width: 100%; max-width: 360px; }
     .stats-grid { grid-template-columns: 1fr; gap: 40px; }
     .cuisine-explorer { grid-template-columns: 1fr 1fr; }
     .cuisine-card.expanded { grid-column: span 2; grid-row: span 1; }
+    .recipe-grid { grid-template-columns: 1fr; }
     .waitlist-form { flex-direction: column; }
     .waitlist-input { width: 100%; }
+    .theme-toggle { bottom: 20px; right: 20px; width: 44px; height: 44px; }
+    .order-map { height: 260px; }
   }
 </style>
 </head>
@@ -697,6 +1092,16 @@
     <a href="#cta" class="nav-cta" data-vi="Tham gia waitlist" data-en="Join waitlist">Tham gia waitlist</a>
   </div>
 </nav>
+
+<!-- THEME TOGGLE -->
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+  <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text);">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+  <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text);">
+    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+  </svg>
+</button>
 
 <!-- HERO -->
 <section class="hero">
@@ -732,17 +1137,105 @@
      ========================================== -->
 <section class="tracking-section" id="tracking">
   <div class="section-label reveal" data-vi="Theo dõi real-time" data-en="Real-time tracking">Theo dõi real-time</div>
-  <h2 class="section-title reveal" id="trackingTitle">Tap bữa ăn. <span style="color:var(--accent);">Xem macro chạy.</span></h2>
-  <p class="section-sub reveal" data-vi="Chạm vào từng món để thêm vào nhật ký. Macro ring cập nhật ngay lập tức." data-en="Tap each dish to add to your log. Macro ring updates instantly.">Chạm vào từng món để thêm vào nhật ký. Macro ring cập nhật ngay lập tức.</p>
+  <h2 class="section-title reveal" id="trackingTitle">Không phải carb nào cũng <span style="color:var(--accent);">giống nhau.</span></h2>
+  <p class="section-sub reveal" data-vi="Đồ ăn Việt ngon — nhưng đường ẩn, gia vị, và thiếu carb phức hợp là vấn đề thật. NomNom phân tích chất lượng carb, không chỉ số lượng." data-en="Vietnamese food is delicious — but hidden sugars, excess seasoning, and lack of complex carbs are real problems. NomNom analyzes carb quality, not just quantity.">Đồ ăn Việt ngon — nhưng đường ẩn, gia vị, và thiếu carb phức hợp là vấn đề thật. NomNom phân tích chất lượng carb, không chỉ số lượng.</p>
+
+  <!-- Profile Creation Module -->
+  <div class="profile-module reveal" id="profileModule">
+    <div class="profile-header">
+      <div class="profile-icon">👤</div>
+      <div class="profile-header-text">
+        <h3 id="profileTitle" data-vi="Tạo hồ sơ của bạn" data-en="Create your profile">Tạo hồ sơ của bạn</h3>
+        <p id="profileSub" data-vi="Tính BMI & lượng calo khuyến nghị hàng ngày" data-en="Calculate your BMI & recommended daily calories">Tính BMI & lượng calo khuyến nghị hàng ngày</p>
+      </div>
+      <button class="profile-edit-btn" id="profileEditBtn" style="display:none;" data-vi="Sửa" data-en="Edit">Sửa</button>
+    </div>
+    <div class="profile-form" id="profileForm">
+      <div class="profile-field">
+        <label data-vi="Giới tính" data-en="Gender">Giới tính</label>
+        <select id="profGender">
+          <option value="male" data-vi="Nam" data-en="Male">Nam</option>
+          <option value="female" data-vi="Nữ" data-en="Female">Nữ</option>
+        </select>
+      </div>
+      <div class="profile-field">
+        <label data-vi="Tuổi" data-en="Age">Tuổi</label>
+        <input type="number" id="profAge" placeholder="25" min="10" max="100" value="25">
+      </div>
+      <div class="profile-field">
+        <label data-vi="Chiều cao (cm)" data-en="Height (cm)">Chiều cao (cm)</label>
+        <input type="number" id="profHeight" placeholder="165" min="100" max="250" value="165">
+      </div>
+      <div class="profile-field">
+        <label data-vi="Cân nặng (kg)" data-en="Weight (kg)">Cân nặng (kg)</label>
+        <input type="number" id="profWeight" placeholder="60" min="30" max="300" value="60">
+      </div>
+      <div class="profile-field full-width">
+        <label data-vi="Mức hoạt động" data-en="Activity level">Mức hoạt động</label>
+        <select id="profActivity">
+          <option value="1.2" data-vi="Ít vận động (ngồi văn phòng)" data-en="Sedentary (desk job)">Ít vận động (ngồi văn phòng)</option>
+          <option value="1.375" data-vi="Nhẹ (tập 1-3 ngày/tuần)" data-en="Light (exercise 1-3 days/wk)">Nhẹ (tập 1-3 ngày/tuần)</option>
+          <option value="1.55" selected data-vi="Trung bình (tập 3-5 ngày/tuần)" data-en="Moderate (exercise 3-5 days/wk)">Trung bình (tập 3-5 ngày/tuần)</option>
+          <option value="1.725" data-vi="Tích cực (tập 6-7 ngày/tuần)" data-en="Active (exercise 6-7 days/wk)">Tích cực (tập 6-7 ngày/tuần)</option>
+          <option value="1.9" data-vi="Rất tích cực (VĐV / lao động nặng)" data-en="Very active (athlete / physical labor)">Rất tích cực (VĐV / lao động nặng)</option>
+        </select>
+      </div>
+      <button class="profile-submit-btn" id="profileSubmitBtn" data-vi="Tính toán & bắt đầu theo dõi →" data-en="Calculate & start tracking →">Tính toán & bắt đầu theo dõi →</button>
+    </div>
+    <div class="profile-result" id="profileResult">
+      <div class="bmi-display">
+        <div class="bmi-number" id="bmiNumber" style="color:var(--green);">—</div>
+        <div class="bmi-info">
+          <div class="bmi-category" id="bmiCategory" style="color:var(--green);" data-vi="BMI" data-en="BMI">BMI</div>
+          <div class="bmi-bar-track">
+            <div class="bmi-bar-marker" id="bmiMarker" style="left:30%;background:var(--green);"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:8px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.05em;">
+            <span data-vi="Thiếu cân" data-en="Under">Thiếu cân</span>
+            <span data-vi="Bình thường" data-en="Normal">Bình thường</span>
+            <span data-vi="Thừa cân" data-en="Over">Thừa cân</span>
+            <span data-vi="Béo phì" data-en="Obese">Béo phì</span>
+          </div>
+        </div>
+      </div>
+      <div class="calorie-targets" id="calorieTargets">
+        <div class="calorie-target-card">
+          <div class="ct-value" id="ctKcal" style="color:var(--text);">—</div>
+          <div class="ct-label">Calories</div>
+          <div class="ct-unit">kcal</div>
+        </div>
+        <div class="calorie-target-card">
+          <div class="ct-value" id="ctProtein" style="color:var(--accent);">—</div>
+          <div class="ct-label">Protein</div>
+          <div class="ct-unit" id="ctProteinUnit">g</div>
+        </div>
+        <div class="calorie-target-card">
+          <div class="ct-value" id="ctCarbs" style="color:var(--accent-2);">—</div>
+          <div class="ct-label">Carbs</div>
+          <div class="ct-unit" id="ctCarbsUnit">g</div>
+        </div>
+        <div class="calorie-target-card">
+          <div class="ct-value" id="ctFat" style="color:var(--green);">—</div>
+          <div class="ct-label">Fat</div>
+          <div class="ct-unit" id="ctFatUnit">g</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="tracking-demo" id="trackingDemo">
     <div class="tracking-left">
       <div class="ring-container">
         <svg viewBox="0 0 260 260">
+          <!-- Fat ring -->
           <circle class="ring-bg" cx="130" cy="130" r="104" fill="none" stroke-width="8"/>
           <circle id="trkRingFat" cx="130" cy="130" r="104" fill="none" stroke="var(--green)" stroke-width="8" stroke-linecap="round" stroke-dasharray="653.45" stroke-dashoffset="653.45" style="transform:rotate(-90deg);transform-origin:center;"/>
+          <!-- Bad carb ring (red, behind good carb) -->
           <circle class="ring-bg" cx="130" cy="130" r="88" fill="none" stroke-width="8"/>
+          <circle id="trkRingBadCarb" cx="130" cy="130" r="88" fill="none" stroke="#f87171" stroke-width="8" stroke-linecap="round" stroke-dasharray="552.92" stroke-dashoffset="552.92" style="transform:rotate(-90deg);transform-origin:center;"/>
+          <!-- Good carb ring (on top) -->
           <circle id="trkRingCarbs" cx="130" cy="130" r="88" fill="none" stroke="var(--accent-2)" stroke-width="8" stroke-linecap="round" stroke-dasharray="552.92" stroke-dashoffset="552.92" style="transform:rotate(-90deg);transform-origin:center;"/>
+          <!-- Protein ring -->
           <circle class="ring-bg" cx="130" cy="130" r="72" fill="none" stroke-width="8"/>
           <circle id="trkRingProtein" cx="130" cy="130" r="72" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="452.39" stroke-dashoffset="452.39" style="transform:rotate(-90deg);transform-origin:center;"/>
         </svg>
@@ -760,9 +1253,13 @@
         </div>
         <div class="macro-bar-item">
           <div class="macro-bar-label">Carbs</div>
-          <div class="macro-bar-track"><div class="macro-bar-fill" id="trkCarbsBar" style="background:var(--accent-2);height:0%;"></div></div>
+          <div class="macro-bar-track">
+            <div class="macro-bar-fill" id="trkCarbsBar" style="background:var(--accent-2);height:0%;"></div>
+            <div class="macro-bar-bad" id="trkBadCarbBar" style="background:#f87171;height:0%;"></div>
+          </div>
           <div class="macro-bar-val" id="trkCarbsVal" style="color:var(--accent-2);">0g</div>
           <div class="macro-bar-max">/ 220g</div>
+          <div class="carb-split-label"><span class="good-c" id="trkGoodCarbLabel">0g</span> <span style="color:var(--text-3)">|</span> <span class="bad-c" id="trkBadCarbLabel">0g</span></div>
         </div>
         <div class="macro-bar-item">
           <div class="macro-bar-label">Fat</div>
@@ -771,50 +1268,147 @@
           <div class="macro-bar-max">/ 65g</div>
         </div>
       </div>
+      <!-- Daily quality score -->
+      <div class="quality-score-wrap" id="trkQualityWrap">
+        <div class="quality-score-ring">
+          <svg viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="4"/>
+            <circle id="trkQualityRing" cx="24" cy="24" r="20" fill="none" stroke="var(--green)" stroke-width="4" stroke-linecap="round" stroke-dasharray="125.66" stroke-dashoffset="125.66" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 0.8s ease, stroke 0.5s;"/>
+            <text id="trkQualityNum" x="24" y="26" text-anchor="middle" fill="var(--text)" font-family="Instrument Serif" font-size="14" dominant-baseline="middle">—</text>
+          </svg>
+        </div>
+        <div class="qs-label" id="trkQualityLabel"><strong data-vi="Chất lượng" data-en="Quality">Chất lượng</strong><br><span data-vi="Thêm món để xem điểm" data-en="Add meals to see score">Thêm món để xem điểm</span></div>
+      </div>
     </div>
     <div class="tracking-right">
-      <div style="font-size:12px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:4px;" data-vi="🍽️ Bữa ăn hôm nay — tap để thêm" data-en="🍽️ Today's meals — tap to add">🍽️ Bữa ăn hôm nay — tap để thêm</div>
-      <div class="meal-card-interactive" data-kcal="480" data-p="32" data-c="52" data-f="12" data-name="Phở bò tái chín" data-emoji="🍜">
-        <div class="mci-emoji">🍜</div>
-        <div class="mci-info">
-          <div class="mci-name" data-vi="Phở bò tái chín" data-en="Phở bò tái chín (Beef pho)">Phở bò tái chín</div>
-          <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 32g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 52g C</span><span><span class="dot" style="background:var(--green);"></span> 12g F</span></div>
+      <div style="font-size:12px;color:var(--text-3);font-weight:600;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:4px;" data-vi="🍽️ Bữa ăn hôm nay — tap để phân tích" data-en="🍽️ Today's meals — tap to analyze">🍽️ Bữa ăn hôm nay — tap để phân tích</div>
+
+      <!-- Phở bò: mostly complex carb from rice noodles, moderate sodium from broth -->
+      <div class="meal-card-interactive" data-kcal="480" data-p="32" data-c="52" data-f="12" data-goodc="42" data-badc="10" data-sodium="high" data-quality="72"
+        data-warn-vi="🧂 Nước dùng nhiều natri|🍜 Bún = carb phức hợp tốt" data-warn-en="🧂 High-sodium broth|🍜 Rice noodles = good complex carbs"
+        data-warn-type="sodium|good"
+        data-verdict-vi="Carb tốt, nhưng coi chừng muối" data-verdict-en="Good carbs, but watch the sodium">
+        <div class="mci-top">
+          <div class="mci-emoji">🍜</div>
+          <div class="mci-info">
+            <div class="mci-name" data-vi="Phở bò tái chín" data-en="Phở bò tái chín (Beef pho)">Phở bò tái chín</div>
+            <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 32g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 42g <span style="font-size:8px">good</span></span><span><span class="dot" style="background:#f87171;"></span> 10g <span style="font-size:8px">sugar</span></span><span><span class="dot" style="background:var(--green);"></span> 12g F</span></div>
+          </div>
+          <div class="mci-right">
+            <div class="mci-kcal">480</div>
+            <div class="mci-check">✓</div>
+          </div>
         </div>
-        <div class="mci-kcal">480</div>
-      </div>
-      <div class="meal-card-interactive" data-kcal="140" data-p="3" data-c="22" data-f="5" data-name="Cà phê sữa đá" data-emoji="🥤">
-        <div class="mci-emoji">🥤</div>
-        <div class="mci-info">
-          <div class="mci-name" data-vi="Cà phê sữa đá" data-en="Cà phê sữa đá (Iced coffee)">Cà phê sữa đá</div>
-          <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 3g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 22g C</span><span><span class="dot" style="background:var(--green);"></span> 5g F</span></div>
+        <div class="mci-warnings"></div>
+        <div class="mci-breakdown">
+          <div class="mci-bd-bar"><div class="bd-good" style="width:81%;"></div><div class="bd-bad" style="width:19%;"></div></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Carb phức hợp" data-en="Complex carbs">Carb phức hợp</span><span class="bd-val" style="color:var(--accent-2);">42g</span></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Đường / tinh bột" data-en="Sugars / refined">Đường / tinh bột</span><span class="bd-val" style="color:#f87171;">10g</span></div>
+          <div class="mci-quality-verdict" data-vi="✅ Carb tốt, nhưng coi chừng muối" data-en="✅ Good carbs, but watch the sodium">✅ Carb tốt, nhưng coi chừng muối</div>
         </div>
-        <div class="mci-kcal">140</div>
       </div>
-      <div class="meal-card-interactive" data-kcal="240" data-p="14" data-c="28" data-f="8" data-name="Gỏi cuốn tôm (2)" data-emoji="🥗">
-        <div class="mci-emoji">🥗</div>
-        <div class="mci-info">
-          <div class="mci-name" data-vi="Gỏi cuốn tôm (2)" data-en="Gỏi cuốn tôm (Spring rolls)">Gỏi cuốn tôm (2)</div>
-          <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 14g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 28g C</span><span><span class="dot" style="background:var(--green);"></span> 8g F</span></div>
+
+      <!-- Cà phê sữa đá: almost ALL carbs are refined sugar from condensed milk -->
+      <div class="meal-card-interactive" data-kcal="140" data-p="3" data-c="22" data-f="5" data-goodc="0" data-badc="22" data-sodium="low" data-quality="25"
+        data-warn-vi="⚠️ 22g đường từ sữa đặc|🚫 0g carb phức hợp" data-warn-en="⚠️ 22g sugar from condensed milk|🚫 Zero complex carbs"
+        data-warn-type="sugar|nocomplex"
+        data-verdict-vi="100% đường tinh — sữa đặc là thủ phạm" data-verdict-en="100% refined sugar — condensed milk is the culprit">
+        <div class="mci-top">
+          <div class="mci-emoji">🥤</div>
+          <div class="mci-info">
+            <div class="mci-name" data-vi="Cà phê sữa đá" data-en="Cà phê sữa đá (Iced coffee)">Cà phê sữa đá</div>
+            <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 3g P</span><span><span class="dot" style="background:#f87171;"></span> 22g <span style="font-size:8px">sugar</span></span><span><span class="dot" style="background:var(--green);"></span> 5g F</span></div>
+          </div>
+          <div class="mci-right">
+            <div class="mci-kcal">140</div>
+            <div class="mci-check">✓</div>
+          </div>
         </div>
-        <div class="mci-kcal">240</div>
-      </div>
-      <div class="meal-card-interactive" data-kcal="550" data-p="28" data-c="65" data-f="18" data-name="Cơm tấm sườn bì chả" data-emoji="🍚">
-        <div class="mci-emoji">🍚</div>
-        <div class="mci-info">
-          <div class="mci-name" data-vi="Cơm tấm sườn bì chả" data-en="Cơm tấm sườn bì chả (Broken rice)">Cơm tấm sườn bì chả</div>
-          <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 28g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 65g C</span><span><span class="dot" style="background:var(--green);"></span> 18g F</span></div>
+        <div class="mci-warnings"></div>
+        <div class="mci-breakdown">
+          <div class="mci-bd-bar"><div class="bd-good" style="width:0%;"></div><div class="bd-bad" style="width:100%;"></div></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Carb phức hợp" data-en="Complex carbs">Carb phức hợp</span><span class="bd-val" style="color:var(--accent-2);">0g</span></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Đường từ sữa đặc" data-en="Sugar from condensed milk">Đường từ sữa đặc</span><span class="bd-val" style="color:#f87171;">22g</span></div>
+          <div class="mci-quality-verdict" style="color:#f87171;" data-vi="⛔ 100% đường tinh — sữa đặc là thủ phạm" data-en="⛔ 100% refined sugar — condensed milk is the culprit">⛔ 100% đường tinh — sữa đặc là thủ phạm</div>
         </div>
-        <div class="mci-kcal">550</div>
       </div>
-      <div class="meal-card-interactive" data-kcal="320" data-p="22" data-c="38" data-f="9" data-name="Bún chả Hà Nội" data-emoji="🥢">
-        <div class="mci-emoji">🥢</div>
-        <div class="mci-info">
-          <div class="mci-name" data-vi="Bún chả Hà Nội" data-en="Bún chả Hà Nội (Grilled pork noodles)">Bún chả Hà Nội</div>
-          <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 22g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 38g C</span><span><span class="dot" style="background:var(--green);"></span> 9g F</span></div>
+
+      <!-- Gỏi cuốn: good balance, rice paper is fine, low sugar -->
+      <div class="meal-card-interactive" data-kcal="240" data-p="14" data-c="28" data-f="8" data-goodc="22" data-badc="6" data-sodium="medium" data-quality="82"
+        data-warn-vi="✅ Carb phức hợp từ bánh tráng|🥬 Nhiều rau tươi" data-warn-en="✅ Complex carbs from rice paper|🥬 High fresh vegetable content"
+        data-warn-type="good|good"
+        data-verdict-vi="Lành mạnh — ít đường, nhiều rau" data-verdict-en="Healthy — low sugar, high vegetables">
+        <div class="mci-top">
+          <div class="mci-emoji">🥗</div>
+          <div class="mci-info">
+            <div class="mci-name" data-vi="Gỏi cuốn tôm (2)" data-en="Gỏi cuốn tôm (Spring rolls)">Gỏi cuốn tôm (2)</div>
+            <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 14g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 22g <span style="font-size:8px">good</span></span><span><span class="dot" style="background:#f87171;"></span> 6g <span style="font-size:8px">sugar</span></span><span><span class="dot" style="background:var(--green);"></span> 8g F</span></div>
+          </div>
+          <div class="mci-right">
+            <div class="mci-kcal">240</div>
+            <div class="mci-check">✓</div>
+          </div>
         </div>
-        <div class="mci-kcal">320</div>
+        <div class="mci-warnings"></div>
+        <div class="mci-breakdown">
+          <div class="mci-bd-bar"><div class="bd-good" style="width:79%;"></div><div class="bd-bad" style="width:21%;"></div></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Carb phức hợp" data-en="Complex carbs">Carb phức hợp</span><span class="bd-val" style="color:var(--accent-2);">22g</span></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Đường / nước chấm" data-en="Sugars / dipping sauce">Đường / nước chấm</span><span class="bd-val" style="color:#f87171;">6g</span></div>
+          <div class="mci-quality-verdict" style="color:var(--green);" data-vi="✅ Lành mạnh — ít đường, nhiều rau" data-en="✅ Healthy — low sugar, high vegetables">✅ Lành mạnh — ít đường, nhiều rau</div>
+        </div>
       </div>
-      <div class="mci-add-hint" data-vi="Tap từng món để thêm vào ring • Tap lại để bỏ" data-en="Tap each dish to add to ring • Tap again to remove">Tap từng món để thêm vào ring • Tap lại để bỏ</div>
+
+      <!-- Cơm tấm: lots of white rice (refined), caramelized fish sauce sugar, MSG -->
+      <div class="meal-card-interactive" data-kcal="550" data-p="28" data-c="65" data-f="18" data-goodc="30" data-badc="35" data-sodium="high" data-quality="45"
+        data-warn-vi="⚠️ 35g đường ẩn từ nước mắm + cơm trắng|🧂 Nhiều bột ngọt & gia vị" data-warn-en="⚠️ 35g hidden sugar from fish sauce + white rice|🧂 High MSG & seasoning"
+        data-warn-type="sugar|sodium"
+        data-verdict-vi="Cơm trắng + nước mắm đường = carb kém chất lượng" data-verdict-en="White rice + sweet fish sauce = low-quality carbs">
+        <div class="mci-top">
+          <div class="mci-emoji">🍚</div>
+          <div class="mci-info">
+            <div class="mci-name" data-vi="Cơm tấm sườn bì chả" data-en="Cơm tấm sườn bì chả (Broken rice)">Cơm tấm sườn bì chả</div>
+            <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 28g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 30g <span style="font-size:8px">good</span></span><span><span class="dot" style="background:#f87171;"></span> 35g <span style="font-size:8px">sugar</span></span><span><span class="dot" style="background:var(--green);"></span> 18g F</span></div>
+          </div>
+          <div class="mci-right">
+            <div class="mci-kcal">550</div>
+            <div class="mci-check">✓</div>
+          </div>
+        </div>
+        <div class="mci-warnings"></div>
+        <div class="mci-breakdown">
+          <div class="mci-bd-bar"><div class="bd-good" style="width:46%;"></div><div class="bd-bad" style="width:54%;"></div></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Carb phức hợp" data-en="Complex carbs">Carb phức hợp</span><span class="bd-val" style="color:var(--accent-2);">30g</span></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Đường ẩn (nước mắm, cơm)" data-en="Hidden sugars (fish sauce, rice)">Đường ẩn (nước mắm, cơm)</span><span class="bd-val" style="color:#f87171;">35g</span></div>
+          <div class="mci-quality-verdict" style="color:#fbbf24;" data-vi="⚠️ Cơm trắng + nước mắm đường = carb kém" data-en="⚠️ White rice + sweet fish sauce = low-quality carbs">⚠️ Cơm trắng + nước mắm đường = carb kém</div>
+        </div>
+      </div>
+
+      <!-- Bún chả: nước chấm has sugar, grilled meat has MSG marinade -->
+      <div class="meal-card-interactive" data-kcal="320" data-p="22" data-c="38" data-f="9" data-goodc="24" data-badc="14" data-sodium="high" data-quality="62"
+        data-warn-vi="⚠️ Nước chấm pha đường|🧂 Thịt ướp nhiều gia vị" data-warn-en="⚠️ Dipping sauce has sugar|🧂 Meat marinated with heavy seasoning"
+        data-warn-type="sugar|sodium"
+        data-verdict-vi="Bún tốt, nhưng nước chấm + gia vị ướp thêm đường & muối" data-verdict-en="Noodles are fine, but dipping sauce + marinade add sugar & salt">
+        <div class="mci-top">
+          <div class="mci-emoji">🥢</div>
+          <div class="mci-info">
+            <div class="mci-name" data-vi="Bún chả Hà Nội" data-en="Bún chả Hà Nội (Grilled pork noodles)">Bún chả Hà Nội</div>
+            <div class="mci-macros"><span><span class="dot" style="background:var(--accent);"></span> 22g P</span><span><span class="dot" style="background:var(--accent-2);"></span> 24g <span style="font-size:8px">good</span></span><span><span class="dot" style="background:#f87171;"></span> 14g <span style="font-size:8px">sugar</span></span><span><span class="dot" style="background:var(--green);"></span> 9g F</span></div>
+          </div>
+          <div class="mci-right">
+            <div class="mci-kcal">320</div>
+            <div class="mci-check">✓</div>
+          </div>
+        </div>
+        <div class="mci-warnings"></div>
+        <div class="mci-breakdown">
+          <div class="mci-bd-bar"><div class="bd-good" style="width:63%;"></div><div class="bd-bad" style="width:37%;"></div></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Carb phức hợp" data-en="Complex carbs">Carb phức hợp</span><span class="bd-val" style="color:var(--accent-2);">24g</span></div>
+          <div class="mci-bd-row"><span class="bd-label" data-vi="Đường (nước chấm + ướp)" data-en="Sugars (sauce + marinade)">Đường (nước chấm + ướp)</span><span class="bd-val" style="color:#f87171;">14g</span></div>
+          <div class="mci-quality-verdict" style="color:#fbbf24;" data-vi="⚠️ Bún tốt, nhưng nước chấm thêm đường" data-en="⚠️ Noodles fine, but dipping sauce adds sugar">⚠️ Bún tốt, nhưng nước chấm thêm đường</div>
+        </div>
+      </div>
+
+      <div class="mci-add-hint" data-vi="Tap từng món để phân tích carb • Tap lại để bỏ" data-en="Tap each dish to analyze carbs • Tap again to remove">Tap từng món để phân tích carb • Tap lại để bỏ</div>
     </div>
   </div>
 </section>
@@ -947,6 +1541,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Interactive Map -->
+  <div class="order-map-wrap reveal">
+    <div class="order-map-label" data-vi="📍 Top 5 gần bạn" data-en="📍 Top 5 near you">📍 Top 5 gần bạn</div>
+    <div class="order-map" id="orderMap"></div>
+  </div>
 </section>
 
 <!-- ==========================================
@@ -1034,6 +1634,68 @@
   <div class="cuisine-explorer" id="cuisineExplorer"></div>
 </section>
 
+<!-- ==========================================
+     7. RECIPE HUB
+     ========================================== -->
+<section class="recipe-section" id="recipes">
+  <div class="section-label reveal" data-vi="Công thức cộng đồng" data-en="Community Recipes">Công thức cộng đồng</div>
+  <h2 class="section-title reveal" id="recipeTitle">1,200+ món Việt.<br><span style="color:var(--accent-2);">Phân tích dinh dưỡng đầy đủ.</span></h2>
+  <p class="section-sub reveal" data-vi="Cơ sở dữ liệu mở — ai cũng có thể đóng góp công thức. Mỗi món được phân tích: macro, vi chất, chất lượng carb, và cảnh báo ẩn." data-en="Open database — anyone can contribute recipes. Every dish is analyzed: macros, micronutrients, carb quality, and hidden warnings.">Cơ sở dữ liệu mở — ai cũng có thể đóng góp công thức. Mỗi món được phân tích: macro, vi chất, chất lượng carb, và cảnh báo ẩn.</p>
+
+  <div class="recipe-hub" id="recipeHub">
+    <div class="recipe-search-bar">
+      <input class="recipe-search" type="text" id="recipeSearchInput" placeholder="Tìm món... (phở, bún bò, chè...)" data-ph-vi="Tìm món... (phở, bún bò, chè...)" data-ph-en="Search dishes... (pho, bun bo, che...)">
+    </div>
+    <div class="recipe-filter-pills" id="recipePills"></div>
+    <div class="recipe-grid" id="recipeGrid"></div>
+    <div class="recipe-contribute" data-vi="<div class='recipe-contribute-icon'>📝</div>Có công thức hay? <strong>Đóng góp vào database</strong>" data-en="<div class='recipe-contribute-icon'>📝</div>Have a recipe? <strong>Contribute to the database</strong>">
+      <div class="recipe-contribute-icon">📝</div>Có công thức hay? <strong>Đóng góp vào database</strong>
+    </div>
+  </div>
+</section>
+
+<!-- ==========================================
+     8. RESTAURANT VENDOR HUB
+     ========================================== -->
+<section class="vendor-section" id="vendors">
+  <div class="section-label reveal" data-vi="Dành cho nhà hàng" data-en="For Restaurants">Dành cho nhà hàng</div>
+  <h2 class="section-title reveal" id="vendorTitle">Dán nhãn dinh dưỡng<br><span style="color:var(--purple);">toàn bộ menu.</span></h2>
+  <p class="section-sub reveal" data-vi="NomNom phân tích tự động bằng AI. Nhà hàng chỉ cần review và điều chỉnh. Khách hàng tin hơn, đặt nhiều hơn." data-en="NomNom auto-analyzes with AI. Restaurants just review and adjust. Customers trust more, order more.">NomNom phân tích tự động bằng AI. Nhà hàng chỉ cần review và điều chỉnh. Khách hàng tin hơn, đặt nhiều hơn.</p>
+
+  <div class="vendor-demo" id="vendorDemo">
+    <div class="vendor-menu-editor">
+      <div class="vendor-tabs" id="vendorTabs">
+        <button class="vendor-tab active" data-vendor="0" data-vi="🏪 Quán Bà Năm" data-en="🏪 Quán Bà Năm">🏪 Quán Bà Năm</button>
+        <button class="vendor-tab" data-vendor="1" data-vi="🍜 Phở Hòa Pasteur" data-en="🍜 Phở Hòa Pasteur">🍜 Phở Hòa Pasteur</button>
+        <button class="vendor-tab" data-vendor="2" data-vi="🥘 Lẩu Thái Siam" data-en="🥘 Lẩu Thái Siam">🥘 Lẩu Thái Siam</button>
+      </div>
+      <div class="vendor-editor-header">
+        <div class="vendor-editor-title" id="vendorEditorTitle" data-vi="🏪 Quán Bà Năm — Menu" data-en="🏪 Quán Bà Năm — Menu">🏪 Quán Bà Năm — Menu</div>
+        <div class="vendor-editor-badge" data-vi="AI phân tích" data-en="AI analysis">AI phân tích</div>
+      </div>
+      <!-- Menu items populated dynamically by buildVendorMenu() -->
+    </div>
+    <div class="vendor-stats-panel">
+      <div class="vendor-stat-card">
+        <div class="vendor-stat-num" style="color:var(--purple);" id="vendorLabelCount">0</div>
+        <div class="vendor-stat-label" data-vi="/ 5 món đã dán nhãn" data-en="/ 5 items labeled">/ 5 món đã dán nhãn</div>
+        <div class="vendor-progress-bar"><div class="vendor-progress-fill" id="vendorProgressFill" style="width:0%;"></div></div>
+      </div>
+      <div class="vendor-stat-card">
+        <div class="vendor-stat-num" style="color:var(--green);" id="vendorAvgScore">—</div>
+        <div class="vendor-stat-label" data-vi="Điểm dinh dưỡng TB" data-en="Avg nutrition score">Điểm dinh dưỡng TB</div>
+      </div>
+      <div class="vendor-stat-card">
+        <div class="vendor-stat-num" style="color:var(--accent);" id="vendorSugarAlert">—</div>
+        <div class="vendor-stat-label" data-vi="Món có đường ẩn cao" data-en="High hidden sugar items">Món có đường ẩn cao</div>
+      </div>
+      <div class="vendor-cta-badge">
+        <p data-vi="🏪 Miễn phí cho nhà hàng.<br>Dán nhãn = thêm khách hàng NomNom." data-en="🏪 Free for restaurants.<br>Nutrition labels = more NomNom customers.">🏪 Miễn phí cho nhà hàng.<br>Dán nhãn = thêm khách hàng NomNom.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- STATS -->
 <section class="stats-section">
   <div class="stats-grid">
@@ -1087,8 +1749,8 @@ const statementWords = {
 
 const sectionTitles = {
   tracking: {
-    vi: 'Tap bữa ăn. <span style="color:var(--accent);">Xem macro chạy.</span>',
-    en: 'Tap a meal. <span style="color:var(--accent);">Watch macros move.</span>'
+    vi: 'Không phải carb nào cũng <span style="color:var(--accent);">giống nhau.</span>',
+    en: 'Not all carbs are <span style="color:var(--accent);">created equal.</span>'
   },
   gamify: {
     vi: 'Ăn lành. Tích điểm.<br><span style="color:var(--accent);">Mở khoá cheat meal.</span>',
@@ -1109,6 +1771,14 @@ const sectionTitles = {
   cuisine: {
     vi: 'Xây từ đầu.<br><span style="color:var(--accent);">Vì chưa ai làm.</span>',
     en: 'Built from scratch.<br><span style="color:var(--accent);">Because nobody has.</span>'
+  },
+  recipe: {
+    vi: '1,200+ món Việt.<br><span style="color:var(--accent-2);">Phân tích dinh dưỡng đầy đủ.</span>',
+    en: '1,200+ Vietnamese dishes.<br><span style="color:var(--accent-2);">Fully nutrition-analyzed.</span>'
+  },
+  vendor: {
+    vi: 'Dán nhãn dinh dưỡng<br><span style="color:var(--purple);">toàn bộ menu.</span>',
+    en: 'Nutrition-label<br><span style="color:var(--purple);">your entire menu.</span>'
   },
   cta: {
     vi: 'Sẵn sàng ăn <span style="color:var(--accent);"><em>thông minh</em></span> hơn?',
@@ -1149,7 +1819,21 @@ function setLang(lang) {
   document.getElementById('orderTitle').innerHTML = sectionTitles.order[lang];
   document.getElementById('groupTitle').innerHTML = sectionTitles.group[lang];
   document.getElementById('cuisineTitle').innerHTML = sectionTitles.cuisine[lang];
+  document.getElementById('recipeTitle').innerHTML = sectionTitles.recipe[lang];
+  document.getElementById('vendorTitle').innerHTML = sectionTitles.vendor[lang];
   document.getElementById('ctaTitle').innerHTML = sectionTitles.cta[lang];
+
+  // Recipe search placeholder
+  const recipeInput = document.getElementById('recipeSearchInput');
+  if (recipeInput) recipeInput.placeholder = recipeInput.getAttribute('data-ph-' + lang);
+
+  // Profile select options (have data-vi/data-en on <option> tags)
+  document.querySelectorAll('#profileModule select option[data-en]').forEach(opt => {
+    opt.textContent = opt.getAttribute('data-' + lang);
+  });
+
+  // Rebuild recipe hub
+  if (typeof buildRecipeHub === 'function') buildRecipeHub();
 
   // Statement words
   rebuildStatement(lang);
@@ -1220,9 +1904,105 @@ window.addEventListener('scroll', () => {
 });
 
 // =============================================
+// 0. PROFILE CREATION MODULE (BMI + CALORIE CALC)
+// =============================================
+function calculateProfile() {
+  const gender = document.getElementById('profGender').value;
+  const age = parseInt(document.getElementById('profAge').value) || 25;
+  const height = parseInt(document.getElementById('profHeight').value) || 165;
+  const weight = parseInt(document.getElementById('profWeight').value) || 60;
+  const activity = parseFloat(document.getElementById('profActivity').value) || 1.55;
+
+  // BMI
+  const heightM = height / 100;
+  const bmi = weight / (heightM * heightM);
+  const bmiRound = Math.round(bmi * 10) / 10;
+
+  // BMI category & color
+  let bmiCatVi, bmiCatEn, bmiColor, bmiBarPos;
+  if (bmi < 18.5) { bmiCatVi = 'Thiếu cân'; bmiCatEn = 'Underweight'; bmiColor = 'var(--blue)'; bmiBarPos = (bmi / 18.5) * 25; }
+  else if (bmi < 25) { bmiCatVi = 'Bình thường'; bmiCatEn = 'Normal'; bmiColor = 'var(--green)'; bmiBarPos = 25 + ((bmi - 18.5) / 6.5) * 25; }
+  else if (bmi < 30) { bmiCatVi = 'Thừa cân'; bmiCatEn = 'Overweight'; bmiColor = '#fbbf24'; bmiBarPos = 50 + ((bmi - 25) / 5) * 25; }
+  else { bmiCatVi = 'Béo phì'; bmiCatEn = 'Obese'; bmiColor = 'var(--red)'; bmiBarPos = Math.min(97, 75 + ((bmi - 30) / 10) * 25); }
+
+  // Mifflin-St Jeor BMR
+  let bmr;
+  if (gender === 'male') bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+  else bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+
+  // TDEE (Total Daily Energy Expenditure)
+  const tdee = Math.round(bmr * activity);
+
+  // Macro split: 30% protein, 40% carbs, 30% fat
+  const proteinG = Math.round((tdee * 0.30) / 4);
+  const carbsG = Math.round((tdee * 0.40) / 4);
+  const fatG = Math.round((tdee * 0.30) / 9);
+
+  // Update BMI display
+  const bmiNumEl = document.getElementById('bmiNumber');
+  const bmiCatEl = document.getElementById('bmiCategory');
+  const bmiMarker = document.getElementById('bmiMarker');
+  bmiNumEl.textContent = bmiRound;
+  bmiNumEl.style.color = bmiColor;
+  bmiCatEl.style.color = bmiColor;
+  bmiCatEl.setAttribute('data-vi', bmiCatVi + ' — BMI ' + bmiRound);
+  bmiCatEl.setAttribute('data-en', bmiCatEn + ' — BMI ' + bmiRound);
+  bmiCatEl.textContent = (currentLang === 'en' ? bmiCatEn : bmiCatVi) + ' — BMI ' + bmiRound;
+  bmiMarker.style.left = bmiBarPos + '%';
+  bmiMarker.style.background = bmiColor;
+
+  // Update calorie target cards
+  document.getElementById('ctKcal').textContent = tdee.toLocaleString();
+  document.getElementById('ctProtein').textContent = proteinG;
+  document.getElementById('ctCarbs').textContent = carbsG;
+  document.getElementById('ctFat').textContent = fatG;
+
+  // Show result
+  const resultEl = document.getElementById('profileResult');
+  resultEl.classList.add('visible');
+
+  // Update trkMax dynamically
+  trkMax.kcal = tdee;
+  trkMax.protein = proteinG;
+  trkMax.carbs = carbsG;
+  trkMax.fat = fatG;
+
+  // Update ring label
+  document.querySelector('.ring-label').textContent = '/ ' + tdee.toLocaleString() + ' kcal';
+
+  // Update macro bar max labels
+  const maxLabels = document.querySelectorAll('.macro-bar-max');
+  if (maxLabels[0]) maxLabels[0].textContent = '/ ' + proteinG + 'g';
+  if (maxLabels[1]) maxLabels[1].textContent = '/ ' + carbsG + 'g';
+  if (maxLabels[2]) maxLabels[2].textContent = '/ ' + fatG + 'g';
+
+  // Refresh tracking rings with new maxes
+  updateTrackingUI();
+
+  // Collapse form, show edit button
+  const form = document.getElementById('profileForm');
+  form.style.display = 'none';
+  document.getElementById('profileEditBtn').style.display = 'block';
+  document.getElementById('profileSub').setAttribute('data-vi', tdee + ' kcal/ngày • BMI ' + bmiRound);
+  document.getElementById('profileSub').setAttribute('data-en', tdee + ' kcal/day • BMI ' + bmiRound);
+  document.getElementById('profileSub').textContent = (currentLang === 'en' ? tdee + ' kcal/day • BMI ' + bmiRound : tdee + ' kcal/ngày • BMI ' + bmiRound);
+}
+
+document.getElementById('profileSubmitBtn').addEventListener('click', calculateProfile);
+
+document.getElementById('profileEditBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const form = document.getElementById('profileForm');
+  form.style.display = 'grid';
+  document.getElementById('profileEditBtn').style.display = 'none';
+  document.getElementById('profileResult').classList.remove('visible');
+  document.getElementById('profileSub').textContent = currentLang === 'en' ? 'Calculate your BMI & recommended daily calories' : 'Tính BMI & lượng calo khuyến nghị hàng ngày';
+});
+
+// =============================================
 // 1. INTERACTIVE MACRO TRACKING
 // =============================================
-const trkState = { kcal: 0, protein: 0, carbs: 0, fat: 0 };
+const trkState = { kcal: 0, protein: 0, carbs: 0, fat: 0, goodCarbs: 0, badCarbs: 0, qualitySum: 0, mealCount: 0 };
 const trkMax = { kcal: 1850, protein: 120, carbs: 220, fat: 65 };
 
 function updateTrackingUI() {
@@ -1233,17 +2013,77 @@ function updateTrackingUI() {
 
   // Bars
   document.getElementById('trkProteinBar').style.height = Math.min(100, (trkState.protein / trkMax.protein) * 100) + '%';
-  document.getElementById('trkCarbsBar').style.height = Math.min(100, (trkState.carbs / trkMax.carbs) * 100) + '%';
+  const totalCarbPerc = Math.min(100, (trkState.carbs / trkMax.carbs) * 100);
+  const goodCarbPerc = trkState.carbs > 0 ? Math.min(100, (trkState.goodCarbs / trkMax.carbs) * 100) : 0;
+  const badCarbPerc = trkState.carbs > 0 ? Math.min(100, (trkState.badCarbs / trkMax.carbs) * 100) : 0;
+  document.getElementById('trkCarbsBar').style.height = goodCarbPerc + '%';
+  document.getElementById('trkBadCarbBar').style.height = badCarbPerc + '%';
   document.getElementById('trkFatBar').style.height = Math.min(100, (trkState.fat / trkMax.fat) * 100) + '%';
+
+  // Carb split labels
+  document.getElementById('trkGoodCarbLabel').textContent = trkState.goodCarbs + 'g';
+  document.getElementById('trkBadCarbLabel').textContent = trkState.badCarbs + 'g';
 
   // Rings
   const pCirc = 2 * Math.PI * 72;
   const cCirc = 2 * Math.PI * 88;
   const fCirc = 2 * Math.PI * 104;
   document.getElementById('trkRingProtein').style.strokeDashoffset = pCirc * (1 - Math.min(1, trkState.protein / trkMax.protein));
-  document.getElementById('trkRingCarbs').style.strokeDashoffset = cCirc * (1 - Math.min(1, trkState.carbs / trkMax.carbs));
+  // Good carb ring
+  const goodCarbRatio = Math.min(1, trkState.goodCarbs / trkMax.carbs);
+  document.getElementById('trkRingCarbs').style.strokeDashoffset = cCirc * (1 - goodCarbRatio);
+  // Bad carb ring (shows total so bad portion appears after good)
+  const totalCarbRatio = Math.min(1, trkState.carbs / trkMax.carbs);
+  document.getElementById('trkRingBadCarb').style.strokeDashoffset = cCirc * (1 - totalCarbRatio);
   document.getElementById('trkRingFat').style.strokeDashoffset = fCirc * (1 - Math.min(1, trkState.fat / trkMax.fat));
+
+  // Quality score
+  const qRing = document.getElementById('trkQualityRing');
+  const qNum = document.getElementById('trkQualityNum');
+  const qLabel = document.getElementById('trkQualityLabel');
+  const qCirc = 2 * Math.PI * 20;
+  if (trkState.mealCount > 0) {
+    const avgQ = Math.round(trkState.qualitySum / trkState.mealCount);
+    qNum.textContent = avgQ;
+    qRing.style.strokeDashoffset = qCirc * (1 - avgQ / 100);
+    if (avgQ >= 70) { qRing.style.stroke = 'var(--green)'; qNum.style.fill = 'var(--green)'; }
+    else if (avgQ >= 50) { qRing.style.stroke = '#fbbf24'; qNum.style.fill = '#fbbf24'; }
+    else { qRing.style.stroke = '#f87171'; qNum.style.fill = '#f87171'; }
+    const badPerc = trkState.carbs > 0 ? Math.round((trkState.badCarbs / trkState.carbs) * 100) : 0;
+    const verdictVi = badPerc > 50 ? 'Quá nhiều đường tinh — chọn món khác' : badPerc > 25 ? 'Hơi nhiều đường — cân nhắc giảm' : 'Tỷ lệ carb tốt!';
+    const verdictEn = badPerc > 50 ? 'Too much refined sugar — swap a dish' : badPerc > 25 ? 'Some hidden sugars — consider reducing' : 'Good carb ratio!';
+    const labelStrong = qLabel.querySelector('strong');
+    const labelSpan = qLabel.querySelector('span');
+    if (labelStrong) { labelStrong.setAttribute('data-vi', 'Chất lượng: ' + avgQ + '/100'); labelStrong.setAttribute('data-en', 'Quality: ' + avgQ + '/100'); labelStrong.textContent = (currentLang === 'en' ? 'Quality: ' : 'Chất lượng: ') + avgQ + '/100'; }
+    if (labelSpan) { labelSpan.setAttribute('data-vi', verdictVi); labelSpan.setAttribute('data-en', verdictEn); labelSpan.textContent = currentLang === 'en' ? verdictEn : verdictVi; }
+  } else {
+    qNum.textContent = '—';
+    qRing.style.strokeDashoffset = qCirc;
+    qRing.style.stroke = 'var(--green)';
+    qNum.style.fill = 'var(--text)';
+    const labelStrong = qLabel.querySelector('strong');
+    const labelSpan = qLabel.querySelector('span');
+    if (labelStrong) { labelStrong.textContent = currentLang === 'en' ? 'Quality' : 'Chất lượng'; }
+    if (labelSpan) { labelSpan.textContent = currentLang === 'en' ? 'Add meals to see score' : 'Thêm món để xem điểm'; }
+  }
 }
+
+// Populate warning tags on load
+document.querySelectorAll('.meal-card-interactive').forEach(card => {
+  const warnContainer = card.querySelector('.mci-warnings');
+  const warnTexts = (card.dataset.warnVi || '').split('|');
+  const warnTextsEn = (card.dataset.warnEn || '').split('|');
+  const warnTypes = (card.dataset.warnType || '').split('|');
+  warnTexts.forEach((txt, i) => {
+    if (!txt) return;
+    const tag = document.createElement('span');
+    tag.className = 'mci-warn-tag ' + (warnTypes[i] || '');
+    tag.setAttribute('data-vi', txt);
+    tag.setAttribute('data-en', warnTextsEn[i] || txt);
+    tag.textContent = txt;
+    warnContainer.appendChild(tag);
+  });
+});
 
 function spawnParticles(x, y, color) {
   const container = document.getElementById('particleContainer');
@@ -1268,24 +2108,38 @@ document.querySelectorAll('.meal-card-interactive').forEach(card => {
     const p = parseInt(card.dataset.p);
     const c = parseInt(card.dataset.c);
     const f = parseInt(card.dataset.f);
+    const goodc = parseInt(card.dataset.goodc || 0);
+    const badc = parseInt(card.dataset.badc || 0);
+    const quality = parseInt(card.dataset.quality || 50);
 
     if (card.classList.contains('added')) {
       card.classList.remove('added');
       trkState.kcal -= kcal; trkState.protein -= p; trkState.carbs -= c; trkState.fat -= f;
+      trkState.goodCarbs -= goodc; trkState.badCarbs -= badc;
+      trkState.qualitySum -= quality; trkState.mealCount--;
     } else {
       card.classList.add('added');
       trkState.kcal += kcal; trkState.protein += p; trkState.carbs += c; trkState.fat += f;
+      trkState.goodCarbs += goodc; trkState.badCarbs += badc;
+      trkState.qualitySum += quality; trkState.mealCount++;
 
-      // Flash effect
+      // Flash effect — show quality instead of kcal for bad meals
       const flash = document.getElementById('mealFlash');
-      flash.textContent = '+' + kcal;
+      if (quality < 40) {
+        flash.textContent = '⚠️ ' + quality + '/100';
+        flash.style.color = '#f87171';
+      } else {
+        flash.textContent = '+' + kcal;
+        flash.style.color = 'var(--green)';
+      }
       flash.classList.remove('show');
       void flash.offsetWidth;
       flash.classList.add('show');
 
-      // Particles
+      // Particles — red for bad quality, orange for ok, green for good
       const rect = card.getBoundingClientRect();
-      spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, '#FF6A28');
+      const pColor = quality < 40 ? '#f87171' : quality < 70 ? '#fbbf24' : '#34d399';
+      spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, pColor);
     }
     updateTrackingUI();
   });
@@ -1644,6 +2498,612 @@ const statsObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.3 });
 document.querySelectorAll('.stat-item').forEach(s => statsObserver.observe(s));
+
+// =============================================
+// THEME TOGGLE
+// =============================================
+document.getElementById('themeToggle').addEventListener('click', () => {
+  document.body.classList.toggle('light-mode');
+  // Update map tiles if map exists
+  if (typeof updateMapTheme === 'function') updateMapTheme();
+});
+
+// =============================================
+// 7. RECIPE HUB
+// =============================================
+const recipeDB = [
+  // === SOUPS (12) ===
+  { emoji:'🍜', name:'Phở bò tái chín', nameEn:'Beef pho (rare & well-done)', region:'Hà Nội', regionEn:'Hanoi', kcal:480, p:32, c:52, f:12, goodC:42, badC:10, score:72, cat:'soup',
+    warn:{vi:'Nước dùng nhiều natri',en:'High-sodium broth'}, warnType:'sodium',
+    ingredients:['Bánh phở','Bò tái','Hành','Rau quế','Nước dùng xương'],ingredientsEn:['Rice noodles','Rare beef','Onion','Thai basil','Bone broth'] },
+  { emoji:'🍜', name:'Phở gà', nameEn:'Chicken pho', region:'Hà Nội', regionEn:'Hanoi', kcal:380, p:28, c:48, f:6, goodC:40, badC:8, score:80, cat:'soup',
+    warn:{vi:'Nhẹ hơn phở bò, ít béo',en:'Lighter than beef pho, low fat'}, warnType:'good',
+    ingredients:['Bánh phở','Gà ta','Hành lá','Rau mùi','Nước dùng gà'],ingredientsEn:['Rice noodles','Free-range chicken','Scallion','Cilantro','Chicken broth'] },
+  { emoji:'🍲', name:'Bún bò Huế', nameEn:'Hue beef noodle soup', region:'Huế', regionEn:'Hue', kcal:520, p:30, c:48, f:16, goodC:36, badC:12, score:68, cat:'soup',
+    warn:{vi:'Nhiều mắm ruốc = natri',en:'Lots of shrimp paste = sodium'}, warnType:'sodium',
+    ingredients:['Bún','Bò bắp','Giò heo','Sả','Mắm ruốc'],ingredientsEn:['Vermicelli','Beef shank','Pork knuckle','Lemongrass','Shrimp paste'] },
+  { emoji:'🥒', name:'Canh chua cá lóc', nameEn:'Sour fish soup', region:'Miền Tây', regionEn:'Mekong Delta', kcal:180, p:22, c:12, f:4, goodC:10, badC:2, score:90, cat:'soup',
+    warn:{vi:'Ít calo, nhiều protein',en:'Low calorie, high protein'}, warnType:'good',
+    ingredients:['Cá lóc','Cà chua','Dứa','Me','Rau ngò om'],ingredientsEn:['Snakehead fish','Tomato','Pineapple','Tamarind','Rice paddy herb'] },
+  { emoji:'🍲', name:'Bún riêu cua', nameEn:'Crab noodle soup', region:'Hà Nội', regionEn:'Hanoi', kcal:420, p:24, c:44, f:14, goodC:34, badC:10, score:70, cat:'soup',
+    warn:{vi:'Riêu cua + cà chua = natri vừa',en:'Crab paste + tomato = moderate sodium'}, warnType:'sodium',
+    ingredients:['Bún','Riêu cua','Đậu phụ','Cà chua','Rau sống'],ingredientsEn:['Vermicelli','Crab paste','Tofu','Tomato','Fresh greens'] },
+  { emoji:'🍜', name:'Hủ tiếu Nam Vang', nameEn:'Phnom Penh noodle soup', region:'Sài Gòn', regionEn:'Saigon', kcal:450, p:26, c:50, f:14, goodC:38, badC:12, score:66, cat:'soup',
+    warn:{vi:'Nước dùng heo nhiều mỡ',en:'Pork broth high in fat'}, warnType:'sodium',
+    ingredients:['Hủ tiếu','Thịt heo','Tôm','Gan','Giá đỗ'],ingredientsEn:['Rice noodles','Pork','Shrimp','Liver','Bean sprouts'] },
+  { emoji:'🍲', name:'Mì Quảng', nameEn:'Quang noodles', region:'Đà Nẵng', regionEn:'Da Nang', kcal:460, p:28, c:52, f:12, goodC:40, badC:12, score:72, cat:'soup',
+    warn:{vi:'Bún + đậu phộng = carb + chất béo tốt',en:'Noodles + peanuts = carbs + healthy fats'}, warnType:'good',
+    ingredients:['Mì Quảng','Tôm','Thịt heo','Đậu phộng','Rau sống'],ingredientsEn:['Quang noodles','Shrimp','Pork','Peanuts','Fresh herbs'] },
+  { emoji:'🥣', name:'Cháo lòng', nameEn:'Offal rice porridge', region:'Toàn quốc', regionEn:'Nationwide', kcal:350, p:20, c:42, f:10, goodC:30, badC:12, score:58, cat:'soup',
+    warn:{vi:'Cháo trắng = carb tinh, nội tạng = cholesterol',en:'White porridge = refined carb, offal = cholesterol'}, warnType:'sugar',
+    ingredients:['Gạo','Lòng heo','Huyết','Hành phi','Quẩy'],ingredientsEn:['Rice','Pork offal','Blood pudding','Fried shallots','Fried dough'] },
+  { emoji:'🍜', name:'Bún mắm', nameEn:'Fermented fish noodle soup', region:'Miền Tây', regionEn:'Mekong Delta', kcal:480, p:26, c:46, f:18, goodC:34, badC:12, score:62, cat:'soup',
+    warn:{vi:'Mắm = natri cực cao',en:'Fermented fish = very high sodium'}, warnType:'sodium',
+    ingredients:['Bún','Mắm cá linh','Cà tím','Tôm','Thịt heo'],ingredientsEn:['Vermicelli','Fermented fish paste','Eggplant','Shrimp','Pork'] },
+  { emoji:'🍲', name:'Lẩu thái hải sản', nameEn:'Thai-style seafood hotpot', region:'Toàn quốc', regionEn:'Nationwide', kcal:380, p:34, c:18, f:16, goodC:14, badC:4, score:82, cat:'soup',
+    warn:{vi:'Protein cao, ít carb — tốt cho keto',en:'High protein, low carb — keto-friendly'}, warnType:'good',
+    ingredients:['Tôm','Mực','Cá','Nấm','Rau muống'],ingredientsEn:['Shrimp','Squid','Fish','Mushrooms','Morning glory'] },
+  { emoji:'🥣', name:'Súp cua', nameEn:'Crab soup', region:'Sài Gòn', regionEn:'Saigon', kcal:220, p:14, c:24, f:8, goodC:12, badC:12, score:55, cat:'soup',
+    warn:{vi:'Bột bắp = carb tinh, trứng cút = protein tốt',en:'Cornstarch = refined carb, quail egg = good protein'}, warnType:'sugar',
+    ingredients:['Cua','Trứng cút','Bột bắp','Nấm','Ngò'],ingredientsEn:['Crab','Quail eggs','Cornstarch','Mushrooms','Cilantro'] },
+  { emoji:'🍜', name:'Bún thang', nameEn:'Hanoi mixed noodle soup', region:'Hà Nội', regionEn:'Hanoi', kcal:390, p:26, c:42, f:10, goodC:34, badC:8, score:76, cat:'soup',
+    warn:{vi:'Nước dùng trong, ít dầu mỡ',en:'Clear broth, low in oil'}, warnType:'good',
+    ingredients:['Bún','Giò lụa','Trứng','Gà xé','Mắm tôm'],ingredientsEn:['Vermicelli','Pork sausage','Egg','Shredded chicken','Shrimp paste'] },
+
+  // === RICE DISHES (8) ===
+  { emoji:'🍚', name:'Cơm tấm sườn bì chả', nameEn:'Broken rice with pork', region:'Sài Gòn', regionEn:'Saigon', kcal:650, p:35, c:68, f:22, goodC:30, badC:38, score:45, cat:'rice',
+    warn:{vi:'Đường ẩn từ nước mắm + cơm',en:'Hidden sugar from fish sauce + rice'}, warnType:'sugar',
+    ingredients:['Gạo tấm','Sườn nướng','Bì','Chả','Mỡ hành'],ingredientsEn:['Broken rice','Grilled pork','Pork skin','Meatloaf','Scallion oil'] },
+  { emoji:'🍛', name:'Cari gà', nameEn:'Vietnamese chicken curry', region:'Miền Nam', regionEn:'Southern VN', kcal:420, p:28, c:32, f:20, goodC:24, badC:8, score:74, cat:'rice',
+    warn:{vi:'Nước cốt dừa nhiều chất béo',en:'Coconut milk high in fat'}, warnType:'sodium',
+    ingredients:['Gà','Khoai lang','Cà rốt','Nước cốt dừa','Sả'],ingredientsEn:['Chicken','Sweet potato','Carrot','Coconut milk','Lemongrass'] },
+  { emoji:'🍚', name:'Cơm gà Hội An', nameEn:'Hoi An chicken rice', region:'Hội An', regionEn:'Hoi An', kcal:520, p:30, c:60, f:14, goodC:35, badC:25, score:60, cat:'rice',
+    warn:{vi:'Cơm nhuộm nghệ = ít chất xơ',en:'Turmeric rice = low fiber'}, warnType:'sugar',
+    ingredients:['Cơm nghệ','Gà xé','Hành phi','Rau răm','Nước mắm'],ingredientsEn:['Turmeric rice','Shredded chicken','Fried shallots','Vietnamese coriander','Fish sauce'] },
+  { emoji:'🍚', name:'Cơm chiên Dương Châu', nameEn:'Yang Chow fried rice', region:'Toàn quốc', regionEn:'Nationwide', kcal:580, p:20, c:62, f:24, goodC:22, badC:40, score:38, cat:'rice',
+    warn:{vi:'Chiên dầu + cơm trắng = calo rỗng',en:'Fried in oil + white rice = empty calories'}, warnType:'sugar',
+    ingredients:['Cơm nguội','Trứng','Lạp xưởng','Tôm','Đậu Hà Lan'],ingredientsEn:['Day-old rice','Egg','Chinese sausage','Shrimp','Peas'] },
+  { emoji:'🐟', name:'Cá kho tộ', nameEn:'Caramelized clay pot fish', region:'Miền Tây', regionEn:'Mekong Delta', kcal:380, p:32, c:18, f:16, goodC:4, badC:14, score:60, cat:'rice',
+    warn:{vi:'Kho nước màu = đường caramel',en:'Caramel braising = caramelized sugar'}, warnType:'sugar',
+    ingredients:['Cá basa','Nước màu','Nước mắm','Tiêu','Hành'],ingredientsEn:['Pangasius','Caramel sauce','Fish sauce','Pepper','Shallots'] },
+  { emoji:'🥩', name:'Thịt kho hột vịt', nameEn:'Braised pork with duck eggs', region:'Miền Nam', regionEn:'Southern VN', kcal:520, p:30, c:22, f:32, goodC:4, badC:18, score:48, cat:'rice',
+    warn:{vi:'Nước dừa + nước màu = đường ẩn, nhiều mỡ',en:'Coconut juice + caramel = hidden sugar, high fat'}, warnType:'sugar',
+    ingredients:['Thịt ba chỉ','Hột vịt','Nước dừa','Nước mắm','Nước màu'],ingredientsEn:['Pork belly','Duck eggs','Coconut juice','Fish sauce','Caramel sauce'] },
+  { emoji:'🍚', name:'Cơm sườn nướng', nameEn:'Grilled pork chop rice', region:'Toàn quốc', regionEn:'Nationwide', kcal:600, p:32, c:64, f:20, goodC:28, badC:36, score:48, cat:'rice',
+    warn:{vi:'Sườn ướp đường + cơm trắng',en:'Sugar-marinated pork + white rice'}, warnType:'sugar',
+    ingredients:['Cơm trắng','Sườn nướng','Dưa leo','Đồ chua','Nước mắm'],ingredientsEn:['White rice','Grilled pork chop','Cucumber','Pickled veggies','Fish sauce'] },
+  { emoji:'🌿', name:'Cơm chay thập cẩm', nameEn:'Mixed vegetarian rice', region:'Toàn quốc', regionEn:'Nationwide', kcal:380, p:14, c:52, f:10, goodC:40, badC:12, score:82, cat:'vegetarian',
+    warn:{vi:'Nhiều rau + đậu hũ = protein thực vật tốt',en:'High veg + tofu = good plant protein'}, warnType:'good',
+    ingredients:['Cơm trắng','Đậu hũ','Nấm','Rau cải','Tương'],ingredientsEn:['White rice','Tofu','Mushrooms','Bok choy','Soy sauce'] },
+
+  // === STREET FOOD (10) ===
+  { emoji:'🥖', name:'Bánh mì thịt', nameEn:'Vietnamese baguette', region:'Sài Gòn', regionEn:'Saigon', kcal:520, p:22, c:58, f:18, goodC:20, badC:38, score:52, cat:'street',
+    warn:{vi:'Bánh mì trắng = carb tinh',en:'White baguette = refined carb'}, warnType:'sugar',
+    ingredients:['Bánh mì','Chả lụa','Pa-tê','Đồ chua','Dưa leo'],ingredientsEn:['Baguette','Pork sausage','Pâté','Pickled veggies','Cucumber'] },
+  { emoji:'🥟', name:'Bánh xèo', nameEn:'Sizzling crepe', region:'Miền Nam', regionEn:'Southern VN', kcal:450, p:16, c:42, f:24, goodC:20, badC:22, score:55, cat:'street',
+    warn:{vi:'Chiên giòn = nhiều dầu, bột gạo = carb tinh',en:'Deep-fried = high oil, rice flour = refined carb'}, warnType:'sugar',
+    ingredients:['Bột gạo','Tôm','Thịt heo','Giá đỗ','Rau sống'],ingredientsEn:['Rice flour','Shrimp','Pork','Bean sprouts','Fresh herbs'] },
+  { emoji:'🫔', name:'Bánh cuốn', nameEn:'Steamed rice rolls', region:'Hà Nội', regionEn:'Hanoi', kcal:280, p:14, c:38, f:6, goodC:30, badC:8, score:78, cat:'street',
+    warn:{vi:'Hấp = ít dầu, protein từ thịt',en:'Steamed = low oil, good protein from meat'}, warnType:'good',
+    ingredients:['Bột gạo','Thịt heo','Mộc nhĩ','Hành phi','Nước mắm'],ingredientsEn:['Rice flour','Pork','Wood ear mushroom','Fried shallots','Fish sauce'] },
+  { emoji:'🍢', name:'Bò lá lốt', nameEn:'Beef in betel leaf', region:'Miền Nam', regionEn:'Southern VN', kcal:320, p:24, c:8, f:22, goodC:6, badC:2, score:72, cat:'grilled',
+    warn:{vi:'Protein tốt, ít carb, béo vừa',en:'Good protein, low carb, moderate fat'}, warnType:'good',
+    ingredients:['Bò xay','Lá lốt','Sả','Mỡ chài','Đậu phộng'],ingredientsEn:['Ground beef','Betel leaf','Lemongrass','Caul fat','Peanuts'] },
+  { emoji:'🥘', name:'Bánh khọt', nameEn:'Mini savory pancakes', region:'Vũng Tàu', regionEn:'Vung Tau', kcal:350, p:14, c:36, f:16, goodC:18, badC:18, score:58, cat:'street',
+    warn:{vi:'Chiên dầu + bột gạo = carb tinh',en:'Pan-fried + rice flour = refined carb'}, warnType:'sugar',
+    ingredients:['Bột gạo','Nước cốt dừa','Tôm','Hành lá','Rau sống'],ingredientsEn:['Rice flour','Coconut milk','Shrimp','Scallion','Fresh herbs'] },
+  { emoji:'🍡', name:'Nem lụi', nameEn:'Grilled pork skewers', region:'Huế', regionEn:'Hue', kcal:340, p:22, c:28, f:14, goodC:18, badC:10, score:68, cat:'grilled',
+    warn:{vi:'Ướp mắm đường, ăn kèm bánh tráng',en:'Fish sauce + sugar marinade, served with rice paper'}, warnType:'sodium',
+    ingredients:['Thịt heo','Mỡ','Sả','Bánh tráng','Rau sống'],ingredientsEn:['Pork','Fat','Lemongrass','Rice paper','Fresh herbs'] },
+  { emoji:'🌯', name:'Bò bía', nameEn:'Popiah rolls', region:'Sài Gòn', regionEn:'Saigon', kcal:180, p:8, c:22, f:6, goodC:14, badC:8, score:72, cat:'street',
+    warn:{vi:'Nhẹ bụng, ít calo',en:'Light, low calorie'}, warnType:'good',
+    ingredients:['Bánh tráng','Lạp xưởng','Trứng','Jicama','Rau thơm'],ingredientsEn:['Rice paper','Chinese sausage','Egg','Jicama','Fresh herbs'] },
+  { emoji:'🥞', name:'Bánh tráng nướng', nameEn:'Vietnamese pizza', region:'Đà Lạt', regionEn:'Da Lat', kcal:380, p:16, c:40, f:16, goodC:14, badC:26, score:42, cat:'street',
+    warn:{vi:'Sốt mayo + trứng cút + tương ớt = nhiều phụ gia',en:'Mayo + quail egg + chili sauce = lots of additives'}, warnType:'sugar',
+    ingredients:['Bánh tráng','Trứng cút','Bò khô','Hành phi','Sốt tương'],ingredientsEn:['Rice paper','Quail eggs','Beef jerky','Fried shallots','Soy sauce'] },
+  { emoji:'🥠', name:'Chả giò (ram)', nameEn:'Fried spring rolls', region:'Miền Nam', regionEn:'Southern VN', kcal:360, p:14, c:32, f:20, goodC:12, badC:20, score:45, cat:'street',
+    warn:{vi:'Chiên ngập dầu = béo, vỏ bánh tráng = carb tinh',en:'Deep-fried = fatty, rice paper wrapper = refined carb'}, warnType:'sugar',
+    ingredients:['Bánh tráng','Thịt heo','Miến','Mộc nhĩ','Cà rốt'],ingredientsEn:['Rice paper','Pork','Glass noodles','Wood ear mushroom','Carrot'] },
+  { emoji:'🧆', name:'Bánh giò', nameEn:'Pyramid rice dumpling', region:'Hà Nội', regionEn:'Hanoi', kcal:320, p:12, c:44, f:10, goodC:28, badC:16, score:58, cat:'street',
+    warn:{vi:'Bột gạo hấp = carb mịn, ít rau',en:'Steamed rice flour = fine carb, low vegetables'}, warnType:'sugar',
+    ingredients:['Bột gạo','Thịt heo','Mộc nhĩ','Hành','Lá chuối'],ingredientsEn:['Rice flour','Pork','Wood ear mushroom','Shallots','Banana leaf'] },
+
+  // === GRILLED (6) ===
+  { emoji:'🍗', name:'Gà nướng mật ong', nameEn:'Honey grilled chicken', region:'Toàn quốc', regionEn:'Nationwide', kcal:420, p:36, c:16, f:22, goodC:4, badC:12, score:65, cat:'grilled',
+    warn:{vi:'Mật ong = đường, da gà = mỡ',en:'Honey = sugar, chicken skin = fat'}, warnType:'sugar',
+    ingredients:['Gà','Mật ong','Tỏi','Sả','Ớt'],ingredientsEn:['Chicken','Honey','Garlic','Lemongrass','Chili'] },
+  { emoji:'🦐', name:'Tôm nướng muối ớt', nameEn:'Salt & chili grilled shrimp', region:'Miền Nam', regionEn:'Southern VN', kcal:220, p:28, c:4, f:10, goodC:3, badC:1, score:92, cat:'grilled',
+    warn:{vi:'Protein cao, gần 0 carb — rất tốt',en:'High protein, near-zero carb — excellent'}, warnType:'good',
+    ingredients:['Tôm sú','Muối','Ớt','Chanh','Rau răm'],ingredientsEn:['Tiger shrimp','Salt','Chili','Lime','Vietnamese coriander'] },
+  { emoji:'🥩', name:'Bò nướng lá lốt', nameEn:'Grilled beef betel leaf', region:'Sài Gòn', regionEn:'Saigon', kcal:340, p:26, c:6, f:24, goodC:4, badC:2, score:74, cat:'grilled',
+    warn:{vi:'Nhiều protein, ít carb',en:'High protein, low carb'}, warnType:'good',
+    ingredients:['Bò xay','Lá lốt','Hành tím','Sả','Mỡ chài'],ingredientsEn:['Ground beef','Betel leaf','Shallots','Lemongrass','Caul fat'] },
+
+  // === NOODLE DISHES (dry/stir-fried) (5) ===
+  { emoji:'🥢', name:'Bún chả Hà Nội', nameEn:'Grilled pork noodles', region:'Hà Nội', regionEn:'Hanoi', kcal:450, p:26, c:42, f:16, goodC:30, badC:12, score:68, cat:'noodle',
+    warn:{vi:'Nước chấm pha đường',en:'Dipping sauce has sugar'}, warnType:'sugar',
+    ingredients:['Bún','Thịt nướng','Chả viên','Rau sống','Nước chấm'],ingredientsEn:['Vermicelli','Grilled pork','Pork patties','Fresh herbs','Dipping sauce'] },
+  { emoji:'🍖', name:'Bún thịt nướng', nameEn:'Grilled pork vermicelli', region:'Miền Nam', regionEn:'Southern VN', kcal:480, p:28, c:48, f:16, goodC:34, badC:14, score:66, cat:'noodle',
+    warn:{vi:'Thịt ướp đường + nước mắm',en:'Sugar + fish sauce marinated meat'}, warnType:'sugar',
+    ingredients:['Bún','Thịt nướng','Chả giò','Đậu phộng','Rau sống'],ingredientsEn:['Vermicelli','Grilled pork','Spring rolls','Peanuts','Fresh herbs'] },
+  { emoji:'🥡', name:'Phở xào bò', nameEn:'Stir-fried pho with beef', region:'Hà Nội', regionEn:'Hanoi', kcal:520, p:26, c:58, f:18, goodC:30, badC:28, score:52, cat:'noodle',
+    warn:{vi:'Xào dầu + bánh phở = carb + dầu',en:'Stir-fried noodles = carb + oil'}, warnType:'sugar',
+    ingredients:['Bánh phở','Bò','Giá đỗ','Hành','Xì dầu'],ingredientsEn:['Rice noodles','Beef','Bean sprouts','Scallion','Soy sauce'] },
+  { emoji:'🍝', name:'Mì xào hải sản', nameEn:'Stir-fried seafood noodles', region:'Toàn quốc', regionEn:'Nationwide', kcal:480, p:24, c:52, f:18, goodC:22, badC:30, score:50, cat:'noodle',
+    warn:{vi:'Mì trứng = carb tinh, xào dầu',en:'Egg noodles = refined carb, stir-fried'}, warnType:'sugar',
+    ingredients:['Mì trứng','Tôm','Mực','Cải ngọt','Tỏi'],ingredientsEn:['Egg noodles','Shrimp','Squid','Choy sum','Garlic'] },
+  { emoji:'🥗', name:'Bún bò Nam Bộ', nameEn:'Southern beef noodle salad', region:'Hà Nội', regionEn:'Hanoi', kcal:420, p:28, c:40, f:14, goodC:30, badC:10, score:76, cat:'noodle',
+    warn:{vi:'Bún + rau + bò = cân bằng tốt',en:'Noodles + greens + beef = well-balanced'}, warnType:'good',
+    ingredients:['Bún','Bò xào','Đậu phộng','Rau sống','Nước mắm chua ngọt'],ingredientsEn:['Vermicelli','Stir-fried beef','Peanuts','Fresh herbs','Sweet fish sauce'] },
+
+  // === APPETIZERS (5) ===
+  { emoji:'🥗', name:'Gỏi cuốn tôm', nameEn:'Shrimp spring rolls', region:'Miền Nam', regionEn:'Southern VN', kcal:120, p:8, c:14, f:3, goodC:11, badC:3, score:92, cat:'appetizer',
+    warn:{vi:'Carb tốt, nhiều rau',en:'Good carbs, high vegetables'}, warnType:'good',
+    ingredients:['Bánh tráng','Tôm','Bún','Rau sống','Nước chấm'],ingredientsEn:['Rice paper','Shrimp','Vermicelli','Fresh herbs','Dipping sauce'] },
+  { emoji:'🥒', name:'Gỏi ngó sen tôm thịt', nameEn:'Lotus stem salad', region:'Miền Nam', regionEn:'Southern VN', kcal:160, p:14, c:12, f:6, goodC:10, badC:2, score:90, cat:'appetizer',
+    warn:{vi:'Rau + tôm + ngó sen = rất lành mạnh',en:'Greens + shrimp + lotus stem = very healthy'}, warnType:'good',
+    ingredients:['Ngó sen','Tôm','Thịt heo','Rau răm','Đậu phộng'],ingredientsEn:['Lotus stem','Shrimp','Pork','Vietnamese coriander','Peanuts'] },
+  { emoji:'🥬', name:'Gỏi gà bắp cải', nameEn:'Chicken cabbage salad', region:'Toàn quốc', regionEn:'Nationwide', kcal:180, p:20, c:10, f:6, goodC:8, badC:2, score:88, cat:'appetizer',
+    warn:{vi:'Ít calo, protein tốt, nhiều chất xơ',en:'Low cal, good protein, high fiber'}, warnType:'good',
+    ingredients:['Gà xé','Bắp cải','Rau răm','Hành phi','Chanh'],ingredientsEn:['Shredded chicken','Cabbage','Vietnamese coriander','Fried shallots','Lime'] },
+  { emoji:'🦑', name:'Mực chiên giòn', nameEn:'Crispy fried squid', region:'Toàn quốc', regionEn:'Nationwide', kcal:340, p:22, c:24, f:18, goodC:6, badC:18, score:45, cat:'appetizer',
+    warn:{vi:'Chiên = dầu, bột chiên = carb tinh',en:'Fried = oil, batter = refined carb'}, warnType:'sugar',
+    ingredients:['Mực','Bột chiên','Muối tiêu','Chanh','Ớt'],ingredientsEn:['Squid','Frying batter','Salt & pepper','Lime','Chili'] },
+  { emoji:'🥚', name:'Trứng vịt lộn', nameEn:'Fertilized duck egg (balut)', region:'Toàn quốc', regionEn:'Nationwide', kcal:180, p:14, c:2, f:12, goodC:2, badC:0, score:70, cat:'appetizer',
+    warn:{vi:'Protein + béo tự nhiên, cholesterol cao',en:'Natural protein + fat, high cholesterol'}, warnType:'sodium',
+    ingredients:['Trứng vịt lộn','Rau răm','Muối tiêu','Chanh','Gừng'],ingredientsEn:['Fertilized duck egg','Vietnamese coriander','Salt & pepper','Lime','Ginger'] },
+
+  // === SEAFOOD (4) ===
+  { emoji:'🦀', name:'Cua rang me', nameEn:'Tamarind crab', region:'Sài Gòn', regionEn:'Saigon', kcal:380, p:28, c:22, f:18, goodC:8, badC:14, score:62, cat:'seafood',
+    warn:{vi:'Sốt me có đường, nhưng cua = protein tốt',en:'Tamarind sauce has sugar, but crab = good protein'}, warnType:'sugar',
+    ingredients:['Cua','Me','Tỏi','Đường','Hành'],ingredientsEn:['Crab','Tamarind','Garlic','Sugar','Scallion'] },
+  { emoji:'🐚', name:'Nghêu hấp sả', nameEn:'Lemongrass steamed clams', region:'Miền Nam', regionEn:'Southern VN', kcal:140, p:18, c:6, f:4, goodC:5, badC:1, score:94, cat:'seafood',
+    warn:{vi:'Ít calo nhất, protein cao — siêu lành mạnh',en:'Lowest calorie, high protein — super healthy'}, warnType:'good',
+    ingredients:['Nghêu','Sả','Lá chanh','Ớt','Gừng'],ingredientsEn:['Clams','Lemongrass','Kaffir lime leaves','Chili','Ginger'] },
+  { emoji:'🐟', name:'Cá chiên xù', nameEn:'Deep-fried crispy fish', region:'Toàn quốc', regionEn:'Nationwide', kcal:440, p:30, c:28, f:22, goodC:8, badC:20, score:48, cat:'seafood',
+    warn:{vi:'Chiên ngập dầu, bột = carb tinh',en:'Deep-fried, batter = refined carb'}, warnType:'sugar',
+    ingredients:['Cá diêu hồng','Bột chiên','Nước mắm','Tỏi','Ớt'],ingredientsEn:['Red tilapia','Frying batter','Fish sauce','Garlic','Chili'] },
+  { emoji:'🦐', name:'Tôm rang thịt ba chỉ', nameEn:'Shrimp with pork belly', region:'Hà Nội', regionEn:'Hanoi', kcal:360, p:24, c:14, f:22, goodC:4, badC:10, score:58, cat:'seafood',
+    warn:{vi:'Ba chỉ = mỡ, kho nước mắm đường',en:'Pork belly = fat, braised in fish sauce + sugar'}, warnType:'sugar',
+    ingredients:['Tôm','Thịt ba chỉ','Nước mắm','Đường','Tiêu'],ingredientsEn:['Shrimp','Pork belly','Fish sauce','Sugar','Pepper'] },
+
+  // === VEGETARIAN (4) ===
+  { emoji:'🥬', name:'Rau muống xào tỏi', nameEn:'Stir-fried morning glory', region:'Toàn quốc', regionEn:'Nationwide', kcal:80, p:4, c:8, f:4, goodC:7, badC:1, score:95, cat:'vegetarian',
+    warn:{vi:'Siêu ít calo, nhiều chất xơ — tốt nhất',en:'Ultra low calorie, high fiber — the best'}, warnType:'good',
+    ingredients:['Rau muống','Tỏi','Dầu ăn','Muối','Nước mắm'],ingredientsEn:['Morning glory','Garlic','Cooking oil','Salt','Fish sauce'] },
+  { emoji:'🍆', name:'Đậu hũ sốt cà chua', nameEn:'Tofu in tomato sauce', region:'Toàn quốc', regionEn:'Nationwide', kcal:220, p:16, c:14, f:10, goodC:12, badC:2, score:86, cat:'vegetarian',
+    warn:{vi:'Protein thực vật tốt, ít đường',en:'Good plant protein, low sugar'}, warnType:'good',
+    ingredients:['Đậu hũ','Cà chua','Hành lá','Dầu ăn','Nước tương'],ingredientsEn:['Tofu','Tomato','Scallion','Cooking oil','Soy sauce'] },
+  { emoji:'🍄', name:'Nấm xào thập cẩm', nameEn:'Mixed mushroom stir-fry', region:'Toàn quốc', regionEn:'Nationwide', kcal:150, p:8, c:12, f:8, goodC:10, badC:2, score:88, cat:'vegetarian',
+    warn:{vi:'Ít calo, giàu khoáng chất',en:'Low calorie, rich in minerals'}, warnType:'good',
+    ingredients:['Nấm đùi gà','Nấm kim châm','Đậu Hà Lan','Tỏi','Dầu hào'],ingredientsEn:['King oyster mushroom','Enoki','Snow peas','Garlic','Oyster sauce'] },
+
+  // === DRINKS (6) ===
+  { emoji:'🥤', name:'Cà phê sữa đá', nameEn:'Vietnamese iced coffee', region:'Toàn quốc', regionEn:'Nationwide', kcal:140, p:3, c:22, f:5, goodC:0, badC:22, score:25, cat:'drink',
+    warn:{vi:'100% đường từ sữa đặc',en:'100% sugar from condensed milk'}, warnType:'sugar',
+    ingredients:['Cà phê phin','Sữa đặc','Đá'],ingredientsEn:['Drip coffee','Condensed milk','Ice'] },
+  { emoji:'☕', name:'Cà phê đen đá', nameEn:'Black iced coffee', region:'Toàn quốc', regionEn:'Nationwide', kcal:15, p:1, c:2, f:0, goodC:0, badC:2, score:95, cat:'drink',
+    warn:{vi:'Gần 0 calo — lựa chọn tốt nhất',en:'Near-zero calories — best choice'}, warnType:'good',
+    ingredients:['Cà phê phin','Đá'],ingredientsEn:['Drip coffee','Ice'] },
+  { emoji:'🧋', name:'Trà sữa trân châu', nameEn:'Boba milk tea', region:'Toàn quốc', regionEn:'Nationwide', kcal:420, p:4, c:68, f:14, goodC:4, badC:64, score:12, cat:'drink',
+    warn:{vi:'Trân châu + syrup = bom đường',en:'Boba + syrup = sugar bomb'}, warnType:'sugar',
+    ingredients:['Trà đen','Sữa','Trân châu','Syrup','Đá'],ingredientsEn:['Black tea','Milk','Tapioca pearls','Syrup','Ice'] },
+  { emoji:'🥝', name:'Sinh tố bơ', nameEn:'Avocado smoothie', region:'Toàn quốc', regionEn:'Nationwide', kcal:320, p:6, c:38, f:16, goodC:10, badC:28, score:40, cat:'drink',
+    warn:{vi:'Sữa đặc + đường = 70% carb xấu',en:'Condensed milk + sugar = 70% bad carbs'}, warnType:'sugar',
+    ingredients:['Bơ','Sữa đặc','Đá','Đường'],ingredientsEn:['Avocado','Condensed milk','Ice','Sugar'] },
+  { emoji:'🍹', name:'Nước mía', nameEn:'Sugarcane juice', region:'Toàn quốc', regionEn:'Nationwide', kcal:180, p:0, c:44, f:0, goodC:0, badC:44, score:15, cat:'drink',
+    warn:{vi:'100% đường tự nhiên — vẫn là đường',en:'100% natural sugar — still sugar'}, warnType:'sugar',
+    ingredients:['Mía ép','Đá','Tắc'],ingredientsEn:['Sugarcane juice','Ice','Kumquat'] },
+  { emoji:'🥥', name:'Nước dừa tươi', nameEn:'Fresh coconut water', region:'Miền Nam', regionEn:'Southern VN', kcal:60, p:1, c:12, f:1, goodC:10, badC:2, score:90, cat:'drink',
+    warn:{vi:'Electrolyte tự nhiên, ít đường',en:'Natural electrolytes, low sugar'}, warnType:'good',
+    ingredients:['Dừa tươi'],ingredientsEn:['Fresh coconut'] },
+
+  // === DESSERTS (6) ===
+  { emoji:'🧁', name:'Chè ba màu', nameEn:'Three-color dessert', region:'Miền Nam', regionEn:'Southern VN', kcal:280, p:5, c:52, f:8, goodC:15, badC:37, score:30, cat:'dessert',
+    warn:{vi:'Đường + sữa đặc = đường ẩn cực cao',en:'Sugar + condensed milk = very high hidden sugars'}, warnType:'sugar',
+    ingredients:['Đậu đỏ','Đậu xanh','Rau câu','Sữa đặc','Đá'],ingredientsEn:['Red beans','Mung beans','Jelly','Condensed milk','Ice'] },
+  { emoji:'🍮', name:'Bánh flan', nameEn:'Vietnamese crème caramel', region:'Toàn quốc', regionEn:'Nationwide', kcal:240, p:8, c:32, f:10, goodC:4, badC:28, score:28, cat:'dessert',
+    warn:{vi:'Caramel + sữa đặc = đường ẩn',en:'Caramel + condensed milk = hidden sugar'}, warnType:'sugar',
+    ingredients:['Trứng','Sữa','Đường','Cà phê','Caramel'],ingredientsEn:['Eggs','Milk','Sugar','Coffee','Caramel'] },
+  { emoji:'🍡', name:'Chè đậu đỏ', nameEn:'Sweet red bean soup', region:'Toàn quốc', regionEn:'Nationwide', kcal:220, p:8, c:42, f:2, goodC:22, badC:20, score:45, cat:'dessert',
+    warn:{vi:'Đậu đỏ tốt, nhưng nấu với nhiều đường',en:'Red beans are good, but cooked with lots of sugar'}, warnType:'sugar',
+    ingredients:['Đậu đỏ','Đường','Nước cốt dừa','Bột báng'],ingredientsEn:['Red beans','Sugar','Coconut milk','Tapioca pearls'] },
+  { emoji:'🥮', name:'Bánh trung thu', nameEn:'Mooncake', region:'Toàn quốc', regionEn:'Nationwide', kcal:580, p:10, c:68, f:28, goodC:12, badC:56, score:18, cat:'dessert',
+    warn:{vi:'Mỗi chiếc = 1/3 calo ngày, đường cực cao',en:'Each piece = 1/3 daily calories, extreme sugar'}, warnType:'sugar',
+    ingredients:['Bột mì','Hạt sen','Trứng muối','Mỡ','Đường'],ingredientsEn:['Wheat flour','Lotus seed paste','Salted egg yolk','Lard','Sugar'] },
+  { emoji:'🫘', name:'Chè bưởi', nameEn:'Pomelo sweet soup', region:'Huế', regionEn:'Hue', kcal:200, p:2, c:40, f:4, goodC:12, badC:28, score:35, cat:'dessert',
+    warn:{vi:'Nước đường + bột sắn = carb tinh',en:'Sugar syrup + tapioca = refined carb'}, warnType:'sugar',
+    ingredients:['Bưởi','Đường','Bột sắn','Nước cốt dừa','Đậu xanh'],ingredientsEn:['Pomelo peel','Sugar','Tapioca starch','Coconut milk','Mung beans'] },
+  { emoji:'🍌', name:'Chuối nếp nướng', nameEn:'Grilled sticky rice banana', region:'Miền Tây', regionEn:'Mekong Delta', kcal:260, p:4, c:48, f:6, goodC:28, badC:20, score:50, cat:'dessert',
+    warn:{vi:'Nếp = carb phức hợp, nhưng thêm đường',en:'Sticky rice = complex carb, but added sugar'}, warnType:'sugar',
+    ingredients:['Chuối','Nếp','Nước cốt dừa','Đường','Mè'],ingredientsEn:['Banana','Sticky rice','Coconut milk','Sugar','Sesame'] },
+];
+
+const recipeCats = [
+  { id:'all', vi:'Tất cả', en:'All' },
+  { id:'soup', vi:'Canh / Phở', en:'Soups' },
+  { id:'rice', vi:'Cơm', en:'Rice' },
+  { id:'noodle', vi:'Bún / Mì', en:'Noodles' },
+  { id:'grilled', vi:'Nướng', en:'Grilled' },
+  { id:'street', vi:'Đường phố', en:'Street food' },
+  { id:'seafood', vi:'Hải sản', en:'Seafood' },
+  { id:'appetizer', vi:'Khai vị', en:'Appetizers' },
+  { id:'vegetarian', vi:'Chay', en:'Vegetarian' },
+  { id:'drink', vi:'Thức uống', en:'Drinks' },
+  { id:'dessert', vi:'Tráng miệng', en:'Desserts' },
+];
+
+let activeRecipeCat = 'all';
+let recipeSearchTerm = '';
+
+function buildRecipeHub() {
+  const pillsEl = document.getElementById('recipePills');
+  const gridEl = document.getElementById('recipeGrid');
+  const lang = currentLang;
+
+  // Pills
+  pillsEl.innerHTML = '';
+  recipeCats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'recipe-pill' + (cat.id === activeRecipeCat ? ' active' : '');
+    btn.textContent = lang === 'en' ? cat.en : cat.vi;
+    btn.onclick = () => { activeRecipeCat = cat.id; buildRecipeHub(); };
+    pillsEl.appendChild(btn);
+  });
+
+  // Filter
+  let filtered = recipeDB;
+  if (activeRecipeCat !== 'all') filtered = filtered.filter(r => r.cat === activeRecipeCat);
+  if (recipeSearchTerm) {
+    const q = recipeSearchTerm.toLowerCase();
+    filtered = filtered.filter(r => r.name.toLowerCase().includes(q) || (r.nameEn && r.nameEn.toLowerCase().includes(q)));
+  }
+
+  // Cards
+  gridEl.innerHTML = '';
+  filtered.forEach(r => {
+    const goodPerc = r.c > 0 ? Math.round((r.goodC / r.c) * 100) : 0;
+    const scoreColor = r.score >= 70 ? 'var(--green)' : r.score >= 50 ? '#fbbf24' : '#f87171';
+    const warnBg = r.warnType === 'sugar' ? 'rgba(248,113,113,0.1)' : r.warnType === 'sodium' ? 'rgba(251,191,36,0.1)' : 'rgba(52,211,153,0.1)';
+    const warnColor = r.warnType === 'sugar' ? '#f87171' : r.warnType === 'sodium' ? '#fbbf24' : 'var(--green)';
+
+    const card = document.createElement('div');
+    card.className = 'recipe-card reveal';
+    card.innerHTML = `
+      <div class="recipe-card-top">
+        <div class="recipe-card-emoji">${r.emoji}</div>
+        <div class="recipe-card-info">
+          <div class="recipe-card-name">${lang === 'en' ? (r.nameEn || r.name) : r.name}</div>
+          <div class="recipe-card-region">${lang === 'en' ? r.regionEn : r.region} · ${r.kcal} kcal</div>
+        </div>
+        <div class="recipe-card-score" style="color:${scoreColor};">${r.score}</div>
+      </div>
+      <div class="recipe-card-macros">
+        <div class="recipe-card-macro"><span class="dot" style="background:var(--accent);"></span>${r.p}g P</div>
+        <div class="recipe-card-macro"><span class="dot" style="background:var(--accent-2);"></span>${r.goodC}g <span style="font-size:8px">good</span></div>
+        <div class="recipe-card-macro"><span class="dot" style="background:#f87171;"></span>${r.badC}g <span style="font-size:8px">sugar</span></div>
+        <div class="recipe-card-macro"><span class="dot" style="background:var(--green);"></span>${r.f}g F</div>
+      </div>
+      <div class="recipe-card-quality-bar"><div class="rq-good" style="width:${goodPerc}%;"></div><div class="rq-bad" style="width:${100 - goodPerc}%;"></div></div>
+      <div class="recipe-card-warning" style="background:${warnBg};color:${warnColor};">${lang === 'en' ? r.warn.en : r.warn.vi}</div>
+      <div class="recipe-card-ingredients">
+        <ul>${(lang === 'en' ? r.ingredientsEn : r.ingredients).map(i => '<li>' + i + '</li>').join('')}</ul>
+      </div>
+    `;
+    card.onclick = () => card.classList.toggle('expanded');
+    gridEl.appendChild(card);
+    revealObserver.observe(card);
+  });
+}
+
+document.getElementById('recipeSearchInput').addEventListener('input', (e) => {
+  recipeSearchTerm = e.target.value;
+  buildRecipeHub();
+});
+
+buildRecipeHub();
+
+// =============================================
+// 8. VENDOR HUB ANIMATION (multi-restaurant)
+// =============================================
+const vendorRestaurants = [
+  {
+    nameVi: '🏪 Quán Bà Năm — Menu', nameEn: '🏪 Quán Bà Năm — Menu',
+    items: [
+      { emoji:'🍖', name:'Bún thịt nướng chả giò', price:'45,000đ', score:72, sugar:'low' },
+      { emoji:'🍚', name:'Cơm tấm sườn bì chả', price:'50,000đ', score:45, sugar:'high' },
+      { emoji:'🍜', name:'Phở bò đặc biệt', price:'55,000đ', score:68, sugar:'low' },
+      { emoji:'🥗', name:'Gỏi cuốn tôm thịt (2)', price:'30,000đ', score:88, sugar:'low' },
+      { emoji:'🥤', name:'Cà phê sữa đá', price:'20,000đ', score:25, sugar:'high' },
+    ]
+  },
+  {
+    nameVi: '🍜 Phở Hòa Pasteur — Menu', nameEn: '🍜 Phở Hòa Pasteur — Menu',
+    items: [
+      { emoji:'🍜', name:'Phở tái nạm gầu', price:'65,000đ', score:70, sugar:'low' },
+      { emoji:'🍜', name:'Phở gà ta', price:'60,000đ', score:75, sugar:'low' },
+      { emoji:'🥩', name:'Bò viên nướng', price:'35,000đ', score:62, sugar:'low' },
+      { emoji:'🥤', name:'Trà đá (miễn phí)', price:'0đ', score:95, sugar:'low' },
+      { emoji:'🧃', name:'Nước mía chanh', price:'15,000đ', score:30, sugar:'high' },
+      { emoji:'🥢', name:'Phở xào bò', price:'55,000đ', score:52, sugar:'high' },
+    ]
+  },
+  {
+    nameVi: '🥘 Lẩu Thái Siam — Menu', nameEn: '🥘 Lẩu Thái Siam — Menu',
+    items: [
+      { emoji:'🥘', name:'Lẩu Tom Yum hải sản', price:'189,000đ', score:58, sugar:'low' },
+      { emoji:'🍤', name:'Tôm sú nướng muối ớt', price:'120,000đ', score:80, sugar:'low' },
+      { emoji:'🥬', name:'Rau nấm thập cẩm', price:'45,000đ', score:92, sugar:'low' },
+      { emoji:'🍚', name:'Cơm chiên hải sản', price:'65,000đ', score:48, sugar:'high' },
+      { emoji:'🧁', name:'Chè Thái', price:'25,000đ', score:22, sugar:'high' },
+      { emoji:'🥤', name:'Trà thái xanh', price:'28,000đ', score:35, sugar:'high' },
+      { emoji:'🦑', name:'Mực chiên giòn', price:'85,000đ', score:42, sugar:'low' },
+    ]
+  }
+];
+
+let currentVendor = 0;
+let vendorAnimated = [false, false, false];
+
+function buildVendorMenu(vendorIdx) {
+  currentVendor = vendorIdx;
+  const rest = vendorRestaurants[vendorIdx];
+  const container = document.querySelector('.vendor-menu-editor');
+  // Remove old menu items
+  container.querySelectorAll('.vendor-menu-item').forEach(el => el.remove());
+  // Update title
+  const titleEl = document.getElementById('vendorEditorTitle');
+  titleEl.setAttribute('data-vi', rest.nameVi);
+  titleEl.setAttribute('data-en', rest.nameEn);
+  titleEl.textContent = currentLang === 'en' ? rest.nameEn : rest.nameVi;
+  // Update stats label
+  const statLabel = document.querySelector('.vendor-stat-label');
+  if (statLabel) {
+    statLabel.setAttribute('data-vi', '/ ' + rest.items.length + ' món đã dán nhãn');
+    statLabel.setAttribute('data-en', '/ ' + rest.items.length + ' items labeled');
+    statLabel.textContent = currentLang === 'en' ? '/ ' + rest.items.length + ' items labeled' : '/ ' + rest.items.length + ' món đã dán nhãn';
+  }
+  // Build items
+  rest.items.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'vendor-menu-item';
+    div.dataset.analyzeDelay = (i * 600).toString();
+    div.innerHTML = `
+      <div class="vmi-emoji">${item.emoji}</div>
+      <div class="vmi-info"><div class="vmi-name">${item.name}</div><div class="vmi-price">${item.price}</div></div>
+      <div class="vmi-label-status">
+        <div class="vmi-label-dot pending" id="vmiDot${vendorIdx}_${i}"></div>
+        <div class="vmi-label-text" id="vmiText${vendorIdx}_${i}" data-vi="Chưa dán nhãn" data-en="Unlabeled">${currentLang === 'en' ? 'Unlabeled' : 'Chưa dán nhãn'}</div>
+      </div>`;
+    container.appendChild(div);
+  });
+  // Update tabs
+  document.querySelectorAll('.vendor-tab').forEach(t => t.classList.toggle('active', parseInt(t.dataset.vendor) === vendorIdx));
+  // Reset stats
+  document.getElementById('vendorLabelCount').textContent = '0';
+  document.getElementById('vendorProgressFill').style.width = '0%';
+  document.getElementById('vendorAvgScore').textContent = '—';
+  document.getElementById('vendorSugarAlert').textContent = '—';
+  // Animate if not yet done
+  if (!vendorAnimated[vendorIdx]) {
+    vendorAnimated[vendorIdx] = true;
+    animateVendorLabeling(vendorIdx);
+  } else {
+    // Show already-analyzed state
+    showVendorComplete(vendorIdx);
+  }
+}
+
+function animateVendorLabeling(vendorIdx) {
+  const rest = vendorRestaurants[vendorIdx];
+  let labeled = 0, totalScore = 0, sugarAlerts = 0;
+  rest.items.forEach((item, i) => {
+    const delay = i * 600;
+    setTimeout(() => {
+      if (currentVendor !== vendorIdx) return;
+      const dot = document.getElementById('vmiDot' + vendorIdx + '_' + i);
+      const txt = document.getElementById('vmiText' + vendorIdx + '_' + i);
+      if (!dot || !txt) return;
+      dot.className = 'vmi-label-dot analyzing';
+      txt.textContent = currentLang === 'en' ? 'Analyzing...' : 'Đang phân tích...';
+      dot.parentElement.parentElement.classList.add('analyzing');
+    }, delay);
+    setTimeout(() => {
+      if (currentVendor !== vendorIdx) return;
+      const dot = document.getElementById('vmiDot' + vendorIdx + '_' + i);
+      const txt = document.getElementById('vmiText' + vendorIdx + '_' + i);
+      if (!dot || !txt) return;
+      dot.className = 'vmi-label-dot done';
+      txt.textContent = item.score + '/100';
+      txt.style.color = item.score >= 70 ? 'var(--green)' : item.score >= 50 ? '#fbbf24' : '#f87171';
+      dot.parentElement.parentElement.classList.remove('analyzing');
+      dot.parentElement.parentElement.classList.add('analyzed');
+      labeled++;
+      totalScore += item.score;
+      if (item.sugar === 'high') sugarAlerts++;
+      document.getElementById('vendorLabelCount').textContent = labeled;
+      document.getElementById('vendorProgressFill').style.width = (labeled / rest.items.length * 100) + '%';
+      document.getElementById('vendorAvgScore').textContent = Math.round(totalScore / labeled);
+      document.getElementById('vendorAvgScore').style.color = (totalScore / labeled) >= 60 ? 'var(--green)' : '#fbbf24';
+      document.getElementById('vendorSugarAlert').textContent = sugarAlerts;
+      document.getElementById('vendorSugarAlert').style.color = sugarAlerts > 0 ? '#f87171' : 'var(--green)';
+    }, delay + 400);
+  });
+}
+
+function showVendorComplete(vendorIdx) {
+  const rest = vendorRestaurants[vendorIdx];
+  let totalScore = 0, sugarAlerts = 0;
+  rest.items.forEach((item, i) => {
+    const dot = document.getElementById('vmiDot' + vendorIdx + '_' + i);
+    const txt = document.getElementById('vmiText' + vendorIdx + '_' + i);
+    if (!dot || !txt) return;
+    dot.className = 'vmi-label-dot done';
+    txt.textContent = item.score + '/100';
+    txt.style.color = item.score >= 70 ? 'var(--green)' : item.score >= 50 ? '#fbbf24' : '#f87171';
+    dot.parentElement.parentElement.classList.add('analyzed');
+    totalScore += item.score;
+    if (item.sugar === 'high') sugarAlerts++;
+  });
+  document.getElementById('vendorLabelCount').textContent = rest.items.length;
+  document.getElementById('vendorProgressFill').style.width = '100%';
+  document.getElementById('vendorAvgScore').textContent = Math.round(totalScore / rest.items.length);
+  document.getElementById('vendorAvgScore').style.color = (totalScore / rest.items.length) >= 60 ? 'var(--green)' : '#fbbf24';
+  document.getElementById('vendorSugarAlert').textContent = sugarAlerts;
+  document.getElementById('vendorSugarAlert').style.color = sugarAlerts > 0 ? '#f87171' : 'var(--green)';
+}
+
+// Tab click handler
+document.querySelectorAll('.vendor-tab').forEach(tab => {
+  tab.addEventListener('click', () => buildVendorMenu(parseInt(tab.dataset.vendor)));
+});
+
+// Initial build + observe
+buildVendorMenu(0);
+vendorAnimated[0] = false; // reset so observer triggers it
+
+const vendorObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !vendorAnimated[0]) {
+      vendorAnimated[0] = true;
+      animateVendorLabeling(0);
+    }
+  });
+}, { threshold: 0.3 });
+vendorObserver.observe(document.getElementById('vendorDemo'));
+
+// =============================================
+// SMART ORDER MAP (Leaflet + OpenStreetMap)
+// =============================================
+let orderMap;
+let mapTileLayer;
+
+function initOrderMap() {
+  // Center on District 1, Ho Chi Minh City
+  orderMap = L.map('orderMap', {
+    zoomControl: false,
+    attributionControl: false,
+    scrollWheelZoom: true,
+  }).setView([10.7769, 106.7009], 14);
+
+  updateMapTheme();
+
+  // User location
+  const userIcon = L.divIcon({
+    className: '',
+    html: '<div style="width:16px;height:16px;background:var(--accent);border-radius:50%;border:3px solid white;box-shadow:0 0 12px rgba(255,106,40,0.5);"></div>',
+    iconSize: [16, 16], iconAnchor: [8, 8]
+  });
+  L.marker([10.7769, 106.7009], { icon: userIcon }).addTo(orderMap).bindPopup('<b style="font-family:Outfit;">You are here</b>');
+
+  // Restaurant markers
+  const restaurants = [
+    { lat: 10.7810, lng: 106.6960, name: 'Quán Bà Năm', dish: 'Bún thịt nướng chả giò', dishEn: 'Grilled pork noodles', match: 96, kcal: 480, price: '45k', dist: '1.2km', platform: 'GrabFood' },
+    { lat: 10.7740, lng: 106.6970, name: 'Cơm nhà Lan', dish: 'Cá kho tộ + canh rau', dishEn: 'Clay pot fish + veg soup', match: 89, kcal: 420, price: '50k', dist: '0.8km', platform: 'ShopeeFood' },
+    { lat: 10.7800, lng: 106.7060, name: 'Healthy Box', dish: 'Salad ức gà + gạo lứt', dishEn: 'Chicken salad + brown rice', match: 82, kcal: 380, price: '55k', dist: '2.1km', platform: 'GrabFood' },
+    { lat: 10.7730, lng: 106.7040, name: 'Phở Hòa', dish: 'Phở tái nạm', dishEn: 'Beef pho special', match: 78, kcal: 450, price: '48k', dist: '1.5km', platform: 'GrabFood' },
+    { lat: 10.7790, lng: 106.6930, name: 'Bún Chả 145', dish: 'Bún chả đặc biệt', dishEn: 'Special bun cha', match: 74, kcal: 390, price: '42k', dist: '1.8km', platform: 'ShopeeFood' },
+  ];
+
+  restaurants.forEach((r, i) => {
+    setTimeout(() => addRestaurantMarker(r), i * 200);
+  });
+
+  // Dynamic restaurant generation on map move
+  orderMap.on('moveend', generateNearbyRestaurants);
+}
+
+// Pool of Vietnamese restaurant names/dishes for dynamic generation
+const dynamicRestPool = [
+  { name:'Bún Bò Huế Đông Ba', dish:'Bún bò đặc biệt', dishEn:'Special Hue beef noodles', kcal:520, price:'55k' },
+  { name:'Mì Quảng Bà Mua', dish:'Mì quảng tôm thịt', dishEn:'Quang noodles with shrimp', kcal:460, price:'48k' },
+  { name:'Bánh Mì Hòa Mã', dish:'Bánh mì ốp la', dishEn:'Banh mi with fried eggs', kcal:380, price:'30k' },
+  { name:'Hủ Tiếu Nam Vang', dish:'Hủ tiếu khô', dishEn:'Dry Phnom Penh noodles', kcal:410, price:'45k' },
+  { name:'Cơm Chay Tịnh Tâm', dish:'Cơm chay thập cẩm', dishEn:'Mixed veggie rice plate', kcal:340, price:'35k' },
+  { name:'Gà Nướng Ông Già', dish:'Gà nướng muối ớt', dishEn:'Salt & chili grilled chicken', kcal:490, price:'65k' },
+  { name:'Bò Né 3 Ngon', dish:'Bò né trứng ốp la', dishEn:'Sizzling steak & eggs', kcal:550, price:'52k' },
+  { name:'Chè Bưởi Cô Ba', dish:'Chè bưởi tổ yến', dishEn:'Pomelo & birds nest dessert', kcal:210, price:'28k' },
+  { name:'Bún Riêu Cô Tư', dish:'Bún riêu cua đồng', dishEn:'Crab noodle soup', kcal:430, price:'40k' },
+  { name:'Bánh Xèo Mười Xiềm', dish:'Bánh xèo tôm thịt', dishEn:'Crispy crepe shrimp pork', kcal:510, price:'42k' },
+  { name:'Cháo Lòng Bà Út', dish:'Cháo lòng heo', dishEn:'Pork organ porridge', kcal:350, price:'32k' },
+  { name:'Lẩu Thái Siam', dish:'Lẩu tôm Tom Yum', dishEn:'Tom Yum shrimp hotpot', kcal:580, price:'89k' },
+  { name:'Xôi Gà Bà Chiểu', dish:'Xôi gà xé phay', dishEn:'Sticky rice shredded chicken', kcal:440, price:'35k' },
+  { name:'Bò Lá Lốt Anh Hai', dish:'Bò lá lốt nướng', dishEn:'Grilled beef in betel leaf', kcal:390, price:'50k' },
+  { name:'Bánh Cuốn Gia Truyền', dish:'Bánh cuốn nhân thịt', dishEn:'Steamed rice rolls pork', kcal:320, price:'28k' },
+  { name:'Cơm Gà Xối Mỡ', dish:'Cơm gà xối mỡ giòn', dishEn:'Crispy fried chicken rice', kcal:620, price:'48k' },
+  { name:'Bún Thịt Nướng Kim', dish:'Bún thịt nướng chả', dishEn:'Grilled pork noodles', kcal:470, price:'45k' },
+  { name:'Phở Gà Kỳ Đồng', dish:'Phở gà ta', dishEn:'Free-range chicken pho', kcal:400, price:'50k' },
+  { name:'Nem Nướng Nha Trang', dish:'Nem nướng cuốn lá', dishEn:'Nha Trang grilled sausage', kcal:460, price:'55k' },
+  { name:'Ốc Đào Nguyễn Trãi', dish:'Ốc hương rang muối', dishEn:'Salt roasted sea snails', kcal:280, price:'75k' },
+];
+const dynamicPlatforms = ['GrabFood', 'ShopeeFood', 'GrabFood', 'ShopeeFood', 'GrabFood'];
+let dynamicMarkers = [];
+let dynamicSpawnIndex = 0;
+
+function addRestaurantMarker(r) {
+  const markerColor = r.match >= 90 ? '#34D399' : r.match >= 80 ? '#FF9F1C' : '#FF6A28';
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="background:${markerColor};color:#000;font-weight:800;font-size:11px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(0,0,0,0.3);box-shadow:0 2px 8px rgba(0,0,0,0.3);font-family:Outfit;animation:fadeInUp 0.4s ease;">${r.match}%</div>`,
+    iconSize: [30, 30], iconAnchor: [15, 15]
+  });
+  const dist = r.dist || ((Math.random() * 3 + 0.3).toFixed(1) + 'km');
+  const popupContent = `<div style="font-family:Outfit;min-width:180px;"><b style="font-size:13px;">${r.name}</b><br><span style="font-size:12px;color:#666;">${currentLang === 'en' ? r.dishEn : r.dish}</span><br><span style="font-size:11px;color:#999;">${dist} · ${r.price}đ · ${r.platform}</span><br><span style="font-size:11px;font-weight:600;color:${markerColor};">Match: ${r.match}% · ${r.kcal} kcal</span></div>`;
+  const marker = L.marker([r.lat, r.lng], { icon }).addTo(orderMap).bindPopup(popupContent);
+  return marker;
+}
+
+function generateNearbyRestaurants() {
+  const center = orderMap.getCenter();
+  const bounds = orderMap.getBounds();
+  const latSpan = bounds.getNorth() - bounds.getSouth();
+  const lngSpan = bounds.getEast() - bounds.getWest();
+
+  // Remove old dynamic markers
+  dynamicMarkers.forEach(m => orderMap.removeLayer(m));
+  dynamicMarkers = [];
+
+  // Generate 3-5 random restaurants in view
+  const count = 3 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < count; i++) {
+    const poolItem = dynamicRestPool[(dynamicSpawnIndex++) % dynamicRestPool.length];
+    const lat = center.lat + (Math.random() - 0.5) * latSpan * 0.7;
+    const lng = center.lng + (Math.random() - 0.5) * lngSpan * 0.7;
+    const match = 65 + Math.floor(Math.random() * 30);
+    const r = {
+      lat, lng,
+      name: poolItem.name, dish: poolItem.dish, dishEn: poolItem.dishEn,
+      match, kcal: poolItem.kcal, price: poolItem.price,
+      platform: dynamicPlatforms[Math.floor(Math.random() * dynamicPlatforms.length)]
+    };
+    const marker = addRestaurantMarker(r);
+    dynamicMarkers.push(marker);
+  }
+}
+
+function updateMapTheme() {
+  if (!orderMap) return;
+  if (mapTileLayer) orderMap.removeLayer(mapTileLayer);
+  const isLight = document.body.classList.contains('light-mode');
+  const tileUrl = isLight
+    ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
+    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+  mapTileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(orderMap);
+}
+
+// Initialize map when section scrolls into view
+let mapInitialized = false;
+const mapObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting && !mapInitialized) {
+      mapInitialized = true;
+      setTimeout(initOrderMap, 300);
+    }
+  });
+}, { threshold: 0.1 });
+const mapEl = document.getElementById('orderMap');
+if (mapEl) mapObserver.observe(mapEl);
+
 </script>
 </body>
 </html>
