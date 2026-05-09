@@ -3424,7 +3424,7 @@ function initOrderMap() {
     html: '<div style="width:16px;height:16px;background:var(--accent);border-radius:50%;border:3px solid white;box-shadow:0 0 12px rgba(255,106,40,0.5);"></div>',
     iconSize: [16, 16], iconAnchor: [8, 8]
   });
-  L.marker([10.7769, 106.7009], { icon: userIcon }).addTo(orderMap).bindPopup('<b style="font-family:'Be Vietnam Pro';">You are here</b>');
+  L.marker([10.7769, 106.7009], { icon: userIcon }).addTo(orderMap).bindPopup(`<b style="font-family:'Be Vietnam Pro';">You are here</b>`);
 
   // Restaurant markers
   const restaurants = [
@@ -3588,7 +3588,7 @@ function renderTimeline() {
     const fill = d.score >= 75 ? 'rgb(52,211,153)' : d.score >= 60 ? 'rgb(255,159,28)' : 'rgb(239,68,68)';
     bars += `<rect class="tl-bar" x="${x}" y="${y}" width="${barW}" height="${barH}" rx="6" fill="${fill}" opacity="0.85"></rect>`;
     if (days.length <= 12) {
-      bars += `<text x="${x + barW/2}" y="${y - 6}" text-anchor="middle" font-size="10" fill="${isLight?'#6B6560':'#8A8070'}" font-family="Be Vietnam Pro" font-weight="600">${d.kcal.toLocaleString()}</text>`;
+      bars += `<text x="${x + barW/2}" y="${y - 6}" text-anchor="middle" font-size="10" fill="${isLight?'#6B6560':'#8A8070'}" font-family="'Be Vietnam Pro'" font-weight="600">${d.kcal.toLocaleString()}</text>`;
     }
   });
   svg.innerHTML = bars;
