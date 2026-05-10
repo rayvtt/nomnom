@@ -209,12 +209,12 @@ Dark theme by default (bg `#050505`). Light mode via `body.light-mode` class.
 - [x] Railway deployment live (Dockerfile build, all env vars set)
 - [x] Cloud sync working: GitHub ⇄ Railway auto-deploy on every push
 - [x] Repo consolidated onto `claude/setup-cloud-sync-6TBjC` (api/, mobile/, landing page all in one branch)
+- [x] `/health` verified live at `https://nomnom-production.up.railway.app/health`
 
 ### In Progress
-- [ ] Verify `/health` and `/nutrition/search` respond from Railway URL
+- [ ] Connect Expo Go to Railway URL (set `EXPO_PUBLIC_API_URL` in `mobile/.env`)
 - [ ] Test auth flow end-to-end (signup → login → profile)
 - [ ] Wire Home tab to real API (`/profile/logs`)
-- [ ] Push `mobile/` from local laptop → connect Expo Go to Railway URL
 
 ### Next
 - [ ] Smart Order activation (auto-queue based on setup config)
