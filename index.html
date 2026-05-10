@@ -1287,6 +1287,8 @@
   .so-option { display: flex; align-items: center; gap: 14px; padding: 14px 18px; background: var(--bg-2); border: 1.5px solid var(--card-border); border-radius: 16px; cursor: pointer; transition: all 0.25s; }
   .so-option:hover { border-color: var(--green); }
   .so-option.selected { border-color: var(--green); background: rgba(52,211,153,0.07); }
+  .so-option.over-budget { opacity: 0.45; pointer-events: auto; }
+  .so-over-budget-tag { font-size: 10px; font-weight: 700; color: var(--red); background: rgba(239,68,68,0.12); padding: 2px 7px; border-radius: 99px; margin-left: 7px; vertical-align: middle; }
   .so-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--card-border); flex-shrink: 0; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
   .so-option.selected .so-radio { border-color: var(--green); background: var(--green); }
   .so-option.selected .so-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: white; display: block; }
@@ -3162,6 +3164,9 @@ function updateTrackingUI() {
     if (labelStrong) { labelStrong.textContent = currentLang === 'en' ? 'Quality' : 'Chất lượng'; }
     if (labelSpan) { labelSpan.textContent = currentLang === 'en' ? 'Add meals to see score' : 'Thêm món để xem điểm'; }
   }
+
+  // Live-sync Smart Order gap pills when tracking state changes
+  if (typeof soAnimated !== 'undefined' && soAnimated) renderSmartOrder();
 }
 
 // Populate warning tags on load
@@ -3401,9 +3406,9 @@ const soGoalData = {
     today:  { p: 46,  c: 48,  f: 12, k: 590 },
     weekProgress: [0.86, 0.71, 0.94, 0.62, 0.38, 0, 0],
     options: [
-      { emoji:'🍖', vi:'Bún thịt nướng chả giò', en:'Grilled Pork Vermicelli', rest:'Quán Bà Năm', dist:'1.2km', platform:'GrabFood', price:'45,000đ', match:96 },
-      { emoji:'🥘', vi:'Cá kho tộ + canh rau muống', en:'Braised Fish + Water Spinach', rest:'Cơm nhà Lan', dist:'0.8km', platform:'ShopeeFood', price:'50,000đ', match:89 },
-      { emoji:'🥗', vi:'Salad ức gà + gạo lứt', en:'Chicken Salad + Brown Rice', rest:'Healthy Box', dist:'2.1km', platform:'GrabFood', price:'55,000đ', match:82 }
+      { emoji:'🍖', vi:'Bún thịt nướng chả giò', en:'Grilled Pork Vermicelli', rest:'Quán Bà Năm', dist:'1.2km', platform:'GrabFood', price:'45,000đ', price_k:45, match:96, nutrition:{p:28,c:65,f:14,k:520} },
+      { emoji:'🥘', vi:'Cá kho tộ + canh rau muống', en:'Braised Fish + Water Spinach', rest:'Cơm nhà Lan', dist:'0.8km', platform:'ShopeeFood', price:'50,000đ', price_k:50, match:89, nutrition:{p:35,c:42,f:12,k:480} },
+      { emoji:'🥗', vi:'Salad ức gà + gạo lứt', en:'Chicken Salad + Brown Rice', rest:'Healthy Box', dist:'2.1km', platform:'GrabFood', price:'55,000đ', price_k:55, match:82, nutrition:{p:38,c:45,f:8,k:420} }
     ]
   },
   maintain: {
@@ -3412,9 +3417,9 @@ const soGoalData = {
     today:  { p: 55, c: 80, f: 22, k: 750 },
     weekProgress: [0.75, 0.82, 0.78, 0.54, 0.26, 0, 0],
     options: [
-      { emoji:'🍗', vi:'Cơm gà xào sả ớt', en:'Lemongrass Chilli Chicken Rice', rest:'Cơm Tấm Cali', dist:'0.9km', platform:'GrabFood', price:'52,000đ', match:91 },
-      { emoji:'🍲', vi:'Canh chua cá + cơm trắng', en:'Sour Fish Soup + Rice', rest:'Bếp Má Hai', dist:'1.4km', platform:'ShopeeFood', price:'48,000đ', match:85 },
-      { emoji:'🍜', vi:'Bún bò Huế', en:'Huế-style Beef Noodle Soup', rest:'Bún Bò Cô Ba', dist:'1.8km', platform:'GrabFood', price:'55,000đ', match:79 }
+      { emoji:'🍗', vi:'Cơm gà xào sả ớt', en:'Lemongrass Chilli Chicken Rice', rest:'Cơm Tấm Cali', dist:'0.9km', platform:'GrabFood', price:'52,000đ', price_k:52, match:91, nutrition:{p:32,c:72,f:12,k:550} },
+      { emoji:'🍲', vi:'Canh chua cá + cơm trắng', en:'Sour Fish Soup + Rice', rest:'Bếp Má Hai', dist:'1.4km', platform:'ShopeeFood', price:'48,000đ', price_k:48, match:85, nutrition:{p:28,c:68,f:10,k:500} },
+      { emoji:'🍜', vi:'Bún bò Huế', en:'Huế-style Beef Noodle Soup', rest:'Bún Bò Cô Ba', dist:'1.8km', platform:'GrabFood', price:'55,000đ', price_k:55, match:79, nutrition:{p:30,c:65,f:11,k:520} }
     ]
   },
   gain: {
@@ -3423,9 +3428,9 @@ const soGoalData = {
     today:  { p: 80, c: 120, f: 30, k: 1050 },
     weekProgress: [0.65, 0.88, 0.73, 0.49, 0.22, 0, 0],
     options: [
-      { emoji:'🍚', vi:'Cơm tấm sườn bì chả trứng', en:'Broken Rice Full Set', rest:'Cơm Tấm Thuận Kiều', dist:'0.7km', platform:'GrabFood', price:'60,000đ', match:94 },
-      { emoji:'🍗', vi:'Gà nướng mật ong + khoai lang', en:'Honey Grilled Chicken + Sweet Potato', rest:'Healthy Box', dist:'2.1km', platform:'ShopeeFood', price:'65,000đ', match:88 },
-      { emoji:'🍖', vi:'Phở bò đặc biệt + trứng', en:'Special Beef Pho + Egg', rest:'Phở Hòa Pasteur', dist:'1.5km', platform:'GrabFood', price:'70,000đ', match:83 }
+      { emoji:'🍚', vi:'Cơm tấm sườn bì chả trứng', en:'Broken Rice Full Set', rest:'Cơm Tấm Thuận Kiều', dist:'0.7km', platform:'GrabFood', price:'60,000đ', price_k:60, match:94, nutrition:{p:42,c:88,f:20,k:750} },
+      { emoji:'🍗', vi:'Gà nướng mật ong + khoai lang', en:'Honey Grilled Chicken + Sweet Potato', rest:'Healthy Box', dist:'2.1km', platform:'ShopeeFood', price:'65,000đ', price_k:65, match:88, nutrition:{p:48,c:75,f:15,k:680} },
+      { emoji:'🍖', vi:'Phở bò đặc biệt + trứng', en:'Special Beef Pho + Egg', rest:'Phở Hòa Pasteur', dist:'1.5km', platform:'GrabFood', price:'70,000đ', price_k:70, match:83, nutrition:{p:40,c:78,f:16,k:620} }
     ]
   }
 };
@@ -3437,16 +3442,72 @@ const soDayLabels = {
   en: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun']
 };
 
+function computeSmartOrderGaps() {
+  const cMult = { loss: 0.82, maintain: 1.0, gain: 1.18 }[soActiveGoal] || 1.0;
+  const pMult = { loss: 0.9, maintain: 1.0, gain: 1.3 }[soActiveGoal] || 1.0;
+  return {
+    p: Math.max(0, Math.round(trkMax.protein * pMult) - trkState.protein),
+    c: Math.max(0, Math.round(trkMax.carbs * cMult) - trkState.carbs),
+    f: Math.max(0, Math.round(trkMax.fat * cMult) - trkState.fat),
+    k: Math.max(0, Math.round(trkMax.kcal * cMult) - trkState.kcal)
+  };
+}
+
+function computeLiveCountdown() {
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const upcoming = setupState.meals
+    .map(m => {
+      const [h, mi] = m.time.split(':').map(Number);
+      return { meal: m, totalMin: h * 60 + mi };
+    })
+    .filter(m => m.totalMin > nowMin)
+    .sort((a, b) => a.totalMin - b.totalMin);
+  if (!upcoming.length) return null;
+  return { meal: upcoming[0].meal, diffMin: upcoming[0].totalMin - nowMin };
+}
+
+function computeMatchScore(nutrition, gaps) {
+  const items = [
+    { have: nutrition.p, need: gaps.p, w: 0.4 },
+    { have: nutrition.c, need: gaps.c, w: 0.35 },
+    { have: nutrition.f, need: gaps.f, w: 0.25 }
+  ];
+  let score = 0;
+  for (const it of items) {
+    if (it.need <= 0) { score += it.w * 60; continue; }
+    const ratio = it.have / it.need;
+    const fit = ratio <= 1 ? ratio : Math.max(0, 2 - ratio);
+    score += it.w * fit * 100;
+  }
+  return Math.round(Math.min(99, Math.max(40, score)));
+}
+
 function renderSmartOrder() {
   const lang = currentLang;
   const goal = soGoalData[soActiveGoal];
+
+  // Real-time day index (Mon=0 … Sun=6)
+  const jsDay = new Date().getDay();
+  const todayIdx = jsDay === 0 ? 6 : jsDay - 1;
+
+  // Week tag — real day name
+  const weekDayVi = ['Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7','Chủ nhật'];
+  const weekDayEn = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+  const soWeekTagEl = document.getElementById('soWeekTag');
+  if (soWeekTagEl) {
+    const daysLeft = 6 - todayIdx;
+    soWeekTagEl.textContent = lang === 'vi'
+      ? `${weekDayVi[todayIdx]} · ${daysLeft} ngày còn lại`
+      : `${weekDayEn[todayIdx]} · ${daysLeft} days left`;
+  }
 
   // Week grid
   const gridEl = document.getElementById('soWeekGrid');
   if (gridEl) {
     gridEl.innerHTML = '';
     goal.weekProgress.forEach((pct, i) => {
-      const isToday = i === 4;
+      const isToday = i === todayIdx;
       const day = document.createElement('div');
       day.className = 'so-day' + (isToday ? ' today' : '') + (pct === 0 ? ' future' : '');
       const fillH = Math.round(pct * 100);
@@ -3459,7 +3520,6 @@ function renderSmartOrder() {
       `;
       gridEl.appendChild(day);
     });
-    // Animate fills
     setTimeout(() => {
       gridEl.querySelectorAll('.so-day-fill').forEach(el => {
         el.style.height = el.dataset.h;
@@ -3475,7 +3535,6 @@ function renderSmartOrder() {
     const remP = Math.round(wk.p * (1 - doneRatio * 0.74));
     const remC = Math.round(wk.c * (1 - doneRatio * 0.74));
     const remF = Math.round(wk.f * (1 - doneRatio * 0.74));
-    const weekLbl = lang === 'vi' ? 'TUẦN NÀY CÒN THIẾU' : 'REMAINING THIS WEEK';
     macrosEl.innerHTML = `
       <div class="so-wmacro" style="border-color:rgba(255,106,40,0.2);">
         <div class="so-wmacro-val" style="color:var(--accent);">${remP}g</div>
@@ -3492,23 +3551,30 @@ function renderSmartOrder() {
     `;
   }
 
-  // Gap pills (today)
+  // Gap pills — real remaining macros from trkState
+  const gaps = computeSmartOrderGaps();
   const gapEl = document.getElementById('soGapPills');
   if (gapEl) {
-    const t = goal.today;
-    const pLbl = lang === 'vi' ? 'thiếu' : 'needed';
     gapEl.innerHTML = `
-      <span class="so-gap-pill p">+${t.p}g Protein</span>
-      <span class="so-gap-pill c">+${t.c}g Carbs</span>
-      <span class="so-gap-pill f">+${t.f}g Fat</span>
-      <span class="so-gap-pill k">~${t.k} kcal</span>
+      <span class="so-gap-pill p">+${gaps.p}g Protein</span>
+      <span class="so-gap-pill c">+${gaps.c}g Carbs</span>
+      <span class="so-gap-pill f">+${gaps.f}g Fat</span>
+      <span class="so-gap-pill k">~${gaps.k} kcal</span>
     `;
   }
 
-  // Countdown label
+  // Countdown — real time until next scheduled meal
   const cdEl = document.getElementById('soCountdown');
   if (cdEl) {
-    cdEl.textContent = lang === 'vi' ? '28 phút đến bữa trưa' : '28 min until lunch';
+    const cd = computeLiveCountdown();
+    if (cd) {
+      const mealName = lang === 'vi' ? cd.meal.vi : cd.meal.en;
+      cdEl.textContent = lang === 'vi'
+        ? `${cd.diffMin} phút đến ${mealName.toLowerCase()}`
+        : `${cd.diffMin} min until ${mealName.toLowerCase()}`;
+    } else {
+      cdEl.textContent = lang === 'vi' ? 'Hết bữa hôm nay ✓' : 'All meals done today ✓';
+    }
   }
 
   // Notification title
@@ -3517,22 +3583,28 @@ function renderSmartOrder() {
     titleEl.textContent = lang === 'vi' ? 'Hôm nay bạn còn thiếu:' : 'You still need today:';
   }
 
-  // Options (MCQ)
+  // Options — real match scores + budget filtering
   const optionsEl = document.getElementById('soOptions');
   if (optionsEl) {
     optionsEl.innerHTML = '';
     soSelectedOption = null;
     document.getElementById('soOrderActions').style.display = 'none';
 
+    const budget = setupState.budget || 0;
     goal.options.forEach((opt, idx) => {
+      const matchScore = computeMatchScore(opt.nutrition, gaps);
+      const overBudget = budget > 0 && opt.price_k > budget;
       const div = document.createElement('div');
-      div.className = 'so-option';
+      div.className = 'so-option' + (overBudget ? ' over-budget' : '');
       const name = lang === 'en' ? opt.en : opt.vi;
+      const budgetTag = overBudget
+        ? `<span class="so-over-budget-tag">${lang === 'vi' ? 'Vượt ngân sách' : 'Over budget'}</span>`
+        : '';
       div.innerHTML = `
         <div class="so-radio"></div>
         <div class="so-opt-emoji">${opt.emoji}</div>
         <div class="so-opt-info">
-          <div class="so-opt-name">${name}</div>
+          <div class="so-opt-name">${name}${budgetTag}</div>
           <div class="so-opt-meta">
             <span>📍 ${opt.rest}</span>
             <span>🚶 ${opt.dist}</span>
@@ -3540,7 +3612,7 @@ function renderSmartOrder() {
           </div>
         </div>
         <div class="so-opt-right">
-          <div class="so-opt-match">${opt.match}<span style="font-size:12px;color:var(--text-3);">%</span></div>
+          <div class="so-opt-match">${matchScore}<span style="font-size:12px;color:var(--text-3);">%</span></div>
           <div class="so-opt-price">${opt.price}</div>
         </div>
       `;
