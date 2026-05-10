@@ -4,7 +4,7 @@
 
 NomNom is a nutrition tracking platform built for Vietnamese food first. The core insight: nobody has properly built a Vietnamese cuisine nutrition database — that's the moat. The product tracks what you eat vs what your body needs, then acts on it through auto-ordering, recommendations, and gamification.
 
-**Stage:** Pre-seed, building. Currently a single-file interactive landing page / proof-of-concept with 10 working demo sections.
+**Stage:** Pre-seed, building. Single-file web app deployed to Cloudflare Pages at https://nomnom-728.pages.dev/. 13+ interactive demo sections with localStorage persistence + local auth scaffolding.
 
 **Tagline:** Chuyên gia dinh dưỡng cho tất cả. (Nutrition expert for everyone.)
 
@@ -12,11 +12,23 @@ NomNom is a nutrition tracking platform built for Vietnamese food first. The cor
 
 ```
 NOMNOM/
-├── CLAUDE.md                    ← You are here
-├── nomnom-landing.html          ← Main deliverable — single-file HTML app (~3100 lines)
-├── nomnom-brief.md              ← Product brief, feature roadmap, team needs
-└── api-feasibility-research.md  ← GrabFood & ShopeeFood API research
+├── CLAUDE.md                    ← You are here — global context, design system, conventions
+├── README.md
+├── index.html                   ← The app — single-file HTML/CSS/JS, ~5400 lines, deployed to Cloudflare Pages
+└── features/                    ← Per-feature spec docs (read ONLY the relevant one when iterating)
+    ├── README.md                ← Index + iteration workflow
+    ├── auth.md, persistence.md, theme-i18n.md   ← Cross-cutting
+    ├── hero.md, tracking.md, gamification.md, voice-log.md
+    ├── setup-wizard.md, smart-order.md, dine-out.md
+    ├── group-challenge.md, cuisine-db.md, recipe-hub.md
+    ├── recipe-analyzer.md, vendor-hub.md, audience-timeline-proof.md
 ```
+
+## Iteration Workflow
+
+**Per-feature work:** Read `features/<feature>.md` first, then jump to the line ranges it points to in `index.html`. Don't read other feature specs unless they're listed under "Dependencies".
+
+**Cross-cutting changes** (auth, persistence, theme, i18n): start from the relevant `features/<cross-cutting>.md`.
 
 ## Tech Stack
 

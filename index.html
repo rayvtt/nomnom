@@ -100,6 +100,114 @@
   }
   .nav-mobile-cta:hover { transform: scale(1.05); }
 
+  /* ===== AUTH (nav slot + modal) ===== */
+  .nav-auth-slot { display: inline-flex; align-items: center; }
+  .nav-signin {
+    background: transparent; border: 1.5px solid var(--card-border); color: var(--text);
+    padding: 7px 14px; border-radius: 99px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: inherit; transition: all 0.2s;
+  }
+  .nav-signin:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-mobile .nav-signin { padding: 5px 12px; font-size: 11px; }
+  .nav-avatar {
+    width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--card-border);
+    background: var(--bg-2); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-family: inherit; transition: all 0.2s; padding: 0;
+  }
+  .nav-avatar:hover { border-color: var(--accent); transform: scale(1.05); }
+  .nav-avatar-initials {
+    font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: 0.02em;
+  }
+  .nav-mobile .nav-avatar { width: 28px; height: 28px; }
+  .nav-mobile .nav-avatar-initials { font-size: 10px; }
+
+  .auth-modal {
+    position: fixed; inset: 0; z-index: 9999; display: none;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .auth-modal.open { display: flex; }
+  .auth-backdrop {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  body.light-mode .auth-backdrop { background: rgba(0,0,0,0.35); }
+  .auth-dialog {
+    position: relative; background: var(--bg-2); border: 1px solid var(--card-border);
+    border-radius: 24px; padding: 32px 28px; width: 100%; max-width: 380px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4); animation: authIn 0.25s cubic-bezier(0.2,1,0.4,1);
+  }
+  @keyframes authIn { from { opacity: 0; transform: translateY(20px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .auth-close {
+    position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%;
+    background: transparent; border: none; color: var(--text-2); font-size: 24px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; line-height: 1;
+  }
+  .auth-close:hover { background: var(--bg-3); color: var(--text); }
+  .auth-logo { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 18px; letter-spacing: -0.02em; }
+  .auth-tabs {
+    display: flex; background: var(--bg-3); border-radius: 99px; padding: 4px; margin-bottom: 22px;
+  }
+  .auth-tab {
+    flex: 1; background: transparent; border: none; padding: 8px 16px; border-radius: 99px;
+    font-size: 13px; font-weight: 600; color: var(--text-2); cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  .auth-tab.active { background: var(--bg); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+  .auth-form { display: flex; flex-direction: column; gap: 14px; }
+  .auth-field { display: flex; flex-direction: column; gap: 6px; }
+  .auth-field label {
+    font-size: 11px; font-weight: 700; color: var(--text-3); text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .auth-field input {
+    background: var(--bg); border: 1.5px solid var(--card-border); border-radius: 12px;
+    padding: 12px 14px; font-size: 14px; color: var(--text); font-family: inherit;
+    transition: border-color 0.2s;
+  }
+  .auth-field input:focus { outline: none; border-color: var(--accent); }
+  .auth-error {
+    color: var(--red); font-size: 12px; min-height: 16px; font-weight: 500;
+  }
+  .auth-submit {
+    background: var(--accent); color: white; border: none; border-radius: 12px;
+    padding: 13px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+    transition: all 0.2s; margin-top: 4px;
+  }
+  .auth-submit:hover { background: var(--accent-2); transform: translateY(-1px); }
+  .auth-disclaimer {
+    font-size: 10px; color: var(--text-3); text-align: center; line-height: 1.5; margin-top: 8px;
+  }
+
+  /* Mode-driven visibility */
+  .auth-modal[data-mode="account"] .auth-signed-out { display: none; }
+  .auth-modal:not([data-mode="account"]) .auth-signed-in { display: none; }
+  .auth-modal[data-mode="signin"] .auth-field-name { display: none; }
+  .auth-modal[data-mode="signin"] .auth-submit-signup { display: none; }
+  .auth-modal[data-mode="signup"] .auth-submit-signin { display: none; }
+
+  /* Account view */
+  .auth-signed-in { text-align: center; }
+  .auth-account-avatar {
+    width: 64px; height: 64px; border-radius: 50%; background: var(--bg-3);
+    border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px; font-size: 22px; font-weight: 700; color: var(--accent);
+  }
+  .auth-account-name { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .auth-account-email { font-size: 13px; color: var(--text-2); margin-bottom: 4px; }
+  .auth-account-meta { font-size: 11px; color: var(--text-3); margin-bottom: 22px; }
+  .auth-signout {
+    width: 100%; background: transparent; color: var(--red); border: 1.5px solid var(--red);
+    border-radius: 12px; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer;
+    font-family: inherit; transition: all 0.2s;
+  }
+  .auth-signout:hover { background: var(--red); color: white; }
+
+  @media (max-width: 600px) {
+    .auth-dialog { padding: 26px 22px; border-radius: 20px; }
+    .auth-logo { font-size: 22px; }
+    .auth-modal { padding: 12px; }
+  }
+
   /* ===== HERO ===== */
   .hero {
     min-height: 100vh; display: flex; flex-direction: column; align-items: center;
@@ -1748,6 +1856,7 @@
       <button class="active" onclick="setLang('vi')">VN</button>
       <button onclick="setLang('en')">EN</button>
     </div>
+    <span class="nav-auth-slot"></span>
     <a href="#cta" class="nav-cta" data-vi="Tham gia waitlist" data-en="Join waitlist">Tham gia waitlist</a>
   </div>
   <!-- Mobile only: lang toggle + CTA -->
@@ -1756,6 +1865,7 @@
       <button class="active" onclick="setLang('vi')">VN</button>
       <button onclick="setLang('en')">EN</button>
     </div>
+    <span class="nav-auth-slot"></span>
     <a href="#cta" class="nav-mobile-cta" data-vi="Đăng ký" data-en="Sign up">Đăng ký</a>
   </div>
 </nav>
@@ -2789,11 +2899,127 @@
   <p data-vi="Built with 🍜 in Sài Gòn · 2026" data-en="Built with 🍜 in Saigon · 2026">Built with 🍜 in Sài Gòn · 2026</p>
 </footer>
 
+<!-- AUTH MODAL — see features/auth.md -->
+<div class="auth-modal" id="authModal" data-mode="signin" aria-hidden="true">
+  <div class="auth-backdrop"></div>
+  <div class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button class="auth-close" type="button" aria-label="Close">×</button>
+
+    <!-- Signed-out: sign-in / sign-up tabs -->
+    <div class="auth-signed-out">
+      <div class="auth-logo" id="authTitle">Nom<span style="color:var(--accent);">Nom</span></div>
+      <div class="auth-tabs">
+        <button type="button" class="auth-tab active" data-mode="signin" data-vi="Đăng nhập" data-en="Sign in">Đăng nhập</button>
+        <button type="button" class="auth-tab" data-mode="signup" data-vi="Đăng ký" data-en="Sign up">Đăng ký</button>
+      </div>
+      <form class="auth-form" id="authForm" autocomplete="off">
+        <div class="auth-field auth-field-name">
+          <label data-vi="Tên" data-en="Name">Tên</label>
+          <input type="text" id="authName" autocomplete="name">
+        </div>
+        <div class="auth-field">
+          <label>Email</label>
+          <input type="email" id="authEmail" required autocomplete="email">
+        </div>
+        <div class="auth-field">
+          <label data-vi="Mật khẩu" data-en="Password">Mật khẩu</label>
+          <input type="password" id="authPassword" required autocomplete="current-password">
+        </div>
+        <div class="auth-error" id="authError"></div>
+        <button type="submit" class="auth-submit">
+          <span class="auth-submit-signin" data-vi="Đăng nhập" data-en="Sign in">Đăng nhập</span>
+          <span class="auth-submit-signup" data-vi="Tạo tài khoản" data-en="Create account">Tạo tài khoản</span>
+        </button>
+        <div class="auth-disclaimer" data-vi="⚠️ Demo: mật khẩu chưa được xác thực server-side. Sẽ tích hợp Supabase ở bản chính thức." data-en="⚠️ Demo: password not yet server-validated. Real Supabase auth coming.">
+          ⚠️ Demo: mật khẩu chưa được xác thực server-side. Sẽ tích hợp Supabase ở bản chính thức.
+        </div>
+      </form>
+    </div>
+
+    <!-- Signed-in: account view -->
+    <div class="auth-signed-in">
+      <div class="auth-account-avatar"><span id="authAccountInitials">?</span></div>
+      <div class="auth-account-name" id="authAccountName"></div>
+      <div class="auth-account-email" id="authAccountEmail"></div>
+      <div class="auth-account-meta" id="authAccountMeta"></div>
+      <button type="button" class="auth-signout" id="authSignOutBtn" data-vi="Đăng xuất" data-en="Sign out">Đăng xuất</button>
+    </div>
+  </div>
+</div>
+
 <script>
+// =============================================
+// PERSISTENCE + AUTH (cross-cutting)
+// See features/persistence.md, features/auth.md
+// =============================================
+
+let currentUser = null;
+try { currentUser = JSON.parse(localStorage.getItem('nomnom.auth.user') || 'null'); } catch (e) { currentUser = null; }
+
+function authScope() { return currentUser ? currentUser.id : 'guest'; }
+
+function loadState(key, fallback) {
+  try {
+    const raw = localStorage.getItem('nomnom.' + authScope() + '.' + key);
+    if (raw == null) return fallback;
+    const parsed = JSON.parse(raw);
+    // Merge with fallback so new fields added later still get defaults
+    if (fallback && typeof fallback === 'object' && !Array.isArray(fallback) && typeof parsed === 'object' && parsed !== null) {
+      return Object.assign({}, fallback, parsed);
+    }
+    return parsed;
+  } catch (e) { return fallback; }
+}
+
+function saveState(key, value) {
+  try { localStorage.setItem('nomnom.' + authScope() + '.' + key, JSON.stringify(value)); } catch (e) { /* quota or disabled */ }
+}
+
+function authGetAllUsers() {
+  try { return JSON.parse(localStorage.getItem('nomnom.auth.users') || '[]'); } catch (e) { return []; }
+}
+
+function authSignUp(email, _password, name) {
+  email = (email || '').trim().toLowerCase();
+  name = (name || '').trim();
+  if (!email || !name) return { ok: false, error: 'missing' };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: 'invalid_email' };
+  const users = authGetAllUsers();
+  if (users.find(u => u.email === email)) return { ok: false, error: 'exists' };
+  const id = 'u_' + Math.random().toString(36).slice(2, 12);
+  const user = { id, email, name, createdAt: new Date().toISOString() };
+  users.push(user);
+  localStorage.setItem('nomnom.auth.users', JSON.stringify(users));
+  localStorage.setItem('nomnom.auth.user', JSON.stringify(user));
+  currentUser = user;
+  return { ok: true, user };
+}
+
+function authSignIn(email, _password) {
+  email = (email || '').trim().toLowerCase();
+  if (!email) return { ok: false, error: 'missing' };
+  const users = authGetAllUsers();
+  const user = users.find(u => u.email === email);
+  if (!user) return { ok: false, error: 'not_found' };
+  localStorage.setItem('nomnom.auth.user', JSON.stringify(user));
+  currentUser = user;
+  return { ok: true, user };
+}
+
+function authSignOut() {
+  localStorage.removeItem('nomnom.auth.user');
+  currentUser = null;
+}
+
+function userInitials(u) {
+  if (!u || !u.name) return '?';
+  return u.name.split(/\s+/).slice(0, 2).map(w => w[0] || '').join('').toUpperCase() || '?';
+}
+
 // =============================================
 // LANGUAGE SYSTEM
 // =============================================
-let currentLang = 'vi';
+let currentLang = (localStorage.getItem('nomnom.lang') === 'en') ? 'en' : 'vi';
 
 const statementWords = {
   vi: {
@@ -2877,6 +3103,7 @@ const placeholders = {
 
 function setLang(lang) {
   currentLang = lang;
+  try { localStorage.setItem('nomnom.lang', lang); } catch (e) {}
 
   // Toggle button active state
   document.querySelectorAll('.lang-toggle button').forEach(btn => {
@@ -3100,8 +3327,9 @@ document.getElementById('profileEditBtn').addEventListener('click', (e) => {
 // =============================================
 // 1. INTERACTIVE MACRO TRACKING
 // =============================================
-const trkState = { kcal: 0, protein: 0, carbs: 0, fat: 0, goodCarbs: 0, badCarbs: 0, qualitySum: 0, mealCount: 0 };
-const trkMax = { kcal: 1850, protein: 120, carbs: 220, fat: 65 };
+const trkState = loadState('tracking', { kcal: 0, protein: 0, carbs: 0, fat: 0, goodCarbs: 0, badCarbs: 0, qualitySum: 0, mealCount: 0, addedMeals: [] });
+if (!Array.isArray(trkState.addedMeals)) trkState.addedMeals = [];
+const trkMax = loadState('trkMax', { kcal: 1850, protein: 120, carbs: 220, fat: 65 });
 
 function updateTrackingUI() {
   document.getElementById('trkKcal').textContent = trkState.kcal.toLocaleString();
@@ -3165,6 +3393,10 @@ function updateTrackingUI() {
     if (labelSpan) { labelSpan.textContent = currentLang === 'en' ? 'Add meals to see score' : 'Thêm món để xem điểm'; }
   }
 
+  // Persist
+  saveState('tracking', trkState);
+  saveState('trkMax', trkMax);
+
   // Live-sync Smart Order gap pills when tracking state changes
   if (typeof soAnimated !== 'undefined' && soAnimated) renderSmartOrder();
 }
@@ -3203,7 +3435,8 @@ function spawnParticles(x, y, color) {
   }
 }
 
-document.querySelectorAll('.meal-card-interactive').forEach(card => {
+const allMealCards = document.querySelectorAll('.meal-card-interactive');
+allMealCards.forEach((card, mealIdx) => {
   card.addEventListener('click', (e) => {
     const kcal = parseInt(card.dataset.kcal);
     const p = parseInt(card.dataset.p);
@@ -3218,11 +3451,13 @@ document.querySelectorAll('.meal-card-interactive').forEach(card => {
       trkState.kcal -= kcal; trkState.protein -= p; trkState.carbs -= c; trkState.fat -= f;
       trkState.goodCarbs -= goodc; trkState.badCarbs -= badc;
       trkState.qualitySum -= quality; trkState.mealCount--;
+      trkState.addedMeals = trkState.addedMeals.filter(i => i !== mealIdx);
     } else {
       card.classList.add('added');
       trkState.kcal += kcal; trkState.protein += p; trkState.carbs += c; trkState.fat += f;
       trkState.goodCarbs += goodc; trkState.badCarbs += badc;
       trkState.qualitySum += quality; trkState.mealCount++;
+      if (!trkState.addedMeals.includes(mealIdx)) trkState.addedMeals.push(mealIdx);
 
       // Flash effect — show quality instead of kcal for bad meals
       const flash = document.getElementById('mealFlash');
@@ -3246,12 +3481,20 @@ document.querySelectorAll('.meal-card-interactive').forEach(card => {
   });
 });
 
+// Restore meal-card "added" state from persistence
+trkState.addedMeals.forEach(idx => {
+  const card = allMealCards[idx];
+  if (card) card.classList.add('added');
+});
+updateTrackingUI();
+
 // =============================================
 // 2. GAMIFICATION SYSTEM
 // =============================================
-let gamifyState = { xp: 580, streak: 12, unlockDays: 2, badgesUnlocked: 3 };
+let gamifyState = loadState('gamify', { xp: 580, streak: 12, unlockDays: 2, badgesUnlocked: 3 });
 
 function updateGamifyUI() {
+  saveState('gamify', gamifyState);
   const xpPerc = (gamifyState.xp / 1000) * 100;
   document.getElementById('gpXpBar').style.width = xpPerc + '%';
   document.getElementById('gpXpText').textContent = gamifyState.xp;
@@ -3668,19 +3911,21 @@ if (soPanel) soObserver.observe(soPanel);
 // =============================================
 // 4.B AUTO-ORDER SETUP WIZARD
 // =============================================
-const setupState = {
+const setupState = loadState('setupState', {
   meals: [
     { vi: 'Sáng', en: 'Breakfast', icon: '🌅', time: '07:30' },
     { vi: 'Trưa', en: 'Lunch', icon: '☀️', time: '12:30' },
     { vi: 'Tối', en: 'Dinner', icon: '🌙', time: '19:00' }
   ],
   mealsPerDay: 3,
-  budget: 85,        // thousand VND per meal
-  delivery: 25,      // minutes
+  budget: 85,
+  delivery: 25,
   goal: 'maintain',
   channels: { phone: true, desktop: true },
   activated: false
-};
+});
+
+function persistSetupState() { saveState('setupState', setupState); }
 
 const mealPresets = [
   { vi: 'Sáng', en: 'Breakfast', icon: '🌅', time: '07:30' },
@@ -3726,6 +3971,7 @@ function renderSetupMeals() {
     inp.addEventListener('change', e => {
       const idx = parseInt(e.target.dataset.idx);
       setupState.meals[idx].time = e.target.value;
+      persistSetupState();
     });
   });
   // Remove buttons
@@ -3733,19 +3979,17 @@ function renderSetupMeals() {
     btn.addEventListener('click', e => {
       const idx = parseInt(e.target.dataset.idx);
       setupState.meals.splice(idx, 1);
-      if (setupState.mealsPerDay > setupState.meals.length) {
-        // sync mealsPerDay segment
-      }
+      persistSetupState();
       renderSetupMeals();
     });
   });
 }
 
 function addSetupMeal() {
-  // Pick a preset that's not already in meals (by time roughly)
   const usedTimes = new Set(setupState.meals.map(m => m.time));
   const next = mealPresets.find(p => !usedTimes.has(p.time)) || mealPresets[setupState.meals.length % mealPresets.length];
   setupState.meals.push({ ...next });
+  persistSetupState();
   renderSetupMeals();
 }
 
@@ -3764,6 +4008,7 @@ function updateSetupBudget() {
   hint.textContent = currentLang === 'en'
     ? `≈ ${monthlyStr} / month (${monthlyMeals} meals)`
     : `≈ ${monthlyStr} / tháng (${monthlyMeals} bữa)`;
+  persistSetupState();
 }
 
 function updateSetupDelivery() {
@@ -3779,11 +4024,38 @@ function updateSetupDelivery() {
   hint.textContent = currentLang === 'en'
     ? `Within ~${km}km of your location`
     : `Trong vòng ~${km}km gần bạn`;
+  persistSetupState();
 }
 
 // Init setup wizard
 (function initSetupWizard() {
   if (!document.getElementById('setupMeals')) return;
+
+  // Sync persisted state to UI controls
+  const budgetSlider = document.getElementById('setupBudgetSlider');
+  const deliverySlider = document.getElementById('setupDeliverySlider');
+  if (budgetSlider) budgetSlider.value = setupState.budget;
+  if (deliverySlider) deliverySlider.value = setupState.delivery;
+  document.querySelectorAll('#setupMealsDay .setup-seg-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.mealsday) === setupState.mealsPerDay);
+  });
+  document.querySelectorAll('#setupGoals .setup-goal-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.goal === setupState.goal);
+  });
+  document.querySelectorAll('#setupToggles .setup-toggle').forEach(t => {
+    const ch = t.dataset.ch;
+    t.classList.toggle('active', !!setupState.channels[ch]);
+  });
+  if (setupState.activated) {
+    const actBtn = document.getElementById('setupActivateBtn');
+    if (actBtn) {
+      actBtn.classList.add('activated');
+      actBtn.setAttribute('data-vi', '✓ Đã kích hoạt — xem preview ↓');
+      actBtn.setAttribute('data-en', '✓ Activated — see live preview ↓');
+      actBtn.textContent = currentLang === 'en' ? '✓ Activated — see live preview ↓' : '✓ Đã kích hoạt — xem preview ↓';
+    }
+  }
+
   renderSetupMeals();
   updateSetupBudget();
   updateSetupDelivery();
@@ -3803,6 +4075,7 @@ function updateSetupDelivery() {
         const next = mealPresets.find(p => !usedTimes.has(p.time)) || mealPresets[setupState.meals.length % mealPresets.length];
         setupState.meals.push({ ...next });
       }
+      persistSetupState();
       renderSetupMeals();
       updateSetupBudget();
     });
@@ -3813,6 +4086,7 @@ function updateSetupDelivery() {
       document.querySelectorAll('#setupGoals .setup-goal-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       setupState.goal = btn.dataset.goal;
+      persistSetupState();
     });
   });
 
@@ -3821,6 +4095,7 @@ function updateSetupDelivery() {
       t.classList.toggle('active');
       const ch = t.dataset.ch;
       setupState.channels[ch] = t.classList.contains('active');
+      persistSetupState();
     });
   });
 
@@ -3829,6 +4104,7 @@ function updateSetupDelivery() {
     const btn = document.getElementById('setupActivateBtn');
     if (setupState.activated) return;
     setupState.activated = true;
+    persistSetupState();
     btn.classList.add('activated');
     btn.setAttribute('data-vi', '✓ Đã kích hoạt — xem preview ↓');
     btn.setAttribute('data-en', '✓ Activated — see live preview ↓');
@@ -4039,9 +4315,16 @@ document.querySelectorAll('.stat-item').forEach(s => statsObserver.observe(s));
 // =============================================
 document.getElementById('themeToggle').addEventListener('click', () => {
   document.body.classList.toggle('light-mode');
-  // Update map tiles if map exists
+  try { localStorage.setItem('nomnom.theme', document.body.classList.contains('light-mode') ? 'light' : 'dark'); } catch (e) {}
   if (typeof updateMapTheme === 'function') updateMapTheme();
 });
+
+// Apply persisted theme on load
+(function applyPersistedTheme() {
+  try {
+    if (localStorage.getItem('nomnom.theme') === 'light') document.body.classList.add('light-mode');
+  } catch (e) {}
+})();
 
 // =============================================
 // 7. RECIPE HUB
@@ -5231,6 +5514,112 @@ if (floatNavBtn) {
     link.addEventListener('click', () => toggleFloatNav(false));
   });
 }
+
+// Apply persisted language (idempotent for 'vi' default)
+if (currentLang === 'en') setLang('en');
+
+// =============================================
+// AUTH UI WIRING
+// See features/auth.md
+// =============================================
+function refreshAuthUI() {
+  const slots = document.querySelectorAll('.nav-auth-slot');
+  slots.forEach(slot => {
+    if (currentUser) {
+      slot.innerHTML = `
+        <button class="nav-avatar" type="button" aria-label="Account" title="${currentUser.name}">
+          <span class="nav-avatar-initials">${userInitials(currentUser)}</span>
+        </button>`;
+    } else {
+      slot.innerHTML = `
+        <button class="nav-signin" type="button" data-vi="Đăng nhập" data-en="Sign in">${currentLang === 'en' ? 'Sign in' : 'Đăng nhập'}</button>`;
+    }
+  });
+  // Wire up freshly rendered controls
+  document.querySelectorAll('.nav-signin').forEach(btn => btn.addEventListener('click', () => openAuthModal('signin')));
+  document.querySelectorAll('.nav-avatar').forEach(btn => btn.addEventListener('click', () => openAuthModal('account')));
+}
+
+function openAuthModal(mode) {
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (currentUser) {
+    setAuthMode('account');
+    document.getElementById('authAccountInitials').textContent = userInitials(currentUser);
+    document.getElementById('authAccountName').textContent = currentUser.name;
+    document.getElementById('authAccountEmail').textContent = currentUser.email;
+    const since = new Date(currentUser.createdAt).toLocaleDateString(currentLang === 'vi' ? 'vi-VN' : 'en-US');
+    document.getElementById('authAccountMeta').textContent = (currentLang === 'vi' ? 'Tham gia từ ' : 'Joined ') + since;
+  } else {
+    setAuthMode(mode === 'signup' ? 'signup' : 'signin');
+  }
+}
+
+function closeAuthModal() {
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+  const err = document.getElementById('authError');
+  if (err) err.textContent = '';
+}
+
+function setAuthMode(mode) {
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  modal.dataset.mode = mode;
+  const tabs = modal.querySelectorAll('.auth-tab');
+  tabs.forEach(t => t.classList.toggle('active', t.dataset.mode === mode));
+  const err = document.getElementById('authError');
+  if (err) err.textContent = '';
+}
+
+function handleAuthSubmit(e) {
+  e.preventDefault();
+  const modal = document.getElementById('authModal');
+  const mode = modal.dataset.mode;
+  const email = document.getElementById('authEmail').value;
+  const password = document.getElementById('authPassword').value;
+  const nameEl = document.getElementById('authName');
+  const name = nameEl ? nameEl.value : '';
+  const err = document.getElementById('authError');
+
+  let res;
+  if (mode === 'signup') res = authSignUp(email, password, name);
+  else res = authSignIn(email, password);
+
+  if (!res.ok) {
+    const msgs = {
+      vi: { missing: 'Vui lòng điền đầy đủ.', invalid_email: 'Email không hợp lệ.', exists: 'Email đã tồn tại — hãy đăng nhập.', not_found: 'Không tìm thấy tài khoản — hãy đăng ký.' },
+      en: { missing: 'Please fill all fields.', invalid_email: 'Invalid email.', exists: 'Account exists — sign in instead.', not_found: 'No account found — sign up first.' }
+    };
+    err.textContent = msgs[currentLang][res.error] || res.error;
+    return;
+  }
+  closeAuthModal();
+  // Reload so all state re-loads under the new auth scope
+  location.reload();
+}
+
+function handleSignOut() {
+  authSignOut();
+  closeAuthModal();
+  location.reload();
+}
+
+(function initAuthUI() {
+  refreshAuthUI();
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+  modal.querySelector('.auth-close').addEventListener('click', closeAuthModal);
+  modal.querySelector('.auth-backdrop').addEventListener('click', closeAuthModal);
+  modal.querySelectorAll('.auth-tab').forEach(t => t.addEventListener('click', () => setAuthMode(t.dataset.mode)));
+  document.getElementById('authForm').addEventListener('submit', handleAuthSubmit);
+  const signOutBtn = document.getElementById('authSignOutBtn');
+  if (signOutBtn) signOutBtn.addEventListener('click', handleSignOut);
+})();
 
 </script>
 </body>
