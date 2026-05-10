@@ -4,32 +4,67 @@
 
 NomNom is a nutrition tracking platform built for Vietnamese food first. The core insight: nobody has properly built a Vietnamese cuisine nutrition database — that's the moat. The product tracks what you eat vs what your body needs, then acts on it through auto-ordering, recommendations, and gamification.
 
-**Stage:** Pre-seed, building. Currently a single-file interactive landing page / proof-of-concept with 10 working demo sections.
+**Stage:** Pre-seed, building. Landing page (proof-of-concept, 10 demo sections) + cloud backend scaffold now live on Railway.
 
 **Tagline:** Chuyên gia dinh dưỡng cho tất cả. (Nutrition expert for everyone.)
 
 ## File Structure
 
 ```
-NOMNOM/
-├── CLAUDE.md                    ← You are here
-├── nomnom-landing.html          ← Main deliverable — single-file HTML app (~3100 lines)
-├── nomnom-brief.md              ← Product brief, feature roadmap, team needs
-└── api-feasibility-research.md  ← GrabFood & ShopeeFood API research
+nomnom/
+├── CLAUDE.md            ← You are here
+├── index.html           ← Single-file landing page / interactive demo (~3100 lines)
+├── server.js            ← Express server: serves index.html + REST API routes
+├── package.json         ← Node.js project (express, @supabase/supabase-js, dotenv)
+├── railway.json         ← Railway deployment config
+├── .env.example         ← Env var template (copy to .env locally, set in Railway dashboard)
+├── .gitignore           ← Excludes .env, node_modules, Expo build artifacts
+└── mobile/              ← Expo / React Native app (push from local laptop)
+```
+
+## Cloud Architecture
+
+```
+GitHub (rayvtt/nomnom)
+  ├── main branch  ──→  GitHub Pages  (landing page: rayvtt.github.io/nomnom/)
+  └── main branch  ──→  Railway       (backend API: /api/*)
+                                           └──→  Supabase (DB + auth)
+
+Mobile dev (Expo Go)
+  └── pulls from GitHub, runs locally via `npx expo start`
+  └── API calls go to Railway URL
+```
+
+**Env vars** (never commit — set in Railway "Variables" dashboard):
+- `SUPABASE_URL` — your Supabase project URL
+- `SUPABASE_ANON_KEY` — public anon key
+- `SUPABASE_SERVICE_ROLE_KEY` — only for admin server-side ops
+- `PORT` — set automatically by Railway
+
+**Local dev:**
+```bash
+cp .env.example .env   # fill in Supabase credentials
+npm install
+npm run dev            # starts server with --watch on port 3000
 ```
 
 ## Tech Stack
 
-**Current (Landing Page):**
+**Landing Page (`index.html`):**
 - Single-file HTML with inline CSS + vanilla JS (no build tools, no framework)
 - Google Fonts: `Instrument Serif` (display/numbers) + `Outfit` (body/UI)
 - Leaflet.js 1.9.4 + OpenStreetMap via CartoCDN tiles (dark/light variants)
 - CSS custom properties for full dark/light theme support
-- No npm, no bundler — everything in one file for rapid prototyping
 
-**Future (App):**
-- TBD — likely React Native (mobile) + Next.js (web)
-- ML/AI for recommendation engine, recipe analysis, voice processing
+**Backend (`server.js`):**
+- Node.js + Express
+- Supabase JS client (`@supabase/supabase-js`) for DB + auth
+- Hosted on Railway (auto-deploys from `main` branch)
+- API routes: `/api/health`, `/api/waitlist`, `/api/profile/:id`, `/api/meals`, `/api/recipes`
+
+**Mobile (`mobile/`):**
+- Expo / React Native (ExpoGo for development)
+- Pulls data from Railway backend API
 - Vietnamese cuisine nutrition database (the core moat)
 
 ## Design System
