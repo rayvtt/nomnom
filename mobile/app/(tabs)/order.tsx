@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
-  StyleSheet, Switch, ActivityIndicator, Alert,
+  StyleSheet, Switch, ActivityIndicator, Alert, RefreshControl,
 } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { Colors } from '@/constants/colors';
@@ -10,11 +10,7 @@ import { setupApi, nutritionApi, logsApi, type SetupConfig, type Dish } from '@/
 
 const C = Colors.dark;
 
-const GOALS = [
-  { id: 'maintain', vi: 'Duy trì', label: '⚖️' },
-  { id: 'lose',     vi: 'Giảm cân', label: '🔥' },
-  { id: 'gain',     vi: 'Tăng cơ',  label: '💪' },
-] as const;
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatVnd(vnd: number) {
   return new Intl.NumberFormat('vi-VN').format(vnd) + '₫';
@@ -29,235 +25,31 @@ function macroTargets(kcal: number) {
   };
 }
 
-// Returns { slot, time, icon, minutesUntil } for the next upcoming meal, or null if all passed
-function nextMeal(mealTimes: SetupConfig['meal_times']): { slot: string; time: string; icon: string; minutesUntil: number } | null {
-  const now = new Date();
-  const nowMin = now.getHours() * 60 + now.getMinutes();
+function nowMinutes() {
+  const n = new Date();
+  return n.getHours() * 60 + n.getMinutes();
+}
 
-  let best: { slot: string; time: string; icon: string; minutesUntil: number } | null = null;
-  for (const m of mealTimes) {
-    const [hStr, mStr] = m.time.split(':');
-    const mealMin = parseInt(hStr, 10) * 60 + parseInt(mStr, 10);
-    const diff = mealMin - nowMin;
-    if (diff > 0 && (best === null || diff < best.minutesUntil)) {
-      best = { slot: m.slot, time: m.time, icon: m.icon, minutesUntil: diff };
-    }
-  }
-  return best;
+function parseTime(t: string) {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
 }
 
 function fmtCountdown(min: number) {
-  if (min < 60) return `${min} phút`;
+  if (min < 60) return `${min}p`;
   const h = Math.floor(min / 60);
   const m = min % 60;
-  return m > 0 ? `${h}g ${m}p` : `${h} giờ`;
-}
-
-// ── Smart Order live preview ─────────────────────────────────────────────────
-
-type SmartPanelProps = {
-  config: SetupConfig;
-  onOrderDone: () => void;
-};
-
-function SmartOrderPanel({ config, onOrderDone }: SmartPanelProps) {
-  const todayTotals = useStore(selectTodayTotals);
-  const tdee = useStore(selectTdee);
-  const targets = macroTargets(tdee);
-
-  const [next, setNext] = useState(() => nextMeal(config.meal_times));
-  const [recs, setRecs] = useState<Dish[]>([]);
-  const [loadingRecs, setLoadingRecs] = useState(true);
-  const [selected, setSelected] = useState<number | null>(null);
-  const [ordering, setOrdering] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const gapProtein = Math.max(0, targets.protein_g - todayTotals.protein_g);
-  const gapCarbs   = Math.max(0, targets.carbs_g   - todayTotals.carbs_g);
-  const gapFat     = Math.max(0, targets.fat_g     - todayTotals.fat_g);
-  const gapKcal    = Math.max(0, targets.kcal      - todayTotals.kcal);
-
-  // Countdown ticker
-  useEffect(() => {
-    timerRef.current = setInterval(() => setNext(nextMeal(config.meal_times)), 60_000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [config.meal_times]);
-
-  // Load recommendations
-  useEffect(() => {
-    setLoadingRecs(true);
-    nutritionApi.match({
-      kcal: gapKcal || targets.kcal,
-      protein: gapProtein || targets.protein_g,
-      budgetVnd: config.budget_vnd,
-    }).then((dishes) => {
-      setRecs(dishes.slice(0, 3));
-    }).catch(() => {
-      setRecs([]);
-    }).finally(() => setLoadingRecs(false));
-  }, [todayTotals.kcal, config.budget_vnd]);
-
-  async function confirmOrder(dish: Dish) {
-    if (!next) return;
-    setOrdering(true);
-    try {
-      const slot = next.slot.toLowerCase();
-      const mealSlot = (['breakfast', 'lunch', 'dinner', 'snack'].includes(slot)
-        ? slot : 'lunch') as 'breakfast' | 'lunch' | 'dinner' | 'snack';
-
-      await logsApi.log({
-        mealSlot,
-        dishId: dish.id,
-        dishName: dish.name_vi,
-        kcal: dish.kcal,
-        proteinG: dish.protein_g,
-        carbsG: dish.carbs_g,
-        fatG: dish.fat_g,
-        source: 'smart_order',
-      });
-      Alert.alert('Đã đặt hàng! 🎉', `${dish.emoji} ${dish.name_vi} đã được thêm vào nhật ký hôm nay.`);
-      setSelected(null);
-      onOrderDone();
-    } catch (e: any) {
-      Alert.alert('Lỗi', e.message);
-    } finally {
-      setOrdering(false);
-    }
-  }
-
-  const allEaten = gapKcal === 0 && gapProtein === 0;
-
-  return (
-    <View style={so.container}>
-      {/* Header row */}
-      <View style={so.header}>
-        <View style={so.statusDot} />
-        <Text style={so.headerText}>Smart Order đang hoạt động</Text>
-      </View>
-
-      {/* Next meal countdown */}
-      {next ? (
-        <View style={so.countdownCard}>
-          <Text style={so.mealIcon}>{next.icon}</Text>
-          <View style={so.countdownInfo}>
-            <Text style={so.mealSlot}>{next.slot}</Text>
-            <Text style={so.mealTime}>{next.time}</Text>
-          </View>
-          <View style={so.countdownBadge}>
-            <Text style={so.countdownLabel}>còn</Text>
-            <Text style={so.countdownValue}>{fmtCountdown(next.minutesUntil)}</Text>
-          </View>
-        </View>
-      ) : (
-        <View style={so.countdownCard}>
-          <Text style={so.mealIcon}>🌙</Text>
-          <Text style={so.allDone}>Tất cả các bữa hôm nay đã qua. Ngủ ngon!</Text>
-        </View>
-      )}
-
-      {/* Macro gaps */}
-      {!allEaten && (
-        <View style={so.gapsRow}>
-          <GapPill label="Protein" value={gapProtein} unit="g" color={C.accent} />
-          <GapPill label="Carbs"   value={gapCarbs}   unit="g" color={C.accent2} />
-          <GapPill label="Fat"     value={gapFat}     unit="g" color={C.green} />
-          <GapPill label="Kcal"    value={gapKcal}    unit="" color={C.text2} />
-        </View>
-      )}
-
-      {allEaten && (
-        <View style={so.doneBox}>
-          <Text style={so.doneText}>Bạn đã đạt mục tiêu hôm nay! 🥗</Text>
-        </View>
-      )}
-
-      {/* Dish recommendations */}
-      {!allEaten && (
-        <View style={so.recsSection}>
-          <Text style={so.recsTitle}>Gợi ý cho bữa tiếp theo</Text>
-          {loadingRecs ? (
-            <ActivityIndicator color={C.accent} style={{ marginVertical: 16 }} />
-          ) : recs.length === 0 ? (
-            <Text style={so.noRecs}>Không tìm thấy món phù hợp.</Text>
-          ) : (
-            recs.map((dish, i) => {
-              const overBudget = dish.avg_price_vnd > config.budget_vnd;
-              const isSelected = selected === i;
-              const matchScore = computeMatchScore(dish, gapProtein, gapCarbs, gapFat);
-              return (
-                <TouchableOpacity
-                  key={dish.id}
-                  style={[so.dishCard, isSelected && so.dishCardSelected, overBudget && so.dishCardDim]}
-                  onPress={() => setSelected(isSelected ? null : i)}
-                  activeOpacity={0.8}
-                >
-                  <View style={so.dishRow}>
-                    <Text style={so.dishEmoji}>{dish.emoji}</Text>
-                    <View style={so.dishInfo}>
-                      <Text style={[so.dishName, overBudget && so.dimText]}>{dish.name_vi}</Text>
-                      <Text style={so.dishMeta}>
-                        {dish.kcal} kcal · P{dish.protein_g}g C{dish.carbs_g}g F{dish.fat_g}g
-                      </Text>
-                    </View>
-                    <View style={so.dishRight}>
-                      <View style={[so.matchBadge, { backgroundColor: matchColor(matchScore) + '22' }]}>
-                        <Text style={[so.matchText, { color: matchColor(matchScore) }]}>{matchScore}%</Text>
-                      </View>
-                      <Text style={[so.priceText, overBudget && so.overBudget]}>
-                        {formatVnd(dish.avg_price_vnd)}
-                        {overBudget && ' ⚠'}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {isSelected && (
-                    <View style={so.actions}>
-                      <TouchableOpacity
-                        style={so.orderBtn}
-                        onPress={() => confirmOrder(dish)}
-                        disabled={ordering}
-                      >
-                        {ordering ? (
-                          <ActivityIndicator color="#fff" size="small" />
-                        ) : (
-                          <Text style={so.orderBtnText}>Đặt ngay →</Text>
-                        )}
-                      </TouchableOpacity>
-                      <TouchableOpacity style={so.skipBtn} onPress={() => setSelected(null)}>
-                        <Text style={so.skipBtnText}>Bỏ qua</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                </TouchableOpacity>
-              );
-            })
-          )}
-        </View>
-      )}
-    </View>
-  );
-}
-
-function GapPill({ label, value, unit, color }: { label: string; value: number; unit: string; color: string }) {
-  return (
-    <View style={[so.gapPill, { borderColor: color + '44' }]}>
-      <Text style={[so.gapValue, { color }]}>{value}{unit}</Text>
-      <Text style={so.gapLabel}>{label}</Text>
-    </View>
-  );
+  return m > 0 ? `${h}g${m}p` : `${h}g`;
 }
 
 function computeMatchScore(dish: Dish, gapP: number, gapC: number, gapF: number): number {
   const total = gapP + gapC + gapF;
   if (total === 0) return Math.round(dish.health_score);
-  const wP = gapP / total;
-  const wC = gapC / total;
-  const wF = gapF / total;
-  const diffP = Math.abs(dish.protein_g - gapP) / Math.max(gapP, 1);
-  const diffC = Math.abs(dish.carbs_g   - gapC) / Math.max(gapC, 1);
-  const diffF = Math.abs(dish.fat_g     - gapF) / Math.max(gapF, 1);
-  const raw = 1 - (wP * diffP + wC * diffC + wF * diffF);
-  return Math.max(0, Math.min(100, Math.round(raw * 100)));
+  const wP = gapP / total, wC = gapC / total, wF = gapF / total;
+  const dP = Math.abs(dish.protein_g - gapP) / Math.max(gapP, 1);
+  const dC = Math.abs(dish.carbs_g   - gapC) / Math.max(gapC, 1);
+  const dF = Math.abs(dish.fat_g     - gapF) / Math.max(gapF, 1);
+  return Math.max(0, Math.min(100, Math.round((1 - (wP * dP + wC * dC + wF * dF)) * 100)));
 }
 
 function matchColor(score: number) {
@@ -266,42 +58,434 @@ function matchColor(score: number) {
   return C.red;
 }
 
-// ── Main screen ──────────────────────────────────────────────────────────────
+const GOALS_META = [
+  { id: 'maintain', vi: 'Duy trì', en: 'Maintain', icon: '⚖️' },
+  { id: 'lose',     vi: 'Giảm cân', en: 'Lose',    icon: '🔥' },
+  { id: 'gain',     vi: 'Tăng cơ',  en: 'Gain',    icon: '💪' },
+] as const;
+
+// ── Meal Timeline ─────────────────────────────────────────────────────────────
+
+function MealTimeline({ meals }: { meals: SetupConfig['meal_times'] }) {
+  const now = nowMinutes();
+  const nextIdx = meals.findIndex((m) => parseTime(m.time) > now);
+
+  return (
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={tl.wrap} contentContainerStyle={tl.row}>
+      {meals.map((m, i) => {
+        const mMin = parseTime(m.time);
+        const isPast = mMin <= now;
+        const isNext = i === nextIdx;
+        const diff = mMin - now;
+
+        return (
+          <View key={m.slot} style={[tl.slot, isNext && tl.slotNext, isPast && tl.slotPast]}>
+            <Text style={tl.icon}>{m.icon}</Text>
+            <Text style={[tl.name, isPast && tl.dimText, isNext && tl.nextText]}>{m.slot}</Text>
+            <Text style={[tl.time, isPast && tl.dimText, isNext && { color: C.accent2 }]}>{m.time}</Text>
+            {isNext && diff > 0 && (
+              <View style={tl.badge}>
+                <Text style={tl.badgeText}>{fmtCountdown(diff)}</Text>
+              </View>
+            )}
+            {isPast && <Text style={tl.doneCheck}>✓</Text>}
+          </View>
+        );
+      })}
+    </ScrollView>
+  );
+}
+
+const tl = StyleSheet.create({
+  wrap: { marginHorizontal: -20 },
+  row: { paddingHorizontal: 20, gap: 10, paddingBottom: 4 },
+  slot: {
+    alignItems: 'center', width: 76, paddingVertical: 12, paddingHorizontal: 8,
+    backgroundColor: C.bg2, borderRadius: 14, borderWidth: 1, borderColor: C.cardBorder, gap: 4,
+  },
+  slotNext: { borderColor: C.accent2, backgroundColor: 'rgba(255,159,28,0.08)' },
+  slotPast: { opacity: 0.45 },
+  icon: { fontSize: 20 },
+  name: { fontSize: 11, color: C.text2, textTransform: 'capitalize', textAlign: 'center' },
+  nextText: { color: C.text, fontWeight: '600' },
+  dimText: { color: C.text3 },
+  time: { fontSize: 13, fontWeight: '700', color: C.text },
+  badge: { backgroundColor: C.accent2, borderRadius: 6, paddingHorizontal: 5, paddingVertical: 1 },
+  badgeText: { color: '#000', fontSize: 10, fontWeight: '700' },
+  doneCheck: { fontSize: 11, color: C.green, fontWeight: '700' },
+});
+
+// ── Macro Gap Bar ─────────────────────────────────────────────────────────────
+
+function MacroGaps({
+  targets, totals,
+}: {
+  targets: ReturnType<typeof macroTargets>;
+  totals: { kcal: number; protein_g: number; carbs_g: number; fat_g: number };
+}) {
+  const rows = [
+    { label: 'Protein', cur: totals.protein_g, max: targets.protein_g, color: C.accent,  unit: 'g' },
+    { label: 'Carbs',   cur: totals.carbs_g,   max: targets.carbs_g,   color: C.accent2, unit: 'g' },
+    { label: 'Fat',     cur: totals.fat_g,      max: targets.fat_g,     color: C.green,   unit: 'g' },
+  ];
+  return (
+    <View style={gap.wrap}>
+      {rows.map((r) => {
+        const pct = Math.min(1, r.cur / Math.max(r.max, 1));
+        const remaining = Math.max(0, r.max - r.cur);
+        return (
+          <View key={r.label} style={gap.row}>
+            <Text style={gap.label}>{r.label}</Text>
+            <View style={gap.track}>
+              <View style={[gap.fill, { width: `${Math.round(pct * 100)}%` as any, backgroundColor: r.color }]} />
+            </View>
+            <Text style={[gap.remaining, { color: remaining > 0 ? r.color : C.green }]}>
+              {remaining > 0 ? `−${remaining}${r.unit}` : '✓'}
+            </Text>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+const gap = StyleSheet.create({
+  wrap: { gap: 8 },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  label: { width: 52, fontSize: 12, color: C.text2 },
+  track: { flex: 1, height: 5, backgroundColor: C.bg3, borderRadius: 3, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: 3 },
+  remaining: { width: 44, fontSize: 12, fontWeight: '600', textAlign: 'right' },
+});
+
+// ── Dish Recommendation Card ──────────────────────────────────────────────────
+
+function DishCard({
+  dish, matchScore, overBudget, isActive, onOrder,
+}: {
+  dish: Dish;
+  matchScore: number;
+  overBudget: boolean;
+  isActive: boolean;
+  onOrder: (dish: Dish) => Promise<void>;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const [ordering, setOrdering] = useState(false);
+
+  async function handleOrder() {
+    setOrdering(true);
+    try { await onOrder(dish); setExpanded(false); }
+    finally { setOrdering(false); }
+  }
+
+  return (
+    <TouchableOpacity
+      style={[dc.card, expanded && dc.cardOpen]}
+      onPress={() => setExpanded((o) => !o)}
+      activeOpacity={0.85}
+    >
+      <View style={dc.row}>
+        <View style={[dc.matchRing, { borderColor: matchColor(matchScore) }]}>
+          <Text style={[dc.matchNum, { color: matchColor(matchScore) }]}>{matchScore}</Text>
+          <Text style={dc.matchPct}>%</Text>
+        </View>
+
+        <View style={dc.mid}>
+          <Text style={dc.name}>{dish.emoji} {dish.name_vi}</Text>
+          <Text style={dc.region}>{dish.region_vi}</Text>
+          <View style={dc.tagRow}>
+            <Text style={dc.tag}>{dish.kcal} kcal</Text>
+            <Text style={[dc.tag, { color: C.accent }]}>P{dish.protein_g}g</Text>
+            <Text style={[dc.tag, { color: C.accent2 }]}>C{dish.carbs_g}g</Text>
+            <Text style={[dc.tag, { color: C.green }]}>F{dish.fat_g}g</Text>
+          </View>
+        </View>
+
+        <View style={dc.right}>
+          <Text style={[dc.price, overBudget && dc.priceOver]}>
+            {formatVnd(dish.avg_price_vnd)}
+          </Text>
+          {overBudget && <Text style={dc.overTag}>quá NS</Text>}
+          <Text style={[dc.scoreTag, { color: dish.health_score >= 70 ? C.green : C.accent2 }]}>
+            ★ {dish.health_score}
+          </Text>
+        </View>
+      </View>
+
+      {expanded && (
+        <View style={dc.expand}>
+          <Text style={dc.ingredients}>
+            {dish.ingredients_vi?.slice(0, 6).join(' · ')}
+            {(dish.ingredients_vi?.length ?? 0) > 6 ? ' …' : ''}
+          </Text>
+          <Text style={[dc.warn, { color: dish.warn_type === 'good' ? C.green : dish.warn_type === 'neutral' ? C.text3 : C.red }]}>
+            {dish.warn_vi}
+          </Text>
+
+          {isActive ? (
+            <TouchableOpacity style={dc.orderBtn} onPress={handleOrder} disabled={ordering}>
+              {ordering
+                ? <ActivityIndicator color="#fff" size="small" />
+                : <Text style={dc.orderBtnText}>Đặt ngay →</Text>}
+            </TouchableOpacity>
+          ) : (
+            <View style={dc.lockedRow}>
+              <Text style={dc.lockedText}>🔒 Kích hoạt Smart Order để đặt hàng</Text>
+            </View>
+          )}
+        </View>
+      )}
+    </TouchableOpacity>
+  );
+}
+
+const dc = StyleSheet.create({
+  card: {
+    backgroundColor: C.bg2, borderRadius: 14, padding: 14,
+    borderWidth: 1, borderColor: C.cardBorder,
+  },
+  cardOpen: { borderColor: C.accent },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  matchRing: {
+    width: 44, height: 44, borderRadius: 22, borderWidth: 2,
+    alignItems: 'center', justifyContent: 'center', flexDirection: 'row',
+  },
+  matchNum: { fontSize: 14, fontWeight: '800' },
+  matchPct: { fontSize: 9, color: C.text3, marginTop: 4 },
+  mid: { flex: 1, gap: 3 },
+  name: { fontSize: 14, fontWeight: '600', color: C.text },
+  region: { fontSize: 11, color: C.text3 },
+  tagRow: { flexDirection: 'row', gap: 6, marginTop: 2 },
+  tag: { fontSize: 11, color: C.text2 },
+  right: { alignItems: 'flex-end', gap: 4 },
+  price: { fontSize: 13, fontWeight: '600', color: C.text },
+  priceOver: { color: C.red },
+  overTag: { fontSize: 10, color: C.red, backgroundColor: 'rgba(239,68,68,0.12)', paddingHorizontal: 4, paddingVertical: 1, borderRadius: 4 },
+  scoreTag: { fontSize: 12, fontWeight: '600' },
+  expand: { marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: C.cardBorder, gap: 8 },
+  ingredients: { fontSize: 12, color: C.text3 },
+  warn: { fontSize: 12, fontStyle: 'italic' },
+  orderBtn: { backgroundColor: C.accent, borderRadius: 10, paddingVertical: 11, alignItems: 'center', marginTop: 4 },
+  orderBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  lockedRow: { backgroundColor: C.bg3, borderRadius: 10, padding: 10, alignItems: 'center' },
+  lockedText: { color: C.text3, fontSize: 13 },
+});
+
+// ── Settings panel ────────────────────────────────────────────────────────────
+
+function SettingsPanel({
+  local, update,
+}: {
+  local: SetupConfig;
+  update: (p: Partial<SetupConfig>) => void;
+}) {
+  const monthlyBudget = local.meals_per_day * 30 * local.budget_vnd;
+
+  return (
+    <View style={{ gap: 10 }}>
+      {/* Meal times */}
+      <View style={s.card}>
+        <Text style={s.cardTitle}>Giờ ăn hôm nay</Text>
+        {local.meal_times.map((m) => (
+          <View key={m.slot} style={s.mealRow}>
+            <Text style={{ fontSize: 16 }}>{m.icon}</Text>
+            <Text style={s.mealSlot}>{m.slot}</Text>
+            <Text style={s.mealTime}>{m.time}</Text>
+          </View>
+        ))}
+        <Text style={s.hint}>Thông báo sẽ gửi 30 phút trước mỗi bữa.</Text>
+      </View>
+
+      {/* Meals per day */}
+      <View style={s.card}>
+        <Text style={s.cardTitle}>Số bữa / ngày</Text>
+        <View style={s.segRow}>
+          {[2, 3, 4, 5].map((n) => (
+            <TouchableOpacity key={n}
+              style={[s.segBtn, local.meals_per_day === n && s.segBtnActive]}
+              onPress={() => update({ meals_per_day: n })}>
+              <Text style={[s.segText, local.meals_per_day === n && s.segTextActive]}>{n}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Budget */}
+      <View style={s.card}>
+        <View style={s.cardRow}>
+          <Text style={s.cardTitle}>Ngân sách / bữa</Text>
+          <Text style={s.valueAccent}>{formatVnd(local.budget_vnd)}</Text>
+        </View>
+        <Text style={s.hint}>≈ {formatVnd(monthlyBudget)} / tháng</Text>
+        <View style={s.chipRow}>
+          {[40000, 60000, 85000, 120000, 200000].map((v) => (
+            <TouchableOpacity key={v}
+              style={[s.chip, local.budget_vnd === v && s.chipActive]}
+              onPress={() => update({ budget_vnd: v })}>
+              <Text style={[s.chipText, local.budget_vnd === v && s.chipTextActive]}>{v / 1000}k</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Delivery time */}
+      <View style={s.card}>
+        <View style={s.cardRow}>
+          <Text style={s.cardTitle}>Giao hàng tối đa</Text>
+          <Text style={s.valueAccent}>{local.delivery_max_min} phút</Text>
+        </View>
+        <View style={s.chipRow}>
+          {[15, 20, 25, 30, 40].map((v) => (
+            <TouchableOpacity key={v}
+              style={[s.chip, local.delivery_max_min === v && s.chipActive]}
+              onPress={() => update({ delivery_max_min: v })}>
+              <Text style={[s.chipText, local.delivery_max_min === v && s.chipTextActive]}>{v}'</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Goal */}
+      <View style={s.card}>
+        <Text style={s.cardTitle}>Mục tiêu</Text>
+        <View style={s.segRow}>
+          {GOALS_META.map((g) => (
+            <TouchableOpacity key={g.id}
+              style={[s.goalBtn, local.goal === g.id && s.goalBtnActive]}
+              onPress={() => update({ goal: g.id })}>
+              <Text style={{ fontSize: 18 }}>{g.icon}</Text>
+              <Text style={[s.goalText, local.goal === g.id && s.goalTextActive]}>{g.vi}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+
+      {/* Notifications */}
+      <View style={s.card}>
+        <Text style={s.cardTitle}>Thông báo qua</Text>
+        <View style={s.toggleRow}>
+          <Text style={s.toggleLabel}>📱 Điện thoại</Text>
+          <Switch value={local.notify_phone}
+            onValueChange={(v) => update({ notify_phone: v })}
+            trackColor={{ true: C.green, false: C.bg3 }} thumbColor="#fff" />
+        </View>
+        <View style={s.toggleRow}>
+          <Text style={s.toggleLabel}>💻 Máy tính</Text>
+          <Switch value={local.notify_desktop}
+            onValueChange={(v) => update({ notify_desktop: v })}
+            trackColor={{ true: C.green, false: C.bg3 }} thumbColor="#fff" />
+        </View>
+      </View>
+    </View>
+  );
+}
+
+// ── Main screen ───────────────────────────────────────────────────────────────
 
 export default function OrderScreen() {
-  const setupConfig = useStore((s) => s.setupConfig);
-  const setSetupConfig = useStore((s) => s.setSetupConfig);
-  const setTodayLogs = useStore((s) => s.setTodayLogs);
-  const [saving, setSaving] = useState(false);
-  const [local, setLocal] = useState<SetupConfig | null>(null);
+  const setSetupConfig = useStore((st) => st.setSetupConfig);
+  const setTodayLogs   = useStore((st) => st.setTodayLogs);
+  const tdee           = useStore(selectTdee);
+  const totals         = useStore(selectTodayTotals);
+
+  const [config, setConfig]         = useState<SetupConfig | null>(null);
+  const [local, setLocal]           = useState<SetupConfig | null>(null);
+  const [recs, setRecs]             = useState<Dish[]>([]);
+  const [loadingRecs, setLoadingRecs] = useState(true);
+  const [saving, setSaving]         = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const targets = macroTargets(tdee);
+  const gapP = Math.max(0, targets.protein_g - totals.protein_g);
+  const gapC = Math.max(0, targets.carbs_g   - totals.carbs_g);
+  const gapF = Math.max(0, targets.fat_g     - totals.fat_g);
+  const gapK = Math.max(0, targets.kcal      - totals.kcal);
+  const allMet = gapK === 0 && gapP === 0;
+
+  async function loadConfig() {
+    const c = await setupApi.get();
+    setConfig(c);
+    setSetupConfig(c);
+    setLocal(c);
+    return c;
+  }
+
+  async function loadRecs(c?: SetupConfig) {
+    const cfg = c ?? config;
+    setLoadingRecs(true);
+    try {
+      const dishes = await nutritionApi.match({
+        kcal:    gapK    || targets.kcal,
+        protein: gapP    || targets.protein_g,
+        budgetVnd: cfg?.budget_vnd,
+      });
+      setRecs(dishes.slice(0, 3));
+    } catch {
+      setRecs([]);
+    } finally {
+      setLoadingRecs(false);
+    }
+  }
+
+  async function doRefresh() {
+    setRefreshing(true);
+    try {
+      const [c, logs] = await Promise.all([loadConfig(), logsApi.getDay()]);
+      setTodayLogs(logs);
+      await loadRecs(c);
+    } catch { /* ignore */ }
+    setRefreshing(false);
+  }
 
   useFocusEffect(useCallback(() => {
-    setupApi.get().then((c) => {
-      setSetupConfig(c);
-      setLocal(c);
-    });
+    loadConfig().then(loadRecs);
+    timerRef.current = setInterval(() => setLocal((l) => l ? { ...l } : l), 60_000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, []));
 
-  if (!local) {
-    return (
-      <View style={styles.loading}>
-        <ActivityIndicator color={C.accent} size="large" />
-      </View>
-    );
-  }
+  // Reload recs when macro totals change (meal logged on Home tab)
+  useEffect(() => {
+    if (config) loadRecs();
+  }, [totals.kcal]);
 
   function update(patch: Partial<SetupConfig>) {
     setLocal((prev) => prev ? { ...prev, ...patch } : prev);
   }
 
-  async function save() {
+  async function toggleActivate() {
+    if (!local) return;
+    const next = { ...local, active: !local.active };
+    setLocal(next);
+    setSaving(true);
+    try {
+      const updated = await setupApi.update(next);
+      setConfig(updated);
+      setSetupConfig(updated);
+      setLocal(updated);
+      if (updated.active) {
+        Alert.alert('Smart Order kích hoạt! 🎉', 'NomNom sẽ gợi ý bữa ăn theo mục tiêu của bạn.');
+        setSettingsOpen(false);
+      }
+    } catch (e: any) {
+      Alert.alert('Lỗi', e.message);
+      setLocal((p) => p ? { ...p, active: !next.active } : p);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function saveSettings() {
     if (!local) return;
     setSaving(true);
     try {
       const updated = await setupApi.update(local);
+      setConfig(updated);
       setSetupConfig(updated);
       setLocal(updated);
-      Alert.alert('Đã lưu', local.active ? 'Smart Order đã được kích hoạt! 🎉' : 'Cài đặt đã lưu.');
+      await loadRecs(updated);
+      Alert.alert('Đã lưu', 'Cài đặt Smart Order đã được cập nhật.');
     } catch (e: any) {
       Alert.alert('Lỗi', e.message);
     } finally {
@@ -309,340 +493,221 @@ export default function OrderScreen() {
     }
   }
 
-  async function refreshLogs() {
-    try {
-      const logs = await logsApi.getDay();
-      setTodayLogs(logs);
-    } catch { /* ignore */ }
+  async function handleOrder(dish: Dish) {
+    if (!local) return;
+    const now = nowMinutes();
+    const nextSlot = local.meal_times.find((m) => parseTime(m.time) > now);
+    const slotRaw  = (nextSlot?.slot ?? 'lunch').toLowerCase();
+    const mealSlot = (['breakfast', 'lunch', 'dinner', 'snack'].includes(slotRaw)
+      ? slotRaw : 'lunch') as 'breakfast' | 'lunch' | 'dinner' | 'snack';
+
+    await logsApi.log({
+      mealSlot,
+      dishId: dish.id,
+      dishName: dish.name_vi,
+      kcal: dish.kcal,
+      proteinG: dish.protein_g,
+      carbsG: dish.carbs_g,
+      fatG: dish.fat_g,
+      source: 'smart_order',
+    });
+    Alert.alert('Đã đặt! 🎉', `${dish.emoji} ${dish.name_vi} đã thêm vào nhật ký hôm nay.`);
+
+    // Refresh logs so Home tab and gaps update
+    const logs = await logsApi.getDay();
+    setTodayLogs(logs);
   }
 
-  const monthlyBudget = local.meals_per_day * 30 * local.budget_vnd;
+  if (!local) {
+    return (
+      <View style={styles.loading}>
+        <ActivityIndicator color={C.accent} size="large" />
+        <Text style={styles.loadingText}>Đang tải Smart Order…</Text>
+      </View>
+    );
+  }
+
+  const isActive = local.active;
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>
-        {local.active ? '✅ Smart Order' : '⚙️ Smart Order'}
-      </Text>
-      <Text style={styles.sub}>
-        {local.active ? 'Đang theo dõi và gợi ý bữa ăn cho bạn.' : 'Cài đặt một lần — NomNom lo cả tháng.'}
-      </Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={doRefresh} tintColor={C.accent} />}
+    >
+      {/* ── Header ── */}
+      <View style={styles.headerRow}>
+        <View>
+          <Text style={styles.title}>Smart Order</Text>
+          <Text style={styles.sub}>Gợi ý bữa ăn theo mục tiêu của bạn</Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.statusPill, isActive ? styles.pillActive : styles.pillInactive]}
+          onPress={toggleActivate}
+          disabled={saving}
+        >
+          {saving
+            ? <ActivityIndicator color={isActive ? C.green : C.text3} size="small" />
+            : <Text style={[styles.pillText, isActive ? styles.pillTextActive : styles.pillTextInactive]}>
+                {isActive ? '● Bật' : '○ Tắt'}
+              </Text>}
+        </TouchableOpacity>
+      </View>
 
-      {/* Live preview — only shown when active */}
-      {local.active && (
-        <SmartOrderPanel config={local} onOrderDone={refreshLogs} />
-      )}
-
-      {/* Divider when active */}
-      {local.active && (
-        <View style={styles.divider}>
-          <Text style={styles.dividerText}>Cài đặt</Text>
+      {/* ── Meal timeline ── */}
+      {local.meal_times.length > 0 && (
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Bữa ăn hôm nay</Text>
+          <MealTimeline meals={local.meal_times} />
         </View>
       )}
 
-      {/* Meal times */}
+      {/* ── Macro progress ── */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Giờ ăn</Text>
-        {local.meal_times.map((m) => (
-          <View key={m.slot} style={styles.mealRow}>
-            <Text style={styles.mealIcon}>{m.icon}</Text>
-            <Text style={styles.mealSlot}>{m.slot}</Text>
-            <Text style={styles.mealTime}>{m.time}</Text>
+        <View style={styles.cardHeaderRow}>
+          <Text style={styles.cardTitle}>Còn thiếu hôm nay</Text>
+          <Text style={styles.kcalRemain}>
+            {allMet ? '✓ Đủ rồi!' : `${gapK} kcal còn lại`}
+          </Text>
+        </View>
+        {allMet
+          ? <Text style={styles.allMetText}>Bạn đã đạt mục tiêu macro hôm nay 🥗</Text>
+          : <MacroGaps targets={targets} totals={totals} />}
+      </View>
+
+      {/* ── Recommendations ── */}
+      <View style={styles.section}>
+        <View style={styles.recHeader}>
+          <Text style={styles.sectionLabel}>Gợi ý cho bữa tiếp theo</Text>
+          <TouchableOpacity onPress={() => loadRecs()}>
+            <Text style={styles.refreshBtn}>↻ Làm mới</Text>
+          </TouchableOpacity>
+        </View>
+
+        {loadingRecs ? (
+          <View style={styles.recsLoading}>
+            <ActivityIndicator color={C.accent} />
+            <Text style={styles.recsLoadingText}>Đang tính toán…</Text>
           </View>
-        ))}
-        <Text style={styles.hint}>Sẽ nhận thông báo 30 phút trước mỗi bữa.</Text>
-      </View>
-
-      {/* Meals per day */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Số bữa / ngày</Text>
-        <View style={styles.segRow}>
-          {[2, 3, 4, 5].map((n) => (
-            <TouchableOpacity
-              key={n}
-              style={[styles.segBtn, local.meals_per_day === n && styles.segBtnActive]}
-              onPress={() => update({ meals_per_day: n })}
-            >
-              <Text style={[styles.segText, local.meals_per_day === n && styles.segTextActive]}>
-                {n}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      {/* Budget */}
-      <View style={styles.card}>
-        <View style={styles.cardRow}>
-          <Text style={styles.cardTitle}>Ngân sách / bữa</Text>
-          <Text style={styles.valueAccent}>{formatVnd(local.budget_vnd)}</Text>
-        </View>
-        <Text style={styles.hint}>≈ {formatVnd(monthlyBudget)} / tháng ({local.meals_per_day} bữa × 30 ngày)</Text>
-        <View style={styles.sliderRow}>
-          {[40000, 60000, 85000, 120000, 200000].map((v) => (
-            <TouchableOpacity
-              key={v}
-              style={[styles.budgetBtn, local.budget_vnd === v && styles.budgetBtnActive]}
-              onPress={() => update({ budget_vnd: v })}
-            >
-              <Text style={[styles.budgetText, local.budget_vnd === v && styles.budgetTextActive]}>
-                {v / 1000}k
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      {/* Delivery time */}
-      <View style={styles.card}>
-        <View style={styles.cardRow}>
-          <Text style={styles.cardTitle}>Thời gian giao tối đa</Text>
-          <Text style={styles.valueAccent}>{local.delivery_max_min}'</Text>
-        </View>
-        <Text style={styles.hint}>≈ {(local.delivery_max_min * 0.12).toFixed(1)} km bán kính</Text>
-        <View style={styles.sliderRow}>
-          {[15, 20, 25, 30, 40].map((v) => (
-            <TouchableOpacity
-              key={v}
-              style={[styles.budgetBtn, local.delivery_max_min === v && styles.budgetBtnActive]}
-              onPress={() => update({ delivery_max_min: v })}
-            >
-              <Text style={[styles.budgetText, local.delivery_max_min === v && styles.budgetTextActive]}>
-                {v}'
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      {/* Goal */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Mục tiêu</Text>
-        <View style={styles.segRow}>
-          {GOALS.map((g) => (
-            <TouchableOpacity
-              key={g.id}
-              style={[styles.goalBtn, local.goal === g.id && styles.goalBtnActive]}
-              onPress={() => update({ goal: g.id })}
-            >
-              <Text style={styles.goalIcon}>{g.label}</Text>
-              <Text style={[styles.goalText, local.goal === g.id && styles.goalTextActive]}>
-                {g.vi}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      {/* Notification channels */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>Nhận thông báo qua</Text>
-        <View style={styles.toggleRow}>
-          <Text style={styles.toggleLabel}>📱 Điện thoại</Text>
-          <Switch
-            value={local.notify_phone}
-            onValueChange={(v) => update({ notify_phone: v })}
-            trackColor={{ true: C.green, false: C.bg3 }}
-            thumbColor="#fff"
-          />
-        </View>
-        <View style={styles.toggleRow}>
-          <Text style={styles.toggleLabel}>💻 Máy tính</Text>
-          <Switch
-            value={local.notify_desktop}
-            onValueChange={(v) => update({ notify_desktop: v })}
-            trackColor={{ true: C.green, false: C.bg3 }}
-            thumbColor="#fff"
-          />
-        </View>
-      </View>
-
-      {/* Activate toggle */}
-      <TouchableOpacity
-        style={[styles.activateBtn, local.active && styles.activateBtnOn]}
-        onPress={() => update({ active: !local.active })}
-      >
-        <Text style={styles.activateText}>
-          {local.active ? '✓ Đang hoạt động — chạm để tắt' : 'Kích hoạt Smart Order →'}
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.saveBtn} onPress={save} disabled={saving}>
-        {saving ? (
-          <ActivityIndicator color="#fff" />
+        ) : recs.length === 0 ? (
+          <View style={styles.emptyRecs}>
+            <Text style={styles.emptyRecsText}>Không tìm thấy món phù hợp với ngân sách này.</Text>
+          </View>
         ) : (
-          <Text style={styles.saveBtnText}>Lưu cài đặt</Text>
+          <View style={{ gap: 10 }}>
+            {recs.map((dish) => (
+              <DishCard
+                key={dish.id}
+                dish={dish}
+                matchScore={computeMatchScore(dish, gapP, gapC, gapF)}
+                overBudget={dish.avg_price_vnd > local.budget_vnd}
+                isActive={isActive}
+                onOrder={handleOrder}
+              />
+            ))}
+          </View>
         )}
+
+        {!isActive && (
+          <TouchableOpacity style={styles.activateCTA} onPress={toggleActivate} disabled={saving}>
+            <Text style={styles.activateCTAText}>
+              {saving ? 'Đang kích hoạt…' : '⚡ Kích hoạt Smart Order để đặt hàng'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* ── Settings collapsible ── */}
+      <TouchableOpacity style={styles.settingsToggle} onPress={() => setSettingsOpen((o) => !o)}>
+        <Text style={styles.settingsToggleText}>⚙️ Cài đặt Smart Order</Text>
+        <Text style={styles.chevron}>{settingsOpen ? '▲' : '▼'}</Text>
       </TouchableOpacity>
+
+      {settingsOpen && (
+        <>
+          <SettingsPanel local={local} update={update} />
+          <TouchableOpacity style={styles.saveBtn} onPress={saveSettings} disabled={saving}>
+            {saving
+              ? <ActivityIndicator color="#fff" />
+              : <Text style={styles.saveBtnText}>Lưu cài đặt</Text>}
+          </TouchableOpacity>
+        </>
+      )}
     </ScrollView>
   );
 }
 
-// ── Styles ───────────────────────────────────────────────────────────────────
+// ── Shared styles ─────────────────────────────────────────────────────────────
 
-const so = StyleSheet.create({
-  container: {
-    backgroundColor: 'rgba(52,211,153,0.05)',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: C.green + '33',
-    padding: 16,
-    gap: 12,
-  },
-  header: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  statusDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.green },
-  headerText: { fontSize: 13, fontWeight: '600', color: C.green, textTransform: 'uppercase', letterSpacing: 0.5 },
-  countdownCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: C.bg2,
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: C.cardBorder,
-  },
-  mealIcon: { fontSize: 24 },
-  countdownInfo: { flex: 1 },
-  mealSlot: { fontSize: 15, fontWeight: '600', color: C.text, textTransform: 'capitalize' },
-  mealTime: { fontSize: 13, color: C.text2, marginTop: 2 },
-  countdownBadge: { alignItems: 'flex-end' },
-  countdownLabel: { fontSize: 10, color: C.text3, textTransform: 'uppercase' },
-  countdownValue: { fontSize: 18, fontWeight: '700', color: C.accent2 },
-  allDone: { flex: 1, color: C.text2, fontSize: 14 },
-  gapsRow: { flexDirection: 'row', gap: 8 },
-  gapPill: {
-    flex: 1, alignItems: 'center', paddingVertical: 8, paddingHorizontal: 4,
-    backgroundColor: C.bg2, borderRadius: 10, borderWidth: 1,
-  },
-  gapValue: { fontSize: 15, fontWeight: '700' },
-  gapLabel: { fontSize: 10, color: C.text3, marginTop: 2 },
-  doneBox: {
-    backgroundColor: 'rgba(52,211,153,0.1)',
-    borderRadius: 10,
-    padding: 12,
-    alignItems: 'center',
-  },
-  doneText: { color: C.green, fontSize: 14, fontWeight: '500' },
-  recsSection: { gap: 8 },
-  recsTitle: { fontSize: 12, fontWeight: '600', color: C.text2, textTransform: 'uppercase', letterSpacing: 0.5 },
-  noRecs: { color: C.text3, fontSize: 13, textAlign: 'center', paddingVertical: 12 },
-  dishCard: {
-    backgroundColor: C.bg2,
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: C.cardBorder,
-    gap: 10,
-  },
-  dishCardSelected: { borderColor: C.accent, backgroundColor: 'rgba(255,106,40,0.06)' },
-  dishCardDim: { opacity: 0.6 },
-  dishRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  dishEmoji: { fontSize: 22 },
-  dishInfo: { flex: 1 },
-  dishName: { fontSize: 14, fontWeight: '500', color: C.text },
-  dimText: { color: C.text3 },
-  dishMeta: { fontSize: 11, color: C.text3, marginTop: 2 },
-  dishRight: { alignItems: 'flex-end', gap: 4 },
-  matchBadge: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  matchText: { fontSize: 12, fontWeight: '700' },
-  priceText: { fontSize: 12, color: C.text2 },
-  overBudget: { color: C.red },
-  actions: { flexDirection: 'row', gap: 8, marginTop: 4 },
-  orderBtn: {
-    flex: 1, backgroundColor: C.accent, borderRadius: 8,
-    paddingVertical: 10, alignItems: 'center',
-  },
-  orderBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  skipBtn: {
-    paddingHorizontal: 16, paddingVertical: 10, borderRadius: 8,
-    backgroundColor: C.bg3, borderWidth: 1, borderColor: C.cardBorder,
-    alignItems: 'center',
-  },
-  skipBtnText: { color: C.text2, fontSize: 14 },
+const s = StyleSheet.create({
+  card: { backgroundColor: C.bg2, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: C.cardBorder, gap: 8 },
+  cardTitle: { fontSize: 12, fontWeight: '600', color: C.text2, textTransform: 'uppercase', letterSpacing: 0.5 },
+  cardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  valueAccent: { fontSize: 17, fontWeight: '700', color: C.accent },
+  hint: { fontSize: 12, color: C.text3 },
+  mealRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 3 },
+  mealSlot: { flex: 1, color: C.text, fontSize: 14, textTransform: 'capitalize' },
+  mealTime: { color: C.accent2, fontSize: 14, fontWeight: '600' },
+  segRow: { flexDirection: 'row', gap: 8 },
+  segBtn: { flex: 1, paddingVertical: 9, borderRadius: 8, backgroundColor: C.bg3, borderWidth: 1, borderColor: C.cardBorder, alignItems: 'center' },
+  segBtnActive: { backgroundColor: 'rgba(255,106,40,0.15)', borderColor: C.accent },
+  segText: { color: C.text2, fontSize: 14, fontWeight: '500' },
+  segTextActive: { color: C.accent, fontWeight: '700' },
+  chipRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
+  chip: { paddingHorizontal: 12, paddingVertical: 7, borderRadius: 8, backgroundColor: C.bg3, borderWidth: 1, borderColor: C.cardBorder },
+  chipActive: { backgroundColor: 'rgba(255,106,40,0.15)', borderColor: C.accent },
+  chipText: { color: C.text2, fontSize: 13 },
+  chipTextActive: { color: C.accent, fontWeight: '700' },
+  goalBtn: { flex: 1, paddingVertical: 12, borderRadius: 10, backgroundColor: C.bg3, borderWidth: 1, borderColor: C.cardBorder, alignItems: 'center', gap: 4 },
+  goalBtnActive: { backgroundColor: 'rgba(52,211,153,0.12)', borderColor: C.green },
+  goalText: { color: C.text2, fontSize: 12 },
+  goalTextActive: { color: C.green, fontWeight: '600' },
+  toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 4 },
+  toggleLabel: { color: C.text, fontSize: 14 },
 });
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: C.bg },
-  content: { paddingHorizontal: 20, paddingTop: 60, paddingBottom: 48, gap: 12 },
-  loading: { flex: 1, backgroundColor: C.bg, justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 24, fontWeight: '700', color: C.text },
-  sub: { fontSize: 14, color: C.text2, marginBottom: 4 },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    marginVertical: 4,
+  content: { paddingHorizontal: 20, paddingTop: 56, paddingBottom: 48, gap: 16 },
+  loading: { flex: 1, backgroundColor: C.bg, justifyContent: 'center', alignItems: 'center', gap: 12 },
+  loadingText: { color: C.text2, fontSize: 14 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  title: { fontSize: 26, fontWeight: '800', color: C.text },
+  sub: { fontSize: 13, color: C.text2, marginTop: 2 },
+  statusPill: {
+    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
+    borderWidth: 1.5, minWidth: 72, alignItems: 'center',
   },
-  dividerText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: C.text3,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+  pillActive: { borderColor: C.green, backgroundColor: 'rgba(52,211,153,0.1)' },
+  pillInactive: { borderColor: C.text3, backgroundColor: C.bg3 },
+  pillText: { fontSize: 13, fontWeight: '700' },
+  pillTextActive: { color: C.green },
+  pillTextInactive: { color: C.text3 },
+  section: { gap: 10 },
+  sectionLabel: { fontSize: 12, fontWeight: '600', color: C.text2, textTransform: 'uppercase', letterSpacing: 0.5 },
+  card: { backgroundColor: C.bg2, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: C.cardBorder, gap: 10 },
+  cardHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  cardTitle: { fontSize: 12, fontWeight: '600', color: C.text2, textTransform: 'uppercase', letterSpacing: 0.5 },
+  kcalRemain: { fontSize: 13, fontWeight: '600', color: C.accent2 },
+  allMetText: { color: C.green, fontSize: 14 },
+  recHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  refreshBtn: { fontSize: 13, color: C.accent, fontWeight: '600' },
+  recsLoading: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 24, justifyContent: 'center' },
+  recsLoadingText: { color: C.text2, fontSize: 14 },
+  emptyRecs: { backgroundColor: C.bg2, borderRadius: 12, padding: 20, alignItems: 'center' },
+  emptyRecsText: { color: C.text3, fontSize: 14, textAlign: 'center' },
+  activateCTA: {
+    backgroundColor: C.accent, borderRadius: 14, paddingVertical: 15,
+    alignItems: 'center', marginTop: 4,
   },
-  card: {
-    backgroundColor: C.bg2,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: C.cardBorder,
-    gap: 8,
+  activateCTAText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  settingsToggle: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    backgroundColor: C.bg2, borderRadius: 12, padding: 14,
+    borderWidth: 1, borderColor: C.cardBorder,
   },
-  cardTitle: { fontSize: 13, fontWeight: '600', color: C.text2, textTransform: 'uppercase', letterSpacing: 0.5 },
-  cardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  valueAccent: { fontSize: 18, fontWeight: '700', color: C.accent },
-  hint: { fontSize: 12, color: C.text3 },
-  mealRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 4 },
-  mealIcon: { fontSize: 18 },
-  mealSlot: { flex: 1, color: C.text, fontSize: 14, textTransform: 'capitalize' },
-  mealTime: { color: C.accent2, fontSize: 15, fontWeight: '600' },
-  segRow: { flexDirection: 'row', gap: 8 },
-  segBtn: {
-    flex: 1, paddingVertical: 10, borderRadius: 8,
-    backgroundColor: C.bg3, borderWidth: 1, borderColor: C.cardBorder,
-    alignItems: 'center',
-  },
-  segBtnActive: { backgroundColor: 'rgba(255,106,40,0.15)', borderColor: C.accent },
-  segText: { color: C.text2, fontSize: 15, fontWeight: '500' },
-  segTextActive: { color: C.accent, fontWeight: '700' },
-  sliderRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
-  budgetBtn: {
-    paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8,
-    backgroundColor: C.bg3, borderWidth: 1, borderColor: C.cardBorder,
-  },
-  budgetBtnActive: { backgroundColor: 'rgba(255,106,40,0.15)', borderColor: C.accent },
-  budgetText: { color: C.text2, fontSize: 13 },
-  budgetTextActive: { color: C.accent, fontWeight: '700' },
-  goalBtn: {
-    flex: 1, paddingVertical: 12, borderRadius: 10,
-    backgroundColor: C.bg3, borderWidth: 1, borderColor: C.cardBorder,
-    alignItems: 'center', gap: 4,
-  },
-  goalBtnActive: { backgroundColor: 'rgba(52,211,153,0.12)', borderColor: C.green },
-  goalIcon: { fontSize: 20 },
-  goalText: { color: C.text2, fontSize: 12 },
-  goalTextActive: { color: C.green, fontWeight: '600' },
-  toggleRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingVertical: 4,
-  },
-  toggleLabel: { color: C.text, fontSize: 15 },
-  activateBtn: {
-    backgroundColor: C.bg3,
-    borderWidth: 1.5,
-    borderColor: C.accent,
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  activateBtnOn: { backgroundColor: 'rgba(52,211,153,0.15)', borderColor: C.green },
-  activateText: { color: C.text, fontSize: 16, fontWeight: '600' },
-  saveBtn: {
-    backgroundColor: C.accent,
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  saveBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  settingsToggleText: { color: C.text, fontSize: 14, fontWeight: '500' },
+  chevron: { color: C.text3, fontSize: 12 },
+  saveBtn: { backgroundColor: C.accent, borderRadius: 14, paddingVertical: 15, alignItems: 'center' },
+  saveBtnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
