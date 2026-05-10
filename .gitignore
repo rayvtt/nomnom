@@ -1,13 +1,21 @@
-# Environment variables — never commit these
+### Env files (never commit secrets)
 .env
 .env.local
 .env.*.local
 
-# Node
+### Node
 node_modules/
+.npm
 npm-debug.log*
 
-# Expo / React Native
+### Build outputs
+dist/
+build/
+.expo/
+.expo-shared/
+web-build/
+
+### Expo / React Native
 mobile/node_modules/
 mobile/.expo/
 mobile/dist/
@@ -21,6 +29,11 @@ mobile/*.mobileprovision
 mobile/*.orig.*
 mobile/web-build/
 
-# OS
+### IDE
+.vscode/
+.idea/
+*.swp
+
+### OS
 .DS_Store
 Thumbs.db
