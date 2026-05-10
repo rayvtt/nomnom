@@ -210,11 +210,25 @@ Dark theme by default (bg `#050505`). Light mode via `body.light-mode` class.
 - [x] Cloud sync working: GitHub ⇄ Railway auto-deploy on every push
 - [x] Repo consolidated onto `claude/setup-cloud-sync-6TBjC` (api/, mobile/, landing page all in one branch)
 - [x] `/health` verified live at `https://nomnom-production.up.railway.app/health`
+- [x] **Web app live on Cloudflare Pages** at `https://nomnom-728.pages.dev/` — no laptop needed, opens on phone browser
+- [x] **Auth flow working end-to-end** on web (signup → login → 4 tabs visible)
+- [x] **Home tab → meal logging modal**: tap "+ Thêm bữa ăn" → pick slot → search dish → tap to log → kcal/macro bars update
+- [x] **Delete a logged meal**: tap the × icon next to any meal row (DELETE /profile/logs/:id)
 
 ### In Progress
-- [ ] Connect Expo Go to Railway URL (set `EXPO_PUBLIC_API_URL` in `mobile/.env`)
-- [ ] Test auth flow end-to-end (signup → login → profile)
-- [ ] Wire Home tab to real API (`/profile/logs`)
+- [ ] Smart Order tab — currently UI only, needs to call `/profile/setup` PUT and trigger queue
+- [ ] Profile tab — verify body data updates persist to Supabase
+
+### Cloudflare Pages config (web app deploy)
+- Project name: `nomnom`
+- Production branch: `claude/setup-cloud-sync-6TBjC`
+- Build command: `cd mobile && npm install && npx expo export --platform web`
+- Build output directory: `mobile/dist`
+- Env vars (TEXT, all 3 required for build to bundle them):
+  - `EXPO_PUBLIC_SUPABASE_URL`
+  - `EXPO_PUBLIC_SUPABASE_ANON_KEY`
+  - `EXPO_PUBLIC_API_URL` = `https://nomnom-production.up.railway.app`
+- Important: Expo bakes `EXPO_PUBLIC_*` into the JS bundle at build time — changing env vars requires a redeploy
 
 ### Next
 - [ ] Smart Order activation (auto-queue based on setup config)

@@ -210,4 +210,17 @@ export default async function profileRoutes(fastify) {
     if (error) return reply.status(500).send({ error: error.message });
     return reply.status(201).send(data);
   });
+
+  // DELETE /profile/logs/:id  — remove a meal log
+  fastify.delete('/logs/:id', async (request, reply) => {
+    const { id } = request.params;
+    const { error } = await fastify.supabase
+      .from('daily_logs')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId(request));
+
+    if (error) return reply.status(500).send({ error: error.message });
+    return reply.status(204).send();
+  });
 }

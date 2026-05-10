@@ -38,6 +38,12 @@ async function patch<T>(path: string, body: unknown): Promise<T> {
   return res.json();
 }
 
+async function del(path: string): Promise<void> {
+  const headers = await authHeaders();
+  const res = await fetch(`${BASE_URL}${path}`, { method: 'DELETE', headers });
+  if (!res.ok) throw new Error(await res.text());
+}
+
 async function put<T>(path: string, body: unknown): Promise<T> {
   const headers = await authHeaders();
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -116,6 +122,7 @@ export const logsApi = {
     fatG: number;
     source?: LogEntry['source'];
   }) => post<LogEntry>('/profile/logs', entry),
+  remove: (id: string) => del(`/profile/logs/${id}`),
 };
 
 // ── Nutrition DB ───────────────────────────────────────────────

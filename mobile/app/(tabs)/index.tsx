@@ -1,12 +1,14 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
   StyleSheet, RefreshControl,
 } from 'react-native';
 import { useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/colors';
 import { useStore, selectTdee, selectTodayTotals } from '@/store/useStore';
 import { logsApi, profileApi } from '@/lib/api';
+import { LogMealModal } from '@/components/LogMealModal';
 
 const C = Colors.dark;
 
@@ -53,11 +55,13 @@ export default function TodayScreen() {
   const profile = useStore((s) => s.profile);
   const todayLogs = useStore((s) => s.todayLogs);
   const userId = useStore((s) => s.userId);
+  const lang = useStore((s) => s.lang);
   const setProfile = useStore((s) => s.setProfile);
   const setTodayLogs = useStore((s) => s.setTodayLogs);
   const tdee = useStore(selectTdee);
   const totals = useStore(selectTodayTotals);
   const targets = macroTargets(tdee);
+  const [logOpen, setLogOpen] = useState(false);
 
   async function refresh() {
     // Don't fetch if not logged in yet
@@ -127,13 +131,29 @@ export default function TodayScreen() {
                 P {meal.protein_g}g · C {meal.carbs_g}g · F {meal.fat_g}g
               </Text>
             </View>
+            <TouchableOpacity
+              onPress={async () => {
+                try { await logsApi.remove(meal.id); await refresh(); } catch {}
+              }}
+              hitSlop={10}
+              style={styles.delBtn}
+            >
+              <Ionicons name="close-circle" size={18} color={C.text3} />
+            </TouchableOpacity>
           </View>
         ))}
       </View>
 
-      <TouchableOpacity style={styles.logBtn}>
+      <TouchableOpacity style={styles.logBtn} onPress={() => setLogOpen(true)} activeOpacity={0.85}>
         <Text style={styles.logBtnText}>+ Thêm bữa ăn</Text>
       </TouchableOpacity>
+
+      <LogMealModal
+        visible={logOpen}
+        onClose={() => setLogOpen(false)}
+        onLogged={refresh}
+        lang={lang}
+      />
     </ScrollView>
   );
 }
@@ -168,6 +188,7 @@ const styles = StyleSheet.create({
   mealMacros: { alignItems: 'flex-end' },
   mealKcal: { fontSize: 14, color: C.accent, fontWeight: '600' },
   mealDetail: { fontSize: 11, color: C.text3, marginTop: 2 },
+  delBtn: { marginLeft: 8, padding: 4 },
   logBtn: {
     backgroundColor: C.accent, borderRadius: 12,
     paddingVertical: 14, alignItems: 'center', marginTop: 4,
