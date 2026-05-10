@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
   StyleSheet, RefreshControl,
@@ -10,7 +10,6 @@ import { logsApi, profileApi } from '@/lib/api';
 
 const C = Colors.dark;
 
-// Macro targets: 30% protein / 40% carbs / 30% fat (from CLAUDE.md)
 function macroTargets(kcal: number) {
   return {
     kcal,
@@ -31,7 +30,7 @@ function MacroBar({ label, current, max, color, unit = 'g' }: MacroBarProps) {
     <View style={bar.row}>
       <Text style={bar.label}>{label}</Text>
       <View style={bar.track}>
-        <View style={[bar.fill, { width: `${fill * 100}%` as any, backgroundColor: color }]} />
+        <View style={[bar.fill, { width: `${Math.round(fill * 100)}%` as any, backgroundColor: color }]} />
       </View>
       <Text style={bar.value}>
         {current}
@@ -53,6 +52,7 @@ const bar = StyleSheet.create({
 export default function TodayScreen() {
   const profile = useStore((s) => s.profile);
   const todayLogs = useStore((s) => s.todayLogs);
+  const userId = useStore((s) => s.userId);
   const setProfile = useStore((s) => s.setProfile);
   const setTodayLogs = useStore((s) => s.setTodayLogs);
   const tdee = useStore(selectTdee);
@@ -60,17 +60,21 @@ export default function TodayScreen() {
   const targets = macroTargets(tdee);
 
   async function refresh() {
-    const [p, logs] = await Promise.all([profileApi.get(), logsApi.getDay()]);
-    setProfile(p);
-    setTodayLogs(logs);
+    // Don't fetch if not logged in yet
+    if (!userId) return;
+    try {
+      const [p, logs] = await Promise.all([profileApi.get(), logsApi.getDay()]);
+      setProfile(p);
+      setTodayLogs(logs);
+    } catch {
+      // silently ignore — user may still be logging in
+    }
   }
 
-  // Refresh every time this tab gains focus
-  useFocusEffect(useCallback(() => { refresh(); }, []));
+  useFocusEffect(useCallback(() => { refresh(); }, [userId]));
 
   const kcalPct = pct(totals.kcal, targets.kcal);
   const kcalColor = kcalPct > 1 ? C.red : kcalPct > 0.8 ? C.accent2 : C.green;
-
   const today = new Date().toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long' });
 
   return (
@@ -79,13 +83,11 @@ export default function TodayScreen() {
       contentContainerStyle={styles.content}
       refreshControl={<RefreshControl refreshing={false} onRefresh={refresh} tintColor={C.accent} />}
     >
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.greeting}>Xin chào{profile?.display_name ? `, ${profile.display_name}` : ''} 👋</Text>
         <Text style={styles.date}>{today}</Text>
       </View>
 
-      {/* Calorie ring summary */}
       <View style={styles.kcalCard}>
         <View style={styles.kcalMain}>
           <Text style={[styles.kcalNum, { color: kcalColor }]}>{totals.kcal}</Text>
@@ -98,18 +100,19 @@ export default function TodayScreen() {
         </Text>
       </View>
 
-      {/* Macro bars */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Dinh dưỡng hôm nay</Text>
-        <MacroBar label="Protein"     current={Math.round(totals.protein_g)} max={targets.protein_g} color={C.accent} />
-        <MacroBar label="Carbs"       current={Math.round(totals.carbs_g)}   max={targets.carbs_g}   color={C.accent2} />
-        <MacroBar label="Chất béo"    current={Math.round(totals.fat_g)}     max={targets.fat_g}     color={C.green} />
+        <MacroBar label="Protein"  current={Math.round(totals.protein_g)} max={targets.protein_g} color={C.accent} />
+        <MacroBar label="Carbs"    current={Math.round(totals.carbs_g)}   max={targets.carbs_g}   color={C.accent2} />
+        <MacroBar label="Chất béo" current={Math.round(totals.fat_g)}     max={targets.fat_g}     color={C.green} />
       </View>
 
-      {/* Meal list */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Bữa ăn hôm nay</Text>
-        {todayLogs?.meals.length === 0 && (
+        {!userId && (
+          <Text style={styles.empty}>Đang tải...</Text>
+        )}
+        {userId && todayLogs?.meals.length === 0 && (
           <Text style={styles.empty}>Chưa có bữa nào. Thêm bữa ăn đầu tiên!</Text>
         )}
         {todayLogs?.meals.map((meal) => (
@@ -128,7 +131,6 @@ export default function TodayScreen() {
         ))}
       </View>
 
-      {/* Quick-log CTA */}
       <TouchableOpacity style={styles.logBtn}>
         <Text style={styles.logBtnText}>+ Thêm bữa ăn</Text>
       </TouchableOpacity>
@@ -143,33 +145,22 @@ const styles = StyleSheet.create({
   greeting: { fontSize: 22, fontWeight: '700', color: C.text },
   date: { fontSize: 13, color: C.text2, marginTop: 4 },
   kcalCard: {
-    backgroundColor: C.bg2,
-    borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: C.cardBorder,
+    backgroundColor: C.bg2, borderRadius: 16, padding: 20,
+    alignItems: 'center', borderWidth: 1, borderColor: C.cardBorder,
   },
   kcalMain: { flexDirection: 'row', alignItems: 'baseline', gap: 4 },
   kcalNum: { fontSize: 52, fontWeight: '700' },
   kcalLabel: { fontSize: 16, color: C.text2 },
   kcalSub: { fontSize: 13, color: C.text2, marginTop: 4 },
   card: {
-    backgroundColor: C.bg2,
-    borderRadius: 16,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: C.cardBorder,
-    gap: 4,
+    backgroundColor: C.bg2, borderRadius: 16, padding: 18,
+    borderWidth: 1, borderColor: C.cardBorder, gap: 4,
   },
   cardTitle: { fontSize: 14, fontWeight: '600', color: C.text, marginBottom: 12 },
   empty: { color: C.text3, fontSize: 13, textAlign: 'center', paddingVertical: 8 },
   mealRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: C.cardBorder,
+    flexDirection: 'row', justifyContent: 'space-between',
+    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: C.cardBorder,
   },
   mealInfo: { flex: 1 },
   mealName: { fontSize: 14, color: C.text, fontWeight: '500' },
@@ -178,11 +169,8 @@ const styles = StyleSheet.create({
   mealKcal: { fontSize: 14, color: C.accent, fontWeight: '600' },
   mealDetail: { fontSize: 11, color: C.text3, marginTop: 2 },
   logBtn: {
-    backgroundColor: C.accent,
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 4,
+    backgroundColor: C.accent, borderRadius: 12,
+    paddingVertical: 14, alignItems: 'center', marginTop: 4,
   },
   logBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
 });
