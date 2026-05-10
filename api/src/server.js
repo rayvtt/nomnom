@@ -24,6 +24,8 @@ server.addHook('onRequest', async (request, reply) => {
   // Public routes skip auth
   const publicPaths = ['/health', '/auth/login', '/auth/signup'];
   if (publicPaths.includes(request.url)) return;
+  // Nutrition DB is public read — no login required to search dishes
+  if (request.url.startsWith('/nutrition')) return;
   try {
     await request.jwtVerify();
   } catch {
