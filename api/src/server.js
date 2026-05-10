@@ -9,8 +9,10 @@ import nutritionRoutes from './routes/nutrition.js';
 
 const server = Fastify({ logger: true });
 
+// CORS — Expo Go uses random dev URLs, mobile apps don't send Origin at all.
+// In production we allow any origin since auth is via JWT, not cookies.
 await server.register(cors, {
-  origin: process.env.ALLOWED_ORIGINS?.split(',') ?? ['http://localhost:8081'],
+  origin: true,
   credentials: true,
 });
 
