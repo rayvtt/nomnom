@@ -1410,7 +1410,8 @@
   .so-opt-price { font-size: 11px; color: var(--text-3); margin-top: 2px; }
   .so-order-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; animation: fadeInUp 0.4s; }
   .so-order-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--green); color: white; padding: 12px 22px; border-radius: 14px; font-weight: 700; font-size: 14px; font-family: 'Be Vietnam Pro', sans-serif; transition: all 0.3s; cursor: pointer; border: none; text-decoration: none; }
-  .so-order-btn:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(52,211,153,0.35); }
+  .so-order-btn:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 8px 28px rgba(52,211,153,0.35); }
+  .so-order-btn:disabled { cursor: default; }
   .so-skip-btn { background: none; border: 1px solid var(--card-border); color: var(--text-3); padding: 12px 18px; border-radius: 14px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
   .so-skip-btn:hover { border-color: var(--text-2); color: var(--text-2); }
 
@@ -3880,17 +3881,54 @@ function selectSoOption(idx) {
     <button class="so-skip-btn">${skipLabel}</button>
   `;
   actionsEl.style.display = 'flex';
-  actionsEl.querySelector('.so-order-btn').addEventListener('click', () => {
-    actionsEl.querySelector('.so-order-btn').textContent = lang === 'vi' ? '✓ Đã gửi đến GrabFood!' : '✓ Sent to GrabFood!';
+
+  actionsEl.querySelector('.so-order-btn').addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    if (btn.disabled) return;
+
+    // Log dish macros into tracking state
+    const n = opt.nutrition;
+    trkState.kcal     += n.k;
+    trkState.protein  += n.p;
+    trkState.carbs    += n.c;
+    trkState.fat      += n.f;
+    trkState.goodCarbs += Math.round(n.c * 0.65);
+    trkState.badCarbs  += Math.round(n.c * 0.35);
+    trkState.qualitySum += opt.match;
+    trkState.mealCount++;
+    updateTrackingUI();
+
+    // Award XP
+    gamifyState.xp = Math.min(999, gamifyState.xp + 50);
+    updateGamifyUI();
+
+    // Particle burst from button
+    const rect = btn.getBoundingClientRect();
+    spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, '#34D399');
+
+    // Confirm — use actual platform name
+    btn.textContent = lang === 'vi'
+      ? `✓ Đã đặt trên ${opt.platform}!`
+      : `✓ Ordered on ${opt.platform}!`;
+    btn.style.opacity = '0.65';
+    btn.disabled = true;
+  });
+
+  actionsEl.querySelector('.so-skip-btn').addEventListener('click', () => {
+    soSelectedOption = null;
+    document.querySelectorAll('.so-option').forEach(el => el.classList.remove('selected'));
+    actionsEl.style.display = 'none';
   });
 }
 
-// Goal button clicks
+// Goal button clicks — also persist goal back to setupState
 document.querySelectorAll('.so-goal-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.so-goal-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     soActiveGoal = btn.dataset.goal;
+    setupState.goal = soActiveGoal;
+    saveState('setupState', setupState);
     renderSmartOrder();
   });
 });
@@ -3926,6 +3964,12 @@ const setupState = loadState('setupState', {
 });
 
 function persistSetupState() { saveState('setupState', setupState); }
+
+// Sync soActiveGoal from persisted setupState so goal button matches what user last chose
+soActiveGoal = setupState.goal || 'maintain';
+document.querySelectorAll('#soGoalBtns .so-goal-btn').forEach(b => {
+  b.classList.toggle('active', b.dataset.goal === soActiveGoal);
+});
 
 const mealPresets = [
   { vi: 'Sáng', en: 'Breakfast', icon: '🌅', time: '07:30' },
@@ -4087,6 +4131,14 @@ function updateSetupDelivery() {
       btn.classList.add('active');
       setupState.goal = btn.dataset.goal;
       persistSetupState();
+      // Live-sync goal to Smart Order if it's already been rendered
+      if (typeof soActiveGoal !== 'undefined' && soAnimated) {
+        soActiveGoal = setupState.goal;
+        document.querySelectorAll('#soGoalBtns .so-goal-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.goal === setupState.goal);
+        });
+        if (typeof renderSmartOrder === 'function') renderSmartOrder();
+      }
     });
   });
 

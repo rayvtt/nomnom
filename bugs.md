@@ -1,34 +1,61 @@
-# Bugs / Friction Log — Mobile Walkthrough
+# Bugs / Friction Log — Smart Order Tab
 
-> Live notes from a mobile walkthrough of the deployed React Native app at https://nomnom-728.pages.dev/.
-> Format per finding: `severity tab · what felt wrong`
+> Code-review findings from inspecting the deployed landing page at https://nomnom-728.pages.dev/.
+> Format per finding: `severity · tab · what was wrong · fix applied`
 > Severity: 🔴 broken · 🟡 friction · 🟢 polish
 
 ## Walkthrough date: 2026-05-10
-## Source branch deployed: `claude/setup-cloud-sync-6TBjC` (mobile/ built for web SPA)
-## Tabs to cover: Home · Order · Explore · Profile · (auth: Login / Signup)
+## Source file: `index.html` (Smart Order section — `#order`)
 
 ---
 
-## Auth flow (Login / Signup)
-_(if not signed in yet, this is the first thing user hits)_
+## Smart Order tab — `#soNotifPanel`
 
-## Home tab
-_(today's calories + macro progress, meal logging)_
+🔴 **Order button confirmation text hardcoded to "GrabFood"**
+- `selectSoOption()` line ~3884: `'✓ Đã gửi đến GrabFood!'` was hardcoded
+- ShopeeFood dishes showed wrong platform in confirmation
+- **Fixed:** now uses `opt.platform` variable — `'✓ Đã đặt trên ${opt.platform}!'`
 
-## Order tab — "Smart Order"
-_(meal times, budget, radius — the tab the user originally wanted wired)_
+🔴 **Skip button was a dead button**
+- `selectSoOption()` had no click handler on the skip button
+- Tapping "Bỏ qua bữa này" did nothing visually
+- **Fixed:** skip now deselects the option and hides the action row
 
-## Explore tab
-_(nutrition DB search by category + text)_
+🟡 **Ordering didn't update macro tracking**
+- Clicking Order changed a button label but trkState was never mutated
+- The macro rings in the Tracking section stayed unchanged after ordering
+- **Fixed:** Order button now adds `opt.nutrition` to `trkState` and calls `updateTrackingUI()`
 
-## Profile tab
-_(body data, activity, language, TDEE preview)_
+🟡 **Ordering didn't award XP**
+- No gamification wiring existed for the Order flow
+- **Fixed:** Order button now grants +50 XP and calls `updateGamifyUI()`
 
-## Cross-cutting
-_(navigation, theme, performance, mobile gestures)_
+🟡 **Goal button in Smart Order didn't write back to `setupState`**
+- Switching loss/maintain/gain in Smart Order updated `soActiveGoal` in memory only
+- On page reload the goal reverted to whatever was in `setupState`
+- **Fixed:** goal button click now sets `setupState.goal` and calls `saveState('setupState', setupState)`
+
+🟡 **Goal in Setup Wizard didn't live-sync to Smart Order**
+- After activation, changing goal in the Setup Wizard updated `setupState.goal` but Smart Order panels kept the old goal until page reload
+- **Fixed:** Setup Wizard goal buttons now sync `soActiveGoal` + re-render Smart Order when `soAnimated` is true
+
+🟢 **`soActiveGoal` initialized to `'loss'` regardless of persisted preference**
+- Default was hardcoded `let soActiveGoal = 'loss'` before `setupState` was loaded
+- After the first visit the goal button showed the wrong active state until scroll-triggered render
+- **Fixed:** after `setupState` loads, `soActiveGoal` is set from `setupState.goal` and goal buttons updated
+
+🟢 **Order button hover transform still applied when disabled**
+- CSS `so-order-btn:hover` applied `transform: scale(1.02)` even after `disabled` was set
+- **Fixed:** changed selector to `so-order-btn:hover:not(:disabled)`
 
 ---
 
-## Action items
-_(prioritized punch list — filled in at end of walkthrough)_
+## Action items (resolved this session)
+
+- [x] Fix order button platform text
+- [x] Wire skip button
+- [x] Log ordered dish to trkState → updateTrackingUI
+- [x] Award XP on order → updateGamifyUI + particle burst
+- [x] Bidirectional goal sync: Smart Order ↔ Setup Wizard
+- [x] Initialize soActiveGoal from persisted setupState
+- [x] Fix disabled-state hover on order button
