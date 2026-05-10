@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "build:web": "expo export --platform web"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -22,10 +23,12 @@
     "expo-splash-screen": "~0.30.0",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-native": "0.79.2",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.5.0",
     "react-native-svg": "~15.11.0",
+    "react-native-web": "~0.20.0",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
