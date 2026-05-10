@@ -10,6 +10,21 @@ import { setupApi, nutritionApi, logsApi, type SetupConfig, type Dish } from '@/
 
 const C = Colors.dark;
 
+type Lang = 'vi' | 'en';
+
+const SLOT_LABELS: Record<string, { vi: string; en: string }> = {
+  breakfast: { vi: 'Sáng',  en: 'Breakfast' },
+  brunch:    { vi: 'Phụ sáng', en: 'Brunch' },
+  lunch:     { vi: 'Trưa',  en: 'Lunch' },
+  snack:     { vi: 'Phụ',   en: 'Snack' },
+  dinner:    { vi: 'Tối',   en: 'Dinner' },
+};
+
+function slotLabel(slot: string, lang: Lang): string {
+  const key = slot.toLowerCase();
+  return SLOT_LABELS[key]?.[lang] ?? slot;
+}
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatVnd(vnd: number) {
@@ -66,7 +81,7 @@ const GOALS_META = [
 
 // ── Meal Timeline ─────────────────────────────────────────────────────────────
 
-function MealTimeline({ meals }: { meals: SetupConfig['meal_times'] }) {
+function MealTimeline({ meals, lang }: { meals: SetupConfig['meal_times']; lang: Lang }) {
   const now = nowMinutes();
   const nextIdx = meals.findIndex((m) => parseTime(m.time) > now);
 
@@ -81,7 +96,7 @@ function MealTimeline({ meals }: { meals: SetupConfig['meal_times'] }) {
         return (
           <View key={m.slot} style={[tl.slot, isNext && tl.slotNext, isPast && tl.slotPast]}>
             <Text style={tl.icon}>{m.icon}</Text>
-            <Text style={[tl.name, isPast && tl.dimText, isNext && tl.nextText]}>{m.slot}</Text>
+            <Text style={[tl.name, isPast && tl.dimText, isNext && tl.nextText]}>{slotLabel(m.slot, lang)}</Text>
             <Text style={[tl.time, isPast && tl.dimText, isNext && { color: C.accent2 }]}>{m.time}</Text>
             {isNext && diff > 0 && (
               <View style={tl.badge}>
@@ -118,15 +133,16 @@ const tl = StyleSheet.create({
 // ── Macro Gap Bar ─────────────────────────────────────────────────────────────
 
 function MacroGaps({
-  targets, totals,
+  targets, totals, lang,
 }: {
   targets: ReturnType<typeof macroTargets>;
   totals: { kcal: number; protein_g: number; carbs_g: number; fat_g: number };
+  lang: Lang;
 }) {
   const rows = [
-    { label: 'Protein', cur: totals.protein_g, max: targets.protein_g, color: C.accent,  unit: 'g' },
-    { label: 'Carbs',   cur: totals.carbs_g,   max: targets.carbs_g,   color: C.accent2, unit: 'g' },
-    { label: 'Fat',     cur: totals.fat_g,      max: targets.fat_g,     color: C.green,   unit: 'g' },
+    { label: 'Protein',                                cur: totals.protein_g, max: targets.protein_g, color: C.accent,  unit: 'g' },
+    { label: lang === 'en' ? 'Carbs' : 'Carb',         cur: totals.carbs_g,   max: targets.carbs_g,   color: C.accent2, unit: 'g' },
+    { label: lang === 'en' ? 'Fat'   : 'Chất béo',     cur: totals.fat_g,     max: targets.fat_g,     color: C.green,   unit: 'g' },
   ];
   return (
     <View style={gap.wrap}>
@@ -161,16 +177,22 @@ const gap = StyleSheet.create({
 // ── Dish Recommendation Card ──────────────────────────────────────────────────
 
 function DishCard({
-  dish, matchScore, overBudget, isActive, onOrder,
+  dish, matchScore, overBudget, isActive, onOrder, lang,
 }: {
   dish: Dish;
   matchScore: number;
   overBudget: boolean;
   isActive: boolean;
   onOrder: (dish: Dish) => Promise<void>;
+  lang: Lang;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [ordering, setOrdering] = useState(false);
+
+  const dishName = lang === 'en' ? (dish.name_en ?? dish.name_vi) : dish.name_vi;
+  const region   = lang === 'en' ? (dish.region_en ?? dish.region_vi) : dish.region_vi;
+  const warn     = lang === 'en' ? (dish.warn_en ?? dish.warn_vi) : dish.warn_vi;
+  const ingredients = lang === 'en' ? dish.ingredients_en : dish.ingredients_vi;
 
   async function handleOrder() {
     setOrdering(true);
@@ -191,8 +213,8 @@ function DishCard({
         </View>
 
         <View style={dc.mid}>
-          <Text style={dc.name}>{dish.emoji} {dish.name_vi}</Text>
-          <Text style={dc.region}>{dish.region_vi}</Text>
+          <Text style={dc.name}>{dish.emoji} {dishName}</Text>
+          <Text style={dc.region}>{region}</Text>
           <View style={dc.tagRow}>
             <Text style={dc.tag}>{dish.kcal} kcal</Text>
             <Text style={[dc.tag, { color: C.accent }]}>P{dish.protein_g}g</Text>
@@ -205,7 +227,7 @@ function DishCard({
           <Text style={[dc.price, overBudget && dc.priceOver]}>
             {formatVnd(dish.avg_price_vnd)}
           </Text>
-          {overBudget && <Text style={dc.overTag}>quá NS</Text>}
+          {overBudget && <Text style={dc.overTag}>{lang === 'en' ? 'over' : 'quá NS'}</Text>}
           <Text style={[dc.scoreTag, { color: dish.health_score >= 70 ? C.green : C.accent2 }]}>
             ★ {dish.health_score}
           </Text>
@@ -215,22 +237,24 @@ function DishCard({
       {expanded && (
         <View style={dc.expand}>
           <Text style={dc.ingredients}>
-            {dish.ingredients_vi?.slice(0, 6).join(' · ')}
-            {(dish.ingredients_vi?.length ?? 0) > 6 ? ' …' : ''}
+            {ingredients?.slice(0, 6).join(' · ')}
+            {(ingredients?.length ?? 0) > 6 ? ' …' : ''}
           </Text>
           <Text style={[dc.warn, { color: dish.warn_type === 'good' ? C.green : dish.warn_type === 'neutral' ? C.text3 : C.red }]}>
-            {dish.warn_vi}
+            {warn}
           </Text>
 
           {isActive ? (
             <TouchableOpacity style={dc.orderBtn} onPress={handleOrder} disabled={ordering}>
               {ordering
                 ? <ActivityIndicator color="#fff" size="small" />
-                : <Text style={dc.orderBtnText}>Đặt ngay →</Text>}
+                : <Text style={dc.orderBtnText}>{lang === 'en' ? 'Order now →' : 'Đặt ngay →'}</Text>}
             </TouchableOpacity>
           ) : (
             <View style={dc.lockedRow}>
-              <Text style={dc.lockedText}>🔒 Kích hoạt Smart Order để đặt hàng</Text>
+              <Text style={dc.lockedText}>
+                {lang === 'en' ? '🔒 Activate Smart Order to place orders' : '🔒 Kích hoạt Smart Order để đặt hàng'}
+              </Text>
             </View>
           )}
         </View>
@@ -274,10 +298,11 @@ const dc = StyleSheet.create({
 // ── Settings panel ────────────────────────────────────────────────────────────
 
 function SettingsPanel({
-  local, update,
+  local, update, lang,
 }: {
   local: SetupConfig;
   update: (p: Partial<SetupConfig>) => void;
+  lang: Lang;
 }) {
   const monthlyBudget = local.meals_per_day * 30 * local.budget_vnd;
 
@@ -285,20 +310,22 @@ function SettingsPanel({
     <View style={{ gap: 10 }}>
       {/* Meal times */}
       <View style={s.card}>
-        <Text style={s.cardTitle}>Giờ ăn hôm nay</Text>
+        <Text style={s.cardTitle}>{lang === 'en' ? "Today's meal times" : 'Giờ ăn hôm nay'}</Text>
         {local.meal_times.map((m) => (
           <View key={m.slot} style={s.mealRow}>
             <Text style={{ fontSize: 16 }}>{m.icon}</Text>
-            <Text style={s.mealSlot}>{m.slot}</Text>
+            <Text style={s.mealSlot}>{slotLabel(m.slot, lang)}</Text>
             <Text style={s.mealTime}>{m.time}</Text>
           </View>
         ))}
-        <Text style={s.hint}>Thông báo sẽ gửi 30 phút trước mỗi bữa.</Text>
+        <Text style={s.hint}>
+          {lang === 'en' ? 'Notifications fire 30 min before each meal.' : 'Thông báo sẽ gửi 30 phút trước mỗi bữa.'}
+        </Text>
       </View>
 
       {/* Meals per day */}
       <View style={s.card}>
-        <Text style={s.cardTitle}>Số bữa / ngày</Text>
+        <Text style={s.cardTitle}>{lang === 'en' ? 'Meals / day' : 'Số bữa / ngày'}</Text>
         <View style={s.segRow}>
           {[2, 3, 4, 5].map((n) => (
             <TouchableOpacity key={n}
@@ -313,10 +340,10 @@ function SettingsPanel({
       {/* Budget */}
       <View style={s.card}>
         <View style={s.cardRow}>
-          <Text style={s.cardTitle}>Ngân sách / bữa</Text>
+          <Text style={s.cardTitle}>{lang === 'en' ? 'Budget / meal' : 'Ngân sách / bữa'}</Text>
           <Text style={s.valueAccent}>{formatVnd(local.budget_vnd)}</Text>
         </View>
-        <Text style={s.hint}>≈ {formatVnd(monthlyBudget)} / tháng</Text>
+        <Text style={s.hint}>≈ {formatVnd(monthlyBudget)} {lang === 'en' ? '/ month' : '/ tháng'}</Text>
         <View style={s.chipRow}>
           {[40000, 60000, 85000, 120000, 200000].map((v) => (
             <TouchableOpacity key={v}
@@ -331,8 +358,8 @@ function SettingsPanel({
       {/* Delivery time */}
       <View style={s.card}>
         <View style={s.cardRow}>
-          <Text style={s.cardTitle}>Giao hàng tối đa</Text>
-          <Text style={s.valueAccent}>{local.delivery_max_min} phút</Text>
+          <Text style={s.cardTitle}>{lang === 'en' ? 'Max delivery' : 'Giao hàng tối đa'}</Text>
+          <Text style={s.valueAccent}>{local.delivery_max_min} {lang === 'en' ? 'min' : 'phút'}</Text>
         </View>
         <View style={s.chipRow}>
           {[15, 20, 25, 30, 40].map((v) => (
@@ -347,14 +374,16 @@ function SettingsPanel({
 
       {/* Goal */}
       <View style={s.card}>
-        <Text style={s.cardTitle}>Mục tiêu</Text>
+        <Text style={s.cardTitle}>{lang === 'en' ? 'Goal' : 'Mục tiêu'}</Text>
         <View style={s.segRow}>
           {GOALS_META.map((g) => (
             <TouchableOpacity key={g.id}
               style={[s.goalBtn, local.goal === g.id && s.goalBtnActive]}
               onPress={() => update({ goal: g.id })}>
               <Text style={{ fontSize: 18 }}>{g.icon}</Text>
-              <Text style={[s.goalText, local.goal === g.id && s.goalTextActive]}>{g.vi}</Text>
+              <Text style={[s.goalText, local.goal === g.id && s.goalTextActive]}>
+                {lang === 'en' ? g.en : g.vi}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -362,15 +391,15 @@ function SettingsPanel({
 
       {/* Notifications */}
       <View style={s.card}>
-        <Text style={s.cardTitle}>Thông báo qua</Text>
+        <Text style={s.cardTitle}>{lang === 'en' ? 'Notify via' : 'Thông báo qua'}</Text>
         <View style={s.toggleRow}>
-          <Text style={s.toggleLabel}>📱 Điện thoại</Text>
+          <Text style={s.toggleLabel}>{lang === 'en' ? '📱 Phone' : '📱 Điện thoại'}</Text>
           <Switch value={local.notify_phone}
             onValueChange={(v) => update({ notify_phone: v })}
             trackColor={{ true: C.green, false: C.bg3 }} thumbColor="#fff" />
         </View>
         <View style={s.toggleRow}>
-          <Text style={s.toggleLabel}>💻 Máy tính</Text>
+          <Text style={s.toggleLabel}>{lang === 'en' ? '💻 Desktop' : '💻 Máy tính'}</Text>
           <Switch value={local.notify_desktop}
             onValueChange={(v) => update({ notify_desktop: v })}
             trackColor={{ true: C.green, false: C.bg3 }} thumbColor="#fff" />
@@ -387,6 +416,7 @@ export default function OrderScreen() {
   const setTodayLogs   = useStore((st) => st.setTodayLogs);
   const tdee           = useStore(selectTdee);
   const totals         = useStore(selectTodayTotals);
+  const lang           = useStore((st) => st.lang) as Lang;
 
   const [config, setConfig]         = useState<SetupConfig | null>(null);
   const [local, setLocal]           = useState<SetupConfig | null>(null);
@@ -465,11 +495,16 @@ export default function OrderScreen() {
       setSetupConfig(updated);
       setLocal(updated);
       if (updated.active) {
-        Alert.alert('Smart Order kích hoạt! 🎉', 'NomNom sẽ gợi ý bữa ăn theo mục tiêu của bạn.');
+        Alert.alert(
+          lang === 'en' ? 'Smart Order activated! 🎉' : 'Smart Order kích hoạt! 🎉',
+          lang === 'en'
+            ? "NomNom will suggest meals based on your goal."
+            : 'NomNom sẽ gợi ý bữa ăn theo mục tiêu của bạn.',
+        );
         setSettingsOpen(false);
       }
     } catch (e: any) {
-      Alert.alert('Lỗi', e.message);
+      Alert.alert(lang === 'en' ? 'Error' : 'Lỗi', e.message);
       setLocal((p) => p ? { ...p, active: !next.active } : p);
     } finally {
       setSaving(false);
@@ -485,9 +520,12 @@ export default function OrderScreen() {
       setSetupConfig(updated);
       setLocal(updated);
       await loadRecs(updated);
-      Alert.alert('Đã lưu', 'Cài đặt Smart Order đã được cập nhật.');
+      Alert.alert(
+        lang === 'en' ? 'Saved' : 'Đã lưu',
+        lang === 'en' ? 'Smart Order settings updated.' : 'Cài đặt Smart Order đã được cập nhật.',
+      );
     } catch (e: any) {
-      Alert.alert('Lỗi', e.message);
+      Alert.alert(lang === 'en' ? 'Error' : 'Lỗi', e.message);
     } finally {
       setSaving(false);
     }
@@ -501,17 +539,24 @@ export default function OrderScreen() {
     const mealSlot = (['breakfast', 'lunch', 'dinner', 'snack'].includes(slotRaw)
       ? slotRaw : 'lunch') as 'breakfast' | 'lunch' | 'dinner' | 'snack';
 
+    const dishName = lang === 'en' ? (dish.name_en ?? dish.name_vi) : dish.name_vi;
+
     await logsApi.log({
       mealSlot,
       dishId: dish.id,
-      dishName: dish.name_vi,
+      dishName,
       kcal: dish.kcal,
       proteinG: dish.protein_g,
       carbsG: dish.carbs_g,
       fatG: dish.fat_g,
       source: 'smart_order',
     });
-    Alert.alert('Đã đặt! 🎉', `${dish.emoji} ${dish.name_vi} đã thêm vào nhật ký hôm nay.`);
+    Alert.alert(
+      lang === 'en' ? 'Ordered! 🎉' : 'Đã đặt! 🎉',
+      lang === 'en'
+        ? `${dish.emoji} ${dishName} added to today's log.`
+        : `${dish.emoji} ${dishName} đã thêm vào nhật ký hôm nay.`,
+    );
 
     // Refresh logs so Home tab and gaps update
     const logs = await logsApi.getDay();
@@ -522,7 +567,9 @@ export default function OrderScreen() {
     return (
       <View style={styles.loading}>
         <ActivityIndicator color={C.accent} size="large" />
-        <Text style={styles.loadingText}>Đang tải Smart Order…</Text>
+        <Text style={styles.loadingText}>
+          {lang === 'en' ? 'Loading Smart Order…' : 'Đang tải Smart Order…'}
+        </Text>
       </View>
     );
   }
@@ -539,7 +586,9 @@ export default function OrderScreen() {
       <View style={styles.headerRow}>
         <View>
           <Text style={styles.title}>Smart Order</Text>
-          <Text style={styles.sub}>Gợi ý bữa ăn theo mục tiêu của bạn</Text>
+          <Text style={styles.sub}>
+            {lang === 'en' ? 'Meal suggestions for your goal' : 'Gợi ý bữa ăn theo mục tiêu của bạn'}
+          </Text>
         </View>
         <TouchableOpacity
           style={[styles.statusPill, isActive ? styles.pillActive : styles.pillInactive]}
@@ -549,7 +598,9 @@ export default function OrderScreen() {
           {saving
             ? <ActivityIndicator color={isActive ? C.green : C.text3} size="small" />
             : <Text style={[styles.pillText, isActive ? styles.pillTextActive : styles.pillTextInactive]}>
-                {isActive ? '● Bật' : '○ Tắt'}
+                {isActive
+                  ? (lang === 'en' ? '● On'  : '● Bật')
+                  : (lang === 'en' ? '○ Off' : '○ Tắt')}
               </Text>}
         </TouchableOpacity>
       </View>
@@ -557,41 +608,57 @@ export default function OrderScreen() {
       {/* ── Meal timeline ── */}
       {local.meal_times.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Bữa ăn hôm nay</Text>
-          <MealTimeline meals={local.meal_times} />
+          <Text style={styles.sectionLabel}>
+            {lang === 'en' ? "Today's meals" : 'Bữa ăn hôm nay'}
+          </Text>
+          <MealTimeline meals={local.meal_times} lang={lang} />
         </View>
       )}
 
       {/* ── Macro progress ── */}
       <View style={styles.card}>
         <View style={styles.cardHeaderRow}>
-          <Text style={styles.cardTitle}>Còn thiếu hôm nay</Text>
+          <Text style={styles.cardTitle}>
+            {lang === 'en' ? 'Remaining today' : 'Còn thiếu hôm nay'}
+          </Text>
           <Text style={styles.kcalRemain}>
-            {allMet ? '✓ Đủ rồi!' : `${gapK} kcal còn lại`}
+            {allMet
+              ? (lang === 'en' ? '✓ All met!' : '✓ Đủ rồi!')
+              : (lang === 'en' ? `${gapK} kcal left` : `${gapK} kcal còn lại`)}
           </Text>
         </View>
         {allMet
-          ? <Text style={styles.allMetText}>Bạn đã đạt mục tiêu macro hôm nay 🥗</Text>
-          : <MacroGaps targets={targets} totals={totals} />}
+          ? <Text style={styles.allMetText}>
+              {lang === 'en' ? "You've hit today's macro targets 🥗" : 'Bạn đã đạt mục tiêu macro hôm nay 🥗'}
+            </Text>
+          : <MacroGaps targets={targets} totals={totals} lang={lang} />}
       </View>
 
       {/* ── Recommendations ── */}
       <View style={styles.section}>
         <View style={styles.recHeader}>
-          <Text style={styles.sectionLabel}>Gợi ý cho bữa tiếp theo</Text>
+          <Text style={styles.sectionLabel}>
+            {lang === 'en' ? 'Picks for your next meal' : 'Gợi ý cho bữa tiếp theo'}
+          </Text>
           <TouchableOpacity onPress={() => loadRecs()}>
-            <Text style={styles.refreshBtn}>↻ Làm mới</Text>
+            <Text style={styles.refreshBtn}>{lang === 'en' ? '↻ Refresh' : '↻ Làm mới'}</Text>
           </TouchableOpacity>
         </View>
 
         {loadingRecs ? (
           <View style={styles.recsLoading}>
             <ActivityIndicator color={C.accent} />
-            <Text style={styles.recsLoadingText}>Đang tính toán…</Text>
+            <Text style={styles.recsLoadingText}>
+              {lang === 'en' ? 'Calculating…' : 'Đang tính toán…'}
+            </Text>
           </View>
         ) : recs.length === 0 ? (
           <View style={styles.emptyRecs}>
-            <Text style={styles.emptyRecsText}>Không tìm thấy món phù hợp với ngân sách này.</Text>
+            <Text style={styles.emptyRecsText}>
+              {lang === 'en'
+                ? 'No dishes match this budget.'
+                : 'Không tìm thấy món phù hợp với ngân sách này.'}
+            </Text>
           </View>
         ) : (
           <View style={{ gap: 10 }}>
@@ -603,6 +670,7 @@ export default function OrderScreen() {
                 overBudget={dish.avg_price_vnd > local.budget_vnd}
                 isActive={isActive}
                 onOrder={handleOrder}
+                lang={lang}
               />
             ))}
           </View>
@@ -611,7 +679,9 @@ export default function OrderScreen() {
         {!isActive && (
           <TouchableOpacity style={styles.activateCTA} onPress={toggleActivate} disabled={saving}>
             <Text style={styles.activateCTAText}>
-              {saving ? 'Đang kích hoạt…' : '⚡ Kích hoạt Smart Order để đặt hàng'}
+              {saving
+                ? (lang === 'en' ? 'Activating…' : 'Đang kích hoạt…')
+                : (lang === 'en' ? '⚡ Activate Smart Order to order' : '⚡ Kích hoạt Smart Order để đặt hàng')}
             </Text>
           </TouchableOpacity>
         )}
@@ -619,17 +689,21 @@ export default function OrderScreen() {
 
       {/* ── Settings collapsible ── */}
       <TouchableOpacity style={styles.settingsToggle} onPress={() => setSettingsOpen((o) => !o)}>
-        <Text style={styles.settingsToggleText}>⚙️ Cài đặt Smart Order</Text>
+        <Text style={styles.settingsToggleText}>
+          {lang === 'en' ? '⚙️ Smart Order settings' : '⚙️ Cài đặt Smart Order'}
+        </Text>
         <Text style={styles.chevron}>{settingsOpen ? '▲' : '▼'}</Text>
       </TouchableOpacity>
 
       {settingsOpen && (
         <>
-          <SettingsPanel local={local} update={update} />
+          <SettingsPanel local={local} update={update} lang={lang} />
           <TouchableOpacity style={styles.saveBtn} onPress={saveSettings} disabled={saving}>
             {saving
               ? <ActivityIndicator color="#fff" />
-              : <Text style={styles.saveBtnText}>Lưu cài đặt</Text>}
+              : <Text style={styles.saveBtnText}>
+                  {lang === 'en' ? 'Save settings' : 'Lưu cài đặt'}
+                </Text>}
           </TouchableOpacity>
         </>
       )}
