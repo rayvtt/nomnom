@@ -1,6 +1,8 @@
 import { supabase } from './supabase';
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
+// Use || (not ??) so empty-string env var still falls back to Railway
+const BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || 'https://nomnom-production.up.railway.app';
 
 async function authHeaders(): Promise<Record<string, string>> {
   const { data } = await supabase.auth.getSession();
@@ -12,6 +14,14 @@ async function authHeaders(): Promise<Record<string, string>> {
 async function get<T>(path: string): Promise<T> {
   const headers = await authHeaders();
   const res = await fetch(`${BASE_URL}${path}`, { headers });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function getPublic<T>(path: string): Promise<T> {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: { 'Content-Type': 'application/json' },
+  });
   if (!res.ok) throw new Error(await res.text());
   return res.json();
 }
@@ -88,7 +98,18 @@ export type SetupConfig = {
 
 export const setupApi = {
   get: () => get<SetupConfig>('/profile/setup'),
-  update: (data: Partial<SetupConfig>) => put<SetupConfig>('/profile/setup', data),
+
+  // Backend expects camelCase; transform from snake_case SetupConfig before sending
+  update: (data: Partial<SetupConfig>) => put<SetupConfig>('/profile/setup', {
+    ...(data.meal_times      !== undefined && { mealTimes:      data.meal_times }),
+    ...(data.meals_per_day   !== undefined && { mealsPerDay:    data.meals_per_day }),
+    ...(data.budget_vnd      !== undefined && { budgetVnd:      data.budget_vnd }),
+    ...(data.delivery_max_min !== undefined && { deliveryMaxMin: data.delivery_max_min }),
+    ...(data.goal            !== undefined && { goal:           data.goal }),
+    ...(data.notify_phone    !== undefined && { notifyPhone:    data.notify_phone }),
+    ...(data.notify_desktop  !== undefined && { notifyDesktop:  data.notify_desktop }),
+    ...(data.active          !== undefined && { active:         data.active }),
+  }),
 };
 
 // ── Daily Logs ─────────────────────────────────────────────────
@@ -111,7 +132,9 @@ export type DayLogs = {
 };
 
 export const logsApi = {
-  getDay: (date?: string) => get<DayLogs>(`/profile/logs${date ? `?date=${date}` : ''}`),
+  getDay: (date?: string) =>
+    get<DayLogs>(`/profile/logs${date ? `?date=${date}` : ''}`),
+
   log: (entry: {
     mealSlot: LogEntry['meal_slot'];
     dishId?: number;
@@ -122,6 +145,7 @@ export const logsApi = {
     fatG: number;
     source?: LogEntry['source'];
   }) => post<LogEntry>('/profile/logs', entry),
+
   remove: (id: string) => del(`/profile/logs/${id}`),
 };
 
@@ -163,9 +187,12 @@ export const nutritionApi = {
   }) => {
     const qs = new URLSearchParams();
     Object.entries(params).forEach(([k, v]) => v !== undefined && qs.set(k, String(v)));
-    return get<SearchResult>(`/nutrition/search?${qs}`);
+    // Nutrition search is public — no auth required
+    return getPublic<SearchResult>(`/nutrition/search?${qs}`);
   },
-  getById: (id: number) => get<Dish>(`/nutrition/${id}`),
+
+  getById: (id: number) => getPublic<Dish>(`/nutrition/${id}`),
+
   match: (params: { kcal: number; protein: number; budgetVnd?: number; exclude?: number[] }) => {
     const qs = new URLSearchParams({
       kcal: String(params.kcal),
@@ -173,6 +200,7 @@ export const nutritionApi = {
     });
     if (params.budgetVnd) qs.set('budgetVnd', String(params.budgetVnd));
     if (params.exclude?.length) qs.set('exclude', params.exclude.join(','));
-    return get<Dish[]>(`/nutrition/match?${qs}`);
+    // match is also public
+    return getPublic<Dish[]>(`/nutrition/match?${qs}`);
   },
 };
