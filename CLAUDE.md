@@ -204,11 +204,17 @@ Dark theme by default (bg `#050505`). Light mode via `body.light-mode` class.
 
 ## What to Build Next
 
+### Done ✅
+- [x] Supabase project set up (migrations + 58-dish seed run)
+- [x] Railway deployment live (Dockerfile build, all env vars set)
+- [x] Cloud sync working: GitHub ⇄ Railway auto-deploy on every push
+- [x] Repo consolidated onto `claude/setup-cloud-sync-6TBjC` (api/, mobile/, landing page all in one branch)
+
 ### In Progress
-- [ ] Supabase project setup (run migrations + seed)
-- [ ] Railway deployment (connect repo, set env vars)
+- [ ] Verify `/health` and `/nutrition/search` respond from Railway URL
 - [ ] Test auth flow end-to-end (signup → login → profile)
 - [ ] Wire Home tab to real API (`/profile/logs`)
+- [ ] Push `mobile/` from local laptop → connect Expo Go to Railway URL
 
 ### Next
 - [ ] Smart Order activation (auto-queue based on setup config)
@@ -221,3 +227,13 @@ Dark theme by default (bg `#050505`). Light mode via `body.light-mode` class.
 - [ ] GrabFood Partner API integration
 - [ ] B2B restaurant nutrition labeling SaaS
 - [ ] ML-powered dish estimation for unknown menu items
+
+## Deployment Notes (lessons from setup)
+
+A few gotchas hit during initial Railway deploy — recorded here so they don't bite again:
+
+1. **Use Dockerfile, not Railpack.** Railway's auto-detect (Railpack) failed with `secret NODE not found`. Solution: `api/railway.json` explicitly specifies `"builder": "DOCKERFILE"`.
+2. **`dotenv` must be in `dependencies`, not `devDependencies`.** Production build runs `npm ci --omit=dev`, so dev-only packages aren't installed. Anything `import`ed at runtime must be a real dependency.
+3. **No angle brackets in env values.** When copying from `.env.example`, strip the `< >` placeholder markers — paste the raw URL/key only.
+4. **Don't manually set `PORT`.** Railway assigns it automatically; manually setting it can cause the proxy to look at the wrong internal port.
+5. **Railway "Root Directory" matters.** Set to `api` so Railway looks inside `api/` for the Dockerfile and `railway.json` (root-level configs are ignored when a Root Directory is set).
