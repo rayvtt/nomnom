@@ -1,0 +1,24 @@
+{
+  "name": "nomnom-api",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "migrate": "node scripts/migrate.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^9.0.1",
+    "@fastify/jwt": "^8.0.1",
+    "@supabase/supabase-js": "^2.45.0",
+    "fastify": "^4.28.1",
+    "fastify-plugin": "^4.5.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
