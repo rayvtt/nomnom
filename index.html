@@ -27,6 +27,9 @@
     --card-hover: rgba(255,255,255,0.06);
     --nav-bg: rgba(5,5,5,0.7);
   }
+  /* Kill horizontal scroll caused by decorative ::before glows in sections
+     without overflow:hidden. `clip` clips visually without breaking sticky. */
+  html, body { overflow-x: clip; }
   body.light-mode {
     --bg: #FAFAF7;
     --bg-2: #F0EDE6;
@@ -93,9 +96,9 @@
   .nav-mobile {
     display: none; align-items: center; gap: 10px;
   }
-  .nav-mobile .lang-toggle button { padding: 5px 12px; font-size: 11px; }
+  .nav-mobile .lang-toggle button { padding: 8px 14px; font-size: 12px; }
   .nav-mobile-cta {
-    background: var(--accent); color: white; padding: 8px 16px; border-radius: 99px;
+    background: var(--accent); color: white; padding: 11px 18px; border-radius: 99px;
     font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; transition: all 0.3s;
   }
   .nav-mobile-cta:hover { transform: scale(1.05); }
@@ -335,7 +338,7 @@
     opacity: 0.6;
   }
   .macro-bar-val { font-family: 'Lora', serif; font-size: 18px; margin-top: 6px; }
-  .macro-bar-max { font-size: 10px; color: var(--text-3); }
+  .macro-bar-max { font-size: 11px; color: var(--text-3); }
   .carb-split-label { font-size: 8px; margin-top: 2px; line-height: 1.3; }
   .carb-split-label .good-c { color: var(--accent-2); }
   .carb-split-label .bad-c { color: #f87171; }
@@ -377,8 +380,8 @@
     display: flex; gap: 4px; flex-wrap: wrap; padding: 0 18px 12px;
   }
   .mci-warn-tag {
-    font-size: 9px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
-    display: inline-flex; align-items: center; gap: 3px; letter-spacing: 0.02em;
+    font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 20px;
+    display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.02em;
   }
   .mci-warn-tag.sugar { background: rgba(248,113,113,0.12); color: #f87171; border: 1px solid rgba(248,113,113,0.2); }
   .mci-warn-tag.sodium { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
@@ -407,8 +410,8 @@
   .mci-bd-bar .bd-bad { background: #f87171; height: 100%; transition: width 0.6s ease; }
   .mci-quality-verdict {
     display: flex; align-items: center; gap: 6px;
-    font-size: 10px; font-weight: 600; margin-top: 4px; padding: 4px 8px;
-    border-radius: 8px; background: rgba(255,255,255,0.03);
+    font-size: 12px; font-weight: 600; margin-top: 4px; padding: 5px 10px;
+    border-radius: 8px; background: rgba(255,255,255,0.03); line-height: 1.35;
   }
 
   .mci-add-hint { font-size: 10px; color: var(--text-3); text-align: center; margin-top: 8px; font-style: italic; }
@@ -1171,7 +1174,7 @@
   .an-textarea { width: 100%; min-height: 200px; background: var(--bg-2); border: 1px solid var(--card-border); border-radius: 14px; padding: 14px 16px; color: var(--text); font-family: 'Be Vietnam Pro', sans-serif; font-size: 14px; line-height: 1.5; resize: vertical; transition: border-color 0.3s; }
   .an-textarea:focus { outline: none; border-color: var(--purple); }
   .an-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; margin-bottom: 18px; }
-  .an-preset { background: var(--bg-2); color: var(--text-2); border: 1px solid var(--card-border); padding: 7px 14px; border-radius: 99px; font-size: 12px; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+  .an-preset { background: var(--bg-2); color: var(--text-2); border: 1px solid var(--card-border); padding: 10px 16px; border-radius: 99px; font-size: 13px; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 600; cursor: pointer; transition: all 0.3s; }
   .an-preset:hover { background: var(--purple); color: white; border-color: var(--purple); }
   .an-analyze-btn { width: 100%; background: var(--purple); color: white; border: none; padding: 14px; border-radius: 14px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.3s; }
   .an-analyze-btn:hover { transform: scale(1.02); box-shadow: 0 8px 28px rgba(167,139,250,0.35); }
@@ -1652,7 +1655,7 @@
     .hero { padding: 100px 20px 60px; }
     /* Timeline */
     .timeline-tabs { flex-wrap: wrap; justify-content: center; }
-    .timeline-tab { padding: 8px 16px; font-size: 12px; }
+    .timeline-tab { padding: 12px 20px; font-size: 13px; }
     /* Referral */
     .referral-card { max-width: 100%; }
     .ref-row { flex-wrap: wrap; }
@@ -3004,7 +3007,9 @@ function setLang(lang) {
   // Re-render new section content if functions exist
   if (typeof renderTimeline === 'function') renderTimeline();
   if (typeof renderTestimonials === 'function') renderTestimonials();
-  if (typeof renderSmartOrder === 'function' && soAnimated) renderSmartOrder();
+  // soAnimated may still be in TDZ if setLang runs before the Smart Order block
+  // initializes, so guard access with a try/catch instead of a bare reference.
+  try { if (typeof renderSmartOrder === 'function' && soAnimated) renderSmartOrder(); } catch (e) { /* not yet initialized */ }
   if (typeof buildDoPrefPills === 'function') buildDoPrefPills();
   if (typeof renderSetupMeals === 'function') renderSetupMeals();
   if (typeof updateSetupBudget === 'function') updateSetupBudget();
@@ -3822,7 +3827,7 @@ document.querySelectorAll('.so-goal-btn').forEach(btn => {
 });
 
 // Animate on scroll
-let soAnimated = false;
+var soAnimated = false; // var so callers running before this declaration hit `undefined` instead of a TDZ ReferenceError
 const soObserver = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting && !soAnimated) {
