@@ -1307,6 +1307,45 @@
   .so-skip-btn { background: none; border: 1px solid var(--card-border); color: var(--text-3); padding: 12px 18px; border-radius: 14px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
   .so-skip-btn:hover { border-color: var(--text-2); color: var(--text-2); }
 
+  /* Order confirmation card — replaces action row after Order tap */
+  .so-confirm-card {
+    width: 100%; background: linear-gradient(135deg, rgba(52,211,153,0.14), rgba(52,211,153,0.04));
+    border: 1.5px solid rgba(52,211,153,0.35); border-radius: 18px; padding: 16px 18px;
+    display: flex; flex-direction: column; gap: 13px;
+    animation: soConfirmIn 0.5s cubic-bezier(0.34,1.4,0.5,1) both;
+  }
+  @keyframes soConfirmIn { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .so-confirm-head { display: flex; align-items: center; gap: 12px; }
+  .so-confirm-check {
+    width: 32px; height: 32px; border-radius: 50%; background: var(--green); color: white;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900;
+    flex-shrink: 0;
+    animation: soConfirmCheck 0.5s 0.15s cubic-bezier(0.34,1.6,0.5,1) both;
+  }
+  @keyframes soConfirmCheck { from { transform: scale(0) rotate(-45deg); } to { transform: scale(1) rotate(0); } }
+  .so-confirm-heads { flex: 1; min-width: 0; }
+  .so-confirm-title { font-family: 'Lora', serif; font-size: 17px; color: var(--text); line-height: 1.2; margin: 0 0 2px; }
+  .so-confirm-plat { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: 0.08em; text-transform: uppercase; }
+  .so-confirm-dish { display: flex; align-items: center; gap: 11px; padding: 9px 12px; background: var(--bg); border-radius: 12px; border: 1px solid var(--card-border); }
+  .so-confirm-emoji { font-size: 24px; flex-shrink: 0; }
+  .so-confirm-dish-info { flex: 1; min-width: 0; }
+  .so-confirm-dish-name { font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .so-confirm-dish-rest { font-size: 11px; color: var(--text-3); }
+  .so-confirm-eta { font-size: 11px; font-weight: 700; color: var(--accent); background: rgba(255,106,40,0.12); padding: 4px 10px; border-radius: 99px; white-space: nowrap; flex-shrink: 0; }
+  .so-confirm-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .so-confirm-macros { display: flex; gap: 6px; flex-wrap: wrap; }
+  .so-confirm-macro { font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 99px; letter-spacing: 0.03em; }
+  .so-confirm-macro.p { background: rgba(255,106,40,0.14); color: var(--accent); }
+  .so-confirm-macro.c { background: rgba(255,159,28,0.14); color: var(--accent-2); }
+  .so-confirm-macro.f { background: rgba(52,211,153,0.14); color: var(--green); }
+  .so-confirm-macro.k { background: var(--bg-3); color: var(--text-2); }
+  .so-confirm-reset {
+    background: transparent; border: 1px solid var(--card-border); color: var(--text-2);
+    padding: 7px 13px; border-radius: 10px; font-size: 12px; font-weight: 600;
+    cursor: pointer; font-family: 'Be Vietnam Pro', sans-serif; transition: all 0.2s;
+  }
+  .so-confirm-reset:hover { border-color: var(--accent); color: var(--accent); }
+
   /* Mobile recipe/cuisine show-more */
   .show-more-btn { display: none; width: 100%; margin-top: 14px; background: var(--bg-2); border: 1px solid var(--card-border); color: var(--text-2); padding: 12px; border-radius: 12px; font-family: 'Be Vietnam Pro', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.25s; }
   .show-more-btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -3702,18 +3741,71 @@ function selectSoOption(idx) {
     const rect = btn.getBoundingClientRect();
     spawnParticles(rect.left + rect.width / 2, rect.top + rect.height / 2, '#34D399');
 
-    // Confirm — use actual platform name
-    btn.textContent = lang === 'vi'
-      ? `✓ Đã đặt trên ${opt.platform}!`
-      : `✓ Ordered on ${opt.platform}!`;
-    btn.style.opacity = '0.65';
-    btn.disabled = true;
+    showOrderConfirmation(opt);
   });
 
   actionsEl.querySelector('.so-skip-btn').addEventListener('click', () => {
     soSelectedOption = null;
     document.querySelectorAll('.so-option').forEach(el => el.classList.remove('selected'));
     actionsEl.style.display = 'none';
+    actionsEl.innerHTML = '';
+  });
+}
+
+// Parse "1.2km" / "0.8km" → number of minutes ETA (~20min base + 5min/km)
+function computeEta(distStr) {
+  const km = parseFloat(String(distStr).replace(/[^\d.]/g, '')) || 1;
+  return Math.round(18 + km * 5);
+}
+
+function showOrderConfirmation(opt) {
+  const actionsEl = document.getElementById('soOrderActions');
+  if (!actionsEl) return;
+  const lang = currentLang;
+  const dishName = lang === 'en' ? opt.en : opt.vi;
+  const eta = computeEta(opt.dist);
+  const n = opt.nutrition;
+  const t = {
+    title: lang === 'en' ? 'Order placed' : 'Đã đặt món',
+    plat: lang === 'en' ? `on ${opt.platform}` : `qua ${opt.platform}`,
+    etaLabel: lang === 'en' ? `~${eta} min` : `~${eta} phút`,
+    reset: lang === 'en' ? '↻ Order another' : '↻ Đặt món khác',
+    protein: lang === 'en' ? 'protein' : 'đạm',
+  };
+  actionsEl.innerHTML = `
+    <div class="so-confirm-card" role="status" aria-live="polite">
+      <div class="so-confirm-head">
+        <div class="so-confirm-check" aria-hidden="true">✓</div>
+        <div class="so-confirm-heads">
+          <div class="so-confirm-title">${t.title}</div>
+          <div class="so-confirm-plat">${t.plat}</div>
+        </div>
+      </div>
+      <div class="so-confirm-dish">
+        <div class="so-confirm-emoji">${opt.emoji}</div>
+        <div class="so-confirm-dish-info">
+          <div class="so-confirm-dish-name">${dishName}</div>
+          <div class="so-confirm-dish-rest">${opt.rest} · ${opt.dist} · ${opt.price}</div>
+        </div>
+        <div class="so-confirm-eta">🛵 ${t.etaLabel}</div>
+      </div>
+      <div class="so-confirm-row">
+        <div class="so-confirm-macros">
+          <span class="so-confirm-macro k">+${n.k} kcal</span>
+          <span class="so-confirm-macro p">+${n.p}g ${t.protein}</span>
+          <span class="so-confirm-macro c">+${n.c}g carbs</span>
+          <span class="so-confirm-macro f">+${n.f}g fat</span>
+        </div>
+        <button type="button" class="so-confirm-reset">${t.reset}</button>
+      </div>
+    </div>
+  `;
+  actionsEl.style.display = 'flex';
+  actionsEl.querySelector('.so-confirm-reset').addEventListener('click', () => {
+    soSelectedOption = null;
+    document.querySelectorAll('.so-option').forEach(el => el.classList.remove('selected'));
+    actionsEl.style.display = 'none';
+    actionsEl.innerHTML = '';
   });
 }
 

@@ -60,7 +60,7 @@ soAnimated = false  // becomes true when section first scrolls into view
 - [ ] ShopeeFood deep-link fallback when no API.
 - [ ] Larger dish pool — currently 9 hardcoded options. Source from `recipeDB` + restaurant joins.
 - [ ] Push notification fire (Web Push API + service worker) at the configured meal times.
-- [ ] Order confirmation modal (currently "Order" button just changes its label).
+- [x] Order confirmation card — replaces the flat "button-label-flip" with a proper reveal showing dish, restaurant, ETA (~computed from distance), platform, macros added, and an "Order another" reset. (`.so-confirm-card`, `showOrderConfirmation()`, `computeEta()`)
 - [ ] Order history list — feed back into XP / streak.
 - [ ] Match-score weighting tuning (currently 0.4/0.35/0.25 P/C/F; should consider macro shortfall priority).
 - [ ] Skip-meal logic that shifts macros to next meal.
