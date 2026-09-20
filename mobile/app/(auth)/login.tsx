@@ -6,13 +6,22 @@ import {
 import { Link } from 'expo-router';
 import { supabase } from '@/lib/supabase';
 import { Colors } from '@/constants/colors';
+import { useStore } from '@/store/useStore';
+import { setGuestFlag } from '@/lib/guest';
 
 const C = Colors.dark;
 
 export default function LoginScreen() {
+  const setGuest = useStore((s) => s.setGuest);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  async function continueAsGuest() {
+    await setGuestFlag(true);
+    setGuest(true);
+    // _layout.tsx redirects to (tabs) once guest flips
+  }
 
   async function handleLogin() {
     if (!email || !password) return;
@@ -72,6 +81,17 @@ export default function LoginScreen() {
             </Text>
           </TouchableOpacity>
         </Link>
+
+        <View style={styles.dividerRow}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>hoặc</Text>
+          <View style={styles.dividerLine} />
+        </View>
+
+        <TouchableOpacity style={styles.guestBtn} onPress={continueAsGuest} activeOpacity={0.8}>
+          <Text style={styles.guestBtnText}>Xem thử không cần tài khoản →</Text>
+        </TouchableOpacity>
+        <Text style={styles.guestHint}>Dữ liệu lưu trên máy này. Đăng nhập sau để đồng bộ.</Text>
       </View>
     </KeyboardAvoidingView>
   );
@@ -104,4 +124,16 @@ const styles = StyleSheet.create({
   },
   btnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
   switch: { color: C.text2, textAlign: 'center', marginTop: 24, fontSize: 14 },
+  dividerRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 28, marginBottom: 16 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: C.cardBorder },
+  dividerText: { color: C.text3, fontSize: 12 },
+  guestBtn: {
+    borderWidth: 1.5,
+    borderColor: C.cardBorder,
+    borderRadius: 10,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  guestBtnText: { color: C.text, fontSize: 15, fontWeight: '600' },
+  guestHint: { color: C.text3, fontSize: 12, textAlign: 'center', marginTop: 10 },
 });

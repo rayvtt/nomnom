@@ -197,7 +197,9 @@ export default function TodayScreen() {
   const profile      = useStore((s) => s.profile);
   const todayLogs    = useStore((s) => s.todayLogs);
   const userId       = useStore((s) => s.userId);
+  const guest        = useStore((s) => s.guest);
   const lang         = useStore((s) => s.lang);
+  const authed       = !!userId || guest;
   const setProfile   = useStore((s) => s.setProfile);
   const setTodayLogs = useStore((s) => s.setTodayLogs);
   const tdee         = useStore(selectTdee);
@@ -208,7 +210,7 @@ export default function TodayScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   async function refresh() {
-    if (!userId) return;
+    if (!authed) return;
     try {
       const [p, logs] = await Promise.all([profileApi.get(), logsApi.getDay()]);
       setProfile(p);
@@ -222,7 +224,7 @@ export default function TodayScreen() {
     setRefreshing(false);
   }
 
-  useFocusEffect(useCallback(() => { refresh(); }, [userId]));
+  useFocusEffect(useCallback(() => { refresh(); }, [authed]));
 
   const today = new Date().toLocaleDateString('vi-VN', {
     weekday: 'long', day: 'numeric', month: 'long',
@@ -244,6 +246,11 @@ export default function TodayScreen() {
           {profile?.display_name ? `Xin chào, ${profile.display_name} 👋` : 'NomNom 👋'}
         </Text>
         <Text style={styles.date}>{today}</Text>
+        {guest && (
+          <View style={styles.guestBanner}>
+            <Text style={styles.guestBannerText}>👀 Chế độ xem thử · dữ liệu lưu trên máy</Text>
+          </View>
+        )}
       </View>
 
       {/* ── Calorie ring ── */}
@@ -264,10 +271,10 @@ export default function TodayScreen() {
           )}
         </View>
 
-        {!userId && (
+        {!authed && (
           <Text style={styles.empty}>Đang tải…</Text>
         )}
-        {userId && meals.length === 0 && (
+        {authed && meals.length === 0 && (
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>🍽️</Text>
             <Text style={styles.emptyText}>Chưa có bữa nào.</Text>
@@ -334,6 +341,13 @@ const styles = StyleSheet.create({
   header: { marginBottom: 4 },
   greeting: { fontSize: 22, fontWeight: '800', color: C.text },
   date: { fontSize: 13, color: C.text2, marginTop: 4 },
+  guestBanner: {
+    alignSelf: 'flex-start', marginTop: 8,
+    backgroundColor: 'rgba(255,159,28,0.12)', borderRadius: 20,
+    paddingHorizontal: 10, paddingVertical: 4,
+    borderWidth: 1, borderColor: C.accent2 + '44',
+  },
+  guestBannerText: { fontSize: 11, color: C.accent2, fontWeight: '600' },
 
   card: { backgroundColor: C.bg2, borderRadius: 18, padding: 18, borderWidth: 1, borderColor: C.cardBorder },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },

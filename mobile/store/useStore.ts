@@ -7,6 +7,9 @@ type State = {
   userId: string | null;
   setUserId: (id: string | null) => void;
 
+  guest: boolean;
+  setGuest: (guest: boolean) => void;
+
   lang: Lang;
   setLang: (lang: Lang) => void;
 
@@ -23,6 +26,9 @@ type State = {
 export const useStore = create<State>((set) => ({
   userId: null,
   setUserId: (id) => set({ userId: id }),
+
+  guest: false,
+  setGuest: (guest) => set({ guest }),
 
   lang: 'vi',
   setLang: (lang) => set({ lang }),

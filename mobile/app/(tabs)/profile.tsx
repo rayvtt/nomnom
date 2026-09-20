@@ -3,11 +3,12 @@ import {
   View, Text, TextInput, TouchableOpacity,
   StyleSheet, ScrollView, ActivityIndicator, Alert,
 } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { Colors } from '@/constants/colors';
 import { useStore } from '@/store/useStore';
 import { profileApi, type Profile } from '@/lib/api';
 import { supabase } from '@/lib/supabase';
+import { setGuestFlag } from '@/lib/guest';
 
 const C = Colors.dark;
 
@@ -37,9 +38,12 @@ function calcTdee(w: number, h: number, a: number, actId: string) {
 }
 
 export default function ProfileScreen() {
+  const router     = useRouter();
   const profile    = useStore((s) => s.profile);
   const setProfile = useStore((s) => s.setProfile);
   const setLang    = useStore((s) => s.setLang);
+  const guest      = useStore((s) => s.guest);
+  const setGuest   = useStore((s) => s.setGuest);
 
   const [weight,   setWeight]   = useState('');
   const [height,   setHeight]   = useState('');
@@ -90,6 +94,12 @@ export default function ProfileScreen() {
   }
 
   async function logout() {
+    if (guest) {
+      await setGuestFlag(false);
+      setGuest(false);
+      router.replace('/(auth)/login');
+      return;
+    }
     await supabase.auth.signOut();
   }
 
@@ -202,7 +212,9 @@ export default function ProfileScreen() {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.logoutBtn} onPress={logout} activeOpacity={0.7}>
-        <Text style={styles.logoutText}>Đăng xuất</Text>
+        <Text style={[styles.logoutText, guest && { color: C.accent }]}>
+          {guest ? 'Đăng nhập / Đăng ký để đồng bộ' : 'Đăng xuất'}
+        </Text>
       </TouchableOpacity>
 
     </ScrollView>
