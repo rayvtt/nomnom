@@ -1,18 +1,14 @@
 # Auth
 
-**Status:** 🟡 Partial — local-only auth scaffolding; Supabase wiring deferred.
+**Status:** ⚪ Removed — sign-in was gating landing-page demos and got in the way. All local-auth scaffolding was ripped out; persistence now uses a single `nomnom.local.<key>` namespace with no per-user scoping.
 
-## Purpose
-Lets a user sign up / sign in so their tracking data, profile, gamification, and Smart Order config persist to *their* account, not just to this browser.
+## Purpose (when re-added)
+Let a user sign up / sign in so their tracking data, profile, gamification, and Smart Order config persist to *their* account, not just to this browser.
 
 ## Current state (this branch)
-- Sign-up / sign-in / sign-out modal triggered by the navbar avatar button.
-- User record (`{id, email, name, createdAt}`) stored in `localStorage` under key `nomnom.auth.user`.
-- "Password" field is **not** verified server-side — this is a local stub. Anyone with the same email becomes that user. ⚠️ Do NOT ship to production without real auth.
-- Auth state drives:
-  - Navbar avatar (initials when logged in, generic icon when logged out)
-  - Profile module's saved BMI/TDEE values are namespaced per user
-  - Tracking state, gamification state, setup wizard state are namespaced per user
+- **Nothing.** No sign-in button, no modal, no user model. The nav shows only the language toggle and the waitlist CTA.
+- `loadState` / `saveState` live in the persistence block and hard-code the `nomnom.local.<key>` scope.
+- Bringing auth back = re-add nav slot, modal HTML/CSS, and swap the persistence scope to be `currentUser`-driven again — or better, go straight to Supabase per the migration plan below.
 
 ## File locations in `/index.html`
 - **HTML:** auth modal `<div id="authModal">` — search for `id="authModal"`
