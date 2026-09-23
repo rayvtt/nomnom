@@ -33,7 +33,6 @@ Per-feature spec docs. **Each iteration session reads only the relevant feature 
 - [recipe-hub.md](./recipe-hub.md) — §7 58-dish browser with category pills + search
 - [recipe-analyzer.md](./recipe-analyzer.md) — §7.5 AI recipe text/photo analyzer
 - [vendor-hub.md](./vendor-hub.md) — §8 B2B restaurant menu labeling demo
-- [family-hub.md](./family-hub.md) — §9 Multi-profile household (toddler/dad/mom) + daily market list
 
 ## Status legend (used in each spec)
 
