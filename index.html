@@ -793,121 +793,6 @@
   .cc-ingredient-tags { display: flex; flex-wrap: wrap; gap: 6px; }
   .cc-ingredient-tag { padding: 4px 10px; border-radius: 99px; font-size: 10px; background: rgba(255,255,255,0.04); color: var(--text-2); font-weight: 600; }
 
-  /* ========================================== */
-  /* 9. FAMILY HUB                             */
-  /* ========================================== */
-  .family-section {
-    padding: 120px 24px 160px; display: flex; flex-direction: column; align-items: center;
-  }
-  .family-demo { max-width: 1000px; width: 100%; }
-
-  /* Member cards */
-  .family-members {
-    display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 48px;
-  }
-  .family-member-card {
-    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 26px;
-    padding: 28px; width: 260px; text-align: center; cursor: pointer; transition: all 0.4s;
-  }
-  .family-member-card:hover { border-color: rgba(255,255,255,0.16); transform: translateY(-4px); }
-  .family-member-card.expanded { border-color: var(--fmc-color); background: color-mix(in srgb, var(--fmc-color) 6%, transparent); }
-  .fmc-emoji { font-size: 36px; margin-bottom: 8px; }
-  .fmc-name { font-family: 'Instrument Serif', serif; font-size: 22px; }
-  .fmc-role { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 16px; }
-  .fmc-ring { width: 92px; height: 92px; margin: 0 auto 16px; position: relative; }
-  .fmc-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-  .fmc-ring .ring-bg { stroke: rgba(255,255,255,0.06); stroke-width: 7; }
-  .fmc-ring .ring-fill { stroke: var(--fmc-color); stroke-width: 7; stroke-linecap: round; fill: none; transition: stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1); }
-  .fmc-ring-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Instrument Serif', serif; font-size: 20px; }
-  .fmc-ring-unit { position: absolute; top: 68%; left: 50%; transform: translate(-50%, 0); font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; }
-  .fmc-macro-row { display: flex; gap: 10px; margin-bottom: 4px; }
-  .fmc-macro-item { flex: 1; text-align: left; }
-  .fmc-macro-label { font-size: 9px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
-  .fmc-macro-val { font-family: 'Instrument Serif', serif; font-size: 17px; }
-  .fmc-macro-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; margin-top: 3px; }
-  .fmc-macro-bar-fill { height: 100%; border-radius: 99px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0; }
-  .fmc-expand-hint { font-size: 10px; color: var(--text-3); margin-top: 14px; }
-  .fmc-vitamins { display: none; margin-top: 20px; text-align: left; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 16px; }
-  .family-member-card.expanded .fmc-vitamins { display: block; animation: expandIn 0.4s ease; }
-  .fmc-vitamins-title { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 10px; }
-  .fmc-vitamin-row { margin-bottom: 8px; }
-  .fmc-vitamin-top { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
-  .fmc-vitamin-name { color: var(--text-2); }
-  .fmc-vitamin-val { font-weight: 700; }
-  .fmc-vitamin-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
-  .fmc-vitamin-bar-fill { height: 100%; background: var(--fmc-color); border-radius: 99px; transition: width 1s cubic-bezier(0.4,0,0.2,1); width: 0; }
-
-  /* Household totals strip */
-  .family-totals {
-    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
-    margin: 40px 0; padding: 20px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 22px;
-  }
-  .ft-tile { flex: 1; min-width: 100px; text-align: center; }
-  .ft-num { font-family: 'Instrument Serif', serif; font-size: 26px; }
-  .ft-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-top: 2px; }
-  .ft-note { width: 100%; text-align: center; font-size: 12px; color: var(--text-2); padding-top: 12px; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); }
-
-  /* Two-up grid: market list notification + gamify card */
-  .family-grid { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
-  .family-market-card, .family-gamify-card {
-    flex: 1; min-width: 320px; max-width: 460px;
-    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 26px; padding: 28px;
-  }
-  .fm-notif-header { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 20px; }
-  .fm-notif-icon { font-size: 22px; }
-  .fm-notif-app { font-size: 11px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
-  .fm-notif-title { font-family: 'Instrument Serif', serif; font-size: 18px; margin-top: 2px; }
-  .fm-market-list { display: flex; flex-direction: column; gap: 10px; }
-  .fm-item {
-    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
-    background: rgba(255,255,255,0.02); border-radius: 14px; opacity: 0; transform: translateY(8px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
-  }
-  .fm-item.visible { opacity: 1; transform: translateY(0); }
-  .fm-item-emoji { font-size: 22px; flex-shrink: 0; }
-  .fm-item-info { flex: 1; min-width: 0; }
-  .fm-item-name-row { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
-  .fm-item-name { font-size: 13px; font-weight: 600; }
-  .fm-item-qty { font-family: 'Instrument Serif', serif; font-size: 16px; white-space: nowrap; }
-  .fm-item-tag { font-size: 11px; color: var(--text-2); margin-top: 2px; }
-  .fm-refresh-btn {
-    width: 100%; margin-top: 18px; padding: 12px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.04); color: var(--text-2); font-size: 13px; font-weight: 600;
-    font-family: 'Outfit', sans-serif; cursor: pointer; transition: all 0.3s;
-  }
-  .fm-refresh-btn:hover { border-color: var(--green); color: var(--green); background: rgba(52,211,153,0.06); }
-
-  .fg-title { font-size: 12px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 700; margin-bottom: 16px; }
-  .fg-streak {
-    display: flex; align-items: center; gap: 12px; padding: 14px;
-    background: rgba(255,106,40,0.06); border-radius: 14px; margin-bottom: 18px;
-  }
-  .fg-streak-fire { font-size: 28px; animation: fireWiggle 0.6s ease-in-out infinite alternate; }
-  .fg-streak-num { font-family: 'Instrument Serif', serif; font-size: 30px; }
-  .fg-streak-label { font-size: 11px; color: var(--text-2); }
-  .fg-xp-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; margin-bottom: 6px; }
-  .fg-xp-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--accent-2)); border-radius: 99px; transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  .fg-xp-text { font-size: 11px; color: var(--text-3); margin-bottom: 18px; }
-  .fg-badges { display: flex; gap: 12px; margin-bottom: 20px; }
-  .fg-badge {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px;
-    border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-    opacity: 0.35; filter: grayscale(1); transition: all 0.4s;
-  }
-  .fg-badge.unlocked {
-    opacity: 1; filter: grayscale(0); border-color: rgba(52,211,153,0.4); background: rgba(52,211,153,0.06);
-    animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .fg-badge-emoji { font-size: 22px; }
-  .fg-badge-name { font-size: 9px; color: var(--text-3); font-weight: 600; text-align: center; line-height: 1.3; }
-  .fg-complete-btn {
-    width: 100%; padding: 14px; border-radius: 99px; border: none;
-    background: linear-gradient(90deg, var(--green), var(--accent-2)); color: #06110c; font-size: 13px; font-weight: 700;
-    font-family: 'Outfit', sans-serif; cursor: pointer; transition: transform 0.2s;
-  }
-  .fg-complete-btn:hover { transform: scale(1.02); }
-  .fg-complete-btn:active { transform: scale(0.98); }
-
   /* ===== STATS ===== */
   .stats-section {
     padding: 160px 24px; position: relative; overflow: hidden;
@@ -1177,9 +1062,6 @@
     .tracking-right, .order-cards, .group-leaderboard, .group-challenge,
     .gamify-profile, .gamify-unlock, .gamify-badges, .order-remaining,
     .vendor-menu-editor, .vendor-stats-panel { width: 100%; max-width: 360px; }
-    .family-grid { flex-direction: column; align-items: center; }
-    .family-market-card, .family-gamify-card { width: 100%; max-width: 360px; }
-    .family-member-card { width: 100%; max-width: 300px; }
     .stats-grid { grid-template-columns: 1fr; gap: 40px; }
     .cuisine-explorer { grid-template-columns: 1fr 1fr; }
     .cuisine-card.expanded { grid-column: span 2; grid-row: span 1; }
@@ -1203,7 +1085,6 @@
     <a href="#order" data-vi="Smart Order" data-en="Smart Order">Smart Order</a>
     <a href="#group" data-vi="Nhóm" data-en="Groups">Nhóm</a>
     <a href="#cuisine" data-vi="Ẩm thực" data-en="Cuisine">Ẩm thực</a>
-    <a href="#family" data-vi="Gia đình" data-en="Family">Gia đình</a>
     <div class="lang-toggle">
       <button class="active" onclick="setLang('vi')">VN</button>
       <button onclick="setLang('en')">EN</button>
@@ -1815,54 +1696,6 @@
   </div>
 </section>
 
-<!-- ==========================================
-     9. FAMILY HUB (Multi-Profile Household)
-     ========================================== -->
-<section class="family-section" id="family">
-  <div class="section-label reveal" data-vi="Gia đình" data-en="Family">Gia đình</div>
-  <h2 class="section-title reveal" id="familyTitle">Một agent dinh dưỡng<br><span style="color:var(--green);">cho cả nhà.</span></h2>
-  <p class="section-sub reveal" data-vi="Bé 2 tuổi, bố, mẹ — mỗi người một nhu cầu riêng. NomNom tính khẩu phần từng người, gộp thành một danh sách chợ duy nhất mỗi ngày." data-en="A toddler, a dad, a mom — each with different needs. NomNom works out everyone's portions and rolls it into one daily grocery list.">Bé 2 tuổi, bố, mẹ — mỗi người một nhu cầu riêng. NomNom tính khẩu phần từng người, gộp thành một danh sách chợ duy nhất mỗi ngày.</p>
-
-  <div class="family-demo" id="familyDemo">
-    <div class="family-members" id="familyMembers"></div>
-
-    <div class="family-totals reveal" id="familyTotals"></div>
-
-    <div class="family-grid">
-      <div class="family-market-card reveal">
-        <div class="fm-notif-header">
-          <div class="fm-notif-icon">🔔</div>
-          <div class="fm-notif-text">
-            <div class="fm-notif-app">NomNom <span data-vi="• Hôm nay, 7:00" data-en="• Today, 7:00 AM">• Hôm nay, 7:00</span></div>
-            <div class="fm-notif-title" data-vi="Danh sách chợ cho cả nhà hôm nay 🛒" data-en="Today's family grocery list 🛒">Danh sách chợ cho cả nhà hôm nay 🛒</div>
-          </div>
-        </div>
-        <div class="fm-market-list" id="fmMarketList"></div>
-        <button class="fm-refresh-btn" id="fmRefreshBtn" data-vi="🔄 Tạo lại danh sách" data-en="🔄 Regenerate list">🔄 Tạo lại danh sách</button>
-      </div>
-
-      <div class="family-gamify-card reveal">
-        <div class="fg-title" data-vi="Streak cả nhà" data-en="Family streak">Streak cả nhà</div>
-        <div class="fg-streak">
-          <div class="fg-streak-fire">🔥</div>
-          <div>
-            <div class="fg-streak-num" id="fgStreakNum">6</div>
-            <div class="fg-streak-label" data-vi="ngày cả nhà đủ dinh dưỡng" data-en="days of full family nutrition">ngày cả nhà đủ dinh dưỡng</div>
-          </div>
-        </div>
-        <div class="fg-xp-bar"><div class="fg-xp-fill" id="fgXpFill" style="width:0%"></div></div>
-        <div class="fg-xp-text"><span id="fgXpText">0</span> / 1000 XP · <span data-vi="Cấp độ gia đình" data-en="Family level">Cấp độ gia đình</span> <span id="fgLevel">3</span></div>
-        <div class="fg-badges" id="fgBadges">
-          <div class="fg-badge" id="fgBadgeChild"><div class="fg-badge-emoji">🥦</div><div class="fg-badge-name" data-vi="Bé ăn đủ rau" data-en="Kid ate veggies">Bé ăn đủ rau</div></div>
-          <div class="fg-badge" id="fgBadgeDad"><div class="fg-badge-emoji">💪</div><div class="fg-badge-name" data-vi="Bố đủ đạm" data-en="Dad hit protein">Bố đủ đạm</div></div>
-          <div class="fg-badge" id="fgBadgeMom"><div class="fg-badge-emoji">🩸</div><div class="fg-badge-name" data-vi="Mẹ đủ sắt" data-en="Mom hit iron">Mẹ đủ sắt</div></div>
-        </div>
-        <button class="fg-complete-btn" id="fgCompleteBtn" data-vi="✅ Đánh dấu hoàn thành hôm nay" data-en="✅ Mark today complete">✅ Đánh dấu hoàn thành hôm nay</button>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- STATS -->
 <section class="stats-section">
   <div class="stats-grid">
@@ -1947,10 +1780,6 @@ const sectionTitles = {
     vi: 'Dán nhãn dinh dưỡng<br><span style="color:var(--purple);">toàn bộ menu.</span>',
     en: 'Nutrition-label<br><span style="color:var(--purple);">your entire menu.</span>'
   },
-  family: {
-    vi: 'Một agent dinh dưỡng<br><span style="color:var(--green);">cho cả nhà.</span>',
-    en: 'One nutrition agent<br><span style="color:var(--green);">for the whole family.</span>'
-  },
   cta: {
     vi: 'Sẵn sàng ăn <span style="color:var(--accent);"><em>thông minh</em></span> hơn?',
     en: 'Ready to eat <span style="color:var(--accent);"><em>smarter</em></span>?'
@@ -1992,7 +1821,6 @@ function setLang(lang) {
   document.getElementById('cuisineTitle').innerHTML = sectionTitles.cuisine[lang];
   document.getElementById('recipeTitle').innerHTML = sectionTitles.recipe[lang];
   document.getElementById('vendorTitle').innerHTML = sectionTitles.vendor[lang];
-  document.getElementById('familyTitle').innerHTML = sectionTitles.family[lang];
   document.getElementById('ctaTitle').innerHTML = sectionTitles.cta[lang];
 
   // Recipe search placeholder
@@ -2015,9 +1843,6 @@ function setLang(lang) {
 
   // Rebuild cuisine cards
   rebuildCuisine();
-
-  // Rebuild family hub (members + market list use vi/en text baked into JS data)
-  if (typeof rebuildFamilyHub === 'function') rebuildFamilyHub();
 
   // Update order card status attributes
   document.querySelectorAll('.order-card').forEach(card => {
@@ -3278,247 +3103,6 @@ const mapObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 const mapEl = document.getElementById('orderMap');
 if (mapEl) mapObserver.observe(mapEl);
-
-// =============================================
-// 9. FAMILY HUB (multi-profile household + market list)
-// =============================================
-// Daily targets per household member (WHO/RDA-based ballpark figures).
-const familyMembers = [
-  {
-    id: 'child', emoji: '🧒', color: '#60A5FA',
-    nameVi: 'Bé Bin', nameEn: 'Bin', roleVi: '2 tuổi', roleEn: '2 years old',
-    kcal: 1100, kcalMax: 3000, protein: 13, proteinMax: 90, carbs: 130, carbsMax: 350, fat: 40, fatMax: 90,
-    vitamins: [
-      { nameVi: 'Vitamin A', nameEn: 'Vitamin A', val: 300, unit: 'mcg', max: 1000 },
-      { nameVi: 'Vitamin C', nameEn: 'Vitamin C', val: 15, unit: 'mg', max: 100 },
-      { nameVi: 'Vitamin D', nameEn: 'Vitamin D', val: 15, unit: 'mcg', max: 20 },
-      { nameVi: 'Canxi', nameEn: 'Calcium', val: 700, unit: 'mg', max: 1200 },
-      { nameVi: 'Sắt', nameEn: 'Iron', val: 7, unit: 'mg', max: 20 },
-    ]
-  },
-  {
-    id: 'dad', emoji: '👨', color: '#FF6A28',
-    nameVi: 'Bố', nameEn: 'Dad', roleVi: 'Nam trưởng thành', roleEn: 'Adult male',
-    kcal: 2500, kcalMax: 3000, protein: 75, proteinMax: 90, carbs: 310, carbsMax: 350, fat: 70, fatMax: 90,
-    vitamins: [
-      { nameVi: 'Vitamin A', nameEn: 'Vitamin A', val: 900, unit: 'mcg', max: 1000 },
-      { nameVi: 'Vitamin C', nameEn: 'Vitamin C', val: 90, unit: 'mg', max: 100 },
-      { nameVi: 'Vitamin D', nameEn: 'Vitamin D', val: 15, unit: 'mcg', max: 20 },
-      { nameVi: 'Canxi', nameEn: 'Calcium', val: 1000, unit: 'mg', max: 1200 },
-      { nameVi: 'Sắt', nameEn: 'Iron', val: 8, unit: 'mg', max: 20 },
-    ]
-  },
-  {
-    id: 'mom', emoji: '👩', color: '#A78BFA',
-    nameVi: 'Mẹ', nameEn: 'Mom', roleVi: 'Nữ trưởng thành', roleEn: 'Adult female',
-    kcal: 2000, kcalMax: 3000, protein: 60, proteinMax: 90, carbs: 250, carbsMax: 350, fat: 65, fatMax: 90,
-    vitamins: [
-      { nameVi: 'Vitamin A', nameEn: 'Vitamin A', val: 700, unit: 'mcg', max: 1000 },
-      { nameVi: 'Vitamin C', nameEn: 'Vitamin C', val: 75, unit: 'mg', max: 100 },
-      { nameVi: 'Vitamin D', nameEn: 'Vitamin D', val: 15, unit: 'mcg', max: 20 },
-      { nameVi: 'Canxi', nameEn: 'Calcium', val: 1000, unit: 'mg', max: 1200 },
-      { nameVi: 'Sắt', nameEn: 'Iron', val: 18, unit: 'mg', max: 20 },
-    ]
-  },
-];
-
-// Base market basket sized to roughly cover the household's combined targets above.
-// Quantities are illustrative (not lab-precise) — the point is exact, shoppable weights per item.
-const familyMarketBasket = [
-  { emoji: '🍚', vi: 'Gạo tẻ', en: 'White rice', qty: 750, unit: 'g', tagVi: 'Nguồn carb chính cho cả nhà', tagEn: 'Main carb source for everyone', color: 'var(--accent-2)' },
-  { emoji: '🥩', vi: 'Thịt heo nạc', en: 'Lean pork', qty: 300, unit: 'g', tagVi: '≈84g đạm cho bố', tagEn: '≈84g protein for dad', color: 'var(--accent)' },
-  { emoji: '🐟', vi: 'Cá lóc phi lê', en: 'Snakehead fish fillet', qty: 300, unit: 'g', tagVi: '≈54g đạm + DHA cho bé & mẹ', tagEn: '≈54g protein + DHA for kid & mom', color: 'var(--accent)' },
-  { emoji: '🥚', vi: 'Trứng gà', en: 'Eggs', qty: 6, unit: 'quả', unitEn: 'eggs', tagVi: '≈43g đạm + Vitamin D', tagEn: '≈43g protein + Vitamin D', color: 'var(--accent-2)' },
-  { emoji: '🫘', vi: 'Đậu hũ', en: 'Tofu', qty: 200, unit: 'g', tagVi: 'Canxi thực vật cho cả nhà', tagEn: 'Plant calcium for everyone', color: 'var(--purple)' },
-  { emoji: '🥬', vi: 'Rau muống', en: 'Water spinach', qty: 300, unit: 'g', tagVi: 'Sắt + Vitamin A', tagEn: 'Iron + Vitamin A', color: 'var(--green)' },
-  { emoji: '🥕', vi: 'Cà rốt', en: 'Carrot', qty: 200, unit: 'g', tagVi: 'Vitamin A cho bé', tagEn: 'Vitamin A for the kid', color: 'var(--accent-2)' },
-  { emoji: '🍅', vi: 'Cà chua', en: 'Tomato', qty: 200, unit: 'g', tagVi: 'Vitamin C (≈36mg)', tagEn: 'Vitamin C (≈36mg)', color: '#EF4444' },
-  { emoji: '🥛', vi: 'Sữa tươi', en: 'Fresh milk', qty: 600, unit: 'ml', tagVi: 'Canxi cho bé & mẹ', tagEn: 'Calcium for kid & mom', color: 'var(--blue)' },
-  { emoji: '🍊', vi: 'Nước cam ép tươi', en: 'Fresh orange juice', qty: 500, unit: 'ml', tagVi: 'Vitamin C cho cả nhà (≈180mg)', tagEn: 'Vitamin C for everyone (≈180mg)', color: 'var(--accent)' },
-  { emoji: '🌾', vi: 'Dầu ăn', en: 'Cooking oil', qty: 50, unit: 'ml', tagVi: 'Chất béo lành mạnh', tagEn: 'Healthy fats', color: 'var(--green)' },
-  { emoji: '🍌', vi: 'Chuối', en: 'Banana', qty: 3, unit: 'trái', unitEn: 'bananas', tagVi: 'Kali + năng lượng cho bé', tagEn: 'Potassium + energy for the kid', color: 'var(--purple)' },
-];
-
-let familyState = { xp: 340, level: 3, streak: 6, unlockedBadges: 0 };
-
-function renderFamilyMembers() {
-  const container = document.getElementById('familyMembers');
-  if (!container) return;
-  container.innerHTML = '';
-
-  familyMembers.forEach((m) => {
-    const card = document.createElement('div');
-    card.className = 'family-member-card reveal';
-    card.style.setProperty('--fmc-color', m.color);
-    const kcalCirc = 2 * Math.PI * 40;
-    const kcalOffset = kcalCirc * (1 - Math.min(1, m.kcal / m.kcalMax));
-    const name = currentLang === 'en' ? m.nameEn : m.nameVi;
-    const role = currentLang === 'en' ? m.roleEn : m.roleVi;
-    const vitamins = m.vitamins.map(v => `
-      <div class="fmc-vitamin-row">
-        <div class="fmc-vitamin-top">
-          <span class="fmc-vitamin-name">${currentLang === 'en' ? v.nameEn : v.nameVi}</span>
-          <span class="fmc-vitamin-val" style="color:${m.color};">${v.val}${v.unit}</span>
-        </div>
-        <div class="fmc-vitamin-bar"><div class="fmc-vitamin-bar-fill" data-w="${Math.min(100, (v.val / v.max) * 100)}%"></div></div>
-      </div>
-    `).join('');
-
-    card.innerHTML = `
-      <div class="fmc-emoji">${m.emoji}</div>
-      <div class="fmc-name">${name}</div>
-      <div class="fmc-role">${role}</div>
-      <div class="fmc-ring">
-        <svg viewBox="0 0 96 96">
-          <circle class="ring-bg" cx="48" cy="48" r="40" fill="none"/>
-          <circle class="ring-fill" cx="48" cy="48" r="40" fill="none" stroke-dasharray="${kcalCirc}" stroke-dashoffset="${kcalOffset}" style="transform:rotate(-90deg);transform-origin:center;"/>
-        </svg>
-        <div class="fmc-ring-num">${m.kcal}</div>
-        <div class="fmc-ring-unit">kcal/${currentLang === 'en' ? 'day' : 'ngày'}</div>
-      </div>
-      <div class="fmc-macro-row">
-        <div class="fmc-macro-item">
-          <div class="fmc-macro-label" style="color:var(--accent);">${currentLang === 'en' ? 'Protein' : 'Đạm'}</div>
-          <div class="fmc-macro-val" style="color:var(--accent);">${m.protein}g</div>
-          <div class="fmc-macro-bar"><div class="fmc-macro-bar-fill" style="background:var(--accent);" data-w="${(m.protein / m.proteinMax) * 100}%"></div></div>
-        </div>
-        <div class="fmc-macro-item">
-          <div class="fmc-macro-label" style="color:var(--accent-2);">${currentLang === 'en' ? 'Carbs' : 'Carb'}</div>
-          <div class="fmc-macro-val" style="color:var(--accent-2);">${m.carbs}g</div>
-          <div class="fmc-macro-bar"><div class="fmc-macro-bar-fill" style="background:var(--accent-2);" data-w="${(m.carbs / m.carbsMax) * 100}%"></div></div>
-        </div>
-        <div class="fmc-macro-item">
-          <div class="fmc-macro-label" style="color:var(--green);">${currentLang === 'en' ? 'Fat' : 'Béo'}</div>
-          <div class="fmc-macro-val" style="color:var(--green);">${m.fat}g</div>
-          <div class="fmc-macro-bar"><div class="fmc-macro-bar-fill" style="background:var(--green);" data-w="${(m.fat / m.fatMax) * 100}%"></div></div>
-        </div>
-      </div>
-      <div class="fmc-expand-hint" data-vi="Tap để xem vi chất" data-en="Tap to see micronutrients">${currentLang === 'en' ? 'Tap to see micronutrients' : 'Tap để xem vi chất'}</div>
-      <div class="fmc-vitamins">
-        <div class="fmc-vitamins-title">${currentLang === 'en' ? 'Daily micronutrient needs' : 'Nhu cầu vi chất mỗi ngày'}</div>
-        ${vitamins}
-      </div>
-    `;
-
-    card.addEventListener('click', () => {
-      const wasExpanded = card.classList.contains('expanded');
-      document.querySelectorAll('.family-member-card.expanded').forEach(c => c.classList.remove('expanded'));
-      if (!wasExpanded) {
-        card.classList.add('expanded');
-        setTimeout(() => {
-          card.querySelectorAll('.fmc-vitamin-bar-fill').forEach(f => f.style.width = f.dataset.w);
-        }, 50);
-      }
-    });
-
-    container.appendChild(card);
-    revealObserver.observe(card);
-
-    setTimeout(() => {
-      card.querySelectorAll('.fmc-macro-bar-fill').forEach(f => f.style.width = f.dataset.w);
-    }, 300);
-  });
-}
-
-function renderFamilyTotals() {
-  const container = document.getElementById('familyTotals');
-  if (!container) return;
-  const totals = familyMembers.reduce((acc, m) => ({
-    kcal: acc.kcal + m.kcal, protein: acc.protein + m.protein, carbs: acc.carbs + m.carbs, fat: acc.fat + m.fat
-  }), { kcal: 0, protein: 0, carbs: 0, fat: 0 });
-
-  const tiles = [
-    { num: totals.kcal.toLocaleString(), label: 'Kcal', color: 'var(--text)' },
-    { num: totals.protein + 'g', label: currentLang === 'en' ? 'Protein' : 'Đạm', color: 'var(--accent)' },
-    { num: totals.carbs + 'g', label: currentLang === 'en' ? 'Carbs' : 'Carb', color: 'var(--accent-2)' },
-    { num: totals.fat + 'g', label: currentLang === 'en' ? 'Fat' : 'Béo', color: 'var(--green)' },
-  ];
-
-  container.innerHTML = tiles.map(t => `
-    <div class="ft-tile"><div class="ft-num" style="color:${t.color};">${t.num}</div><div class="ft-label">${t.label}</div></div>
-  `).join('') + `<div class="ft-note">${currentLang === 'en'
-    ? '🍊 Plus 1 daily juice serving (500ml) — shared vitamin C boost for the whole family'
-    : '🍊 Cộng thêm 1 khẩu phần nước ép/ngày (500ml) — bổ sung Vitamin C cho cả nhà'}</div>`;
-}
-
-function renderFamilyMarketList(jitter) {
-  const container = document.getElementById('fmMarketList');
-  if (!container) return;
-  container.innerHTML = '';
-
-  familyMarketBasket.forEach((item, i) => {
-    let qty = item.qty;
-    if (jitter) {
-      const factor = 1 + (Math.random() * 0.3 - 0.15);
-      qty = item.unit === 'g' || item.unit === 'ml' ? Math.round(qty * factor / 10) * 10 : Math.max(1, Math.round(qty * factor));
-    }
-    const unit = currentLang === 'en' && item.unitEn ? item.unitEn : item.unit;
-    const el = document.createElement('div');
-    el.className = 'fm-item';
-    el.innerHTML = `
-      <div class="fm-item-emoji">${item.emoji}</div>
-      <div class="fm-item-info">
-        <div class="fm-item-name-row">
-          <span class="fm-item-name">${currentLang === 'en' ? item.en : item.vi}</span>
-          <span class="fm-item-qty" style="color:${item.color};">${qty}${item.unit === 'g' || item.unit === 'ml' ? item.unit : ' ' + unit}</span>
-        </div>
-        <div class="fm-item-tag">${currentLang === 'en' ? item.tagEn : item.tagVi}</div>
-      </div>
-    `;
-    container.appendChild(el);
-    setTimeout(() => el.classList.add('visible'), 80 * i);
-  });
-}
-
-function rebuildFamilyHub() {
-  renderFamilyMembers();
-  renderFamilyTotals();
-  renderFamilyMarketList(false);
-}
-rebuildFamilyHub();
-
-const fmRefreshBtn = document.getElementById('fmRefreshBtn');
-if (fmRefreshBtn) fmRefreshBtn.addEventListener('click', () => renderFamilyMarketList(true));
-
-// Family gamification: streak + XP + per-member badges
-function updateFamilyGamifyUI() {
-  document.getElementById('fgStreakNum').textContent = familyState.streak;
-  document.getElementById('fgLevel').textContent = familyState.level;
-  const xpPerc = Math.min(100, (familyState.xp / 1000) * 100);
-  document.getElementById('fgXpFill').style.width = xpPerc + '%';
-  document.getElementById('fgXpText').textContent = familyState.xp;
-}
-
-const familyBadgeIds = ['fgBadgeChild', 'fgBadgeDad', 'fgBadgeMom'];
-
-const fgCompleteBtn = document.getElementById('fgCompleteBtn');
-if (fgCompleteBtn) fgCompleteBtn.addEventListener('click', () => {
-  familyState.streak += 1;
-  familyState.xp += 120;
-  if (familyState.xp >= 1000) {
-    familyState.xp -= 1000;
-    familyState.level += 1;
-  }
-  if (familyState.unlockedBadges < 3) {
-    const badge = document.getElementById(familyBadgeIds[familyState.unlockedBadges]);
-    badge.classList.add('unlocked');
-    familyState.unlockedBadges += 1;
-    if (familyState.unlockedBadges === 3) spawnConfetti();
-  }
-  updateFamilyGamifyUI();
-});
-
-let familyGamifyAnimated = false;
-const familyGamifyObserver = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting && !familyGamifyAnimated) {
-      familyGamifyAnimated = true;
-      setTimeout(() => updateFamilyGamifyUI(), 300);
-    }
-  });
-}, { threshold: 0.3 });
-const familyDemoEl = document.getElementById('familyDemo');
-if (familyDemoEl) familyGamifyObserver.observe(familyDemoEl);
 
 </script>
 </body>
