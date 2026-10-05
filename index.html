@@ -4,6 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NomNom – Chuyên gia dinh dưỡng trong túi bạn</title>
+<meta name="description" content="NomNom — chuyên gia dinh dưỡng cho tất cả. Theo dõi dinh dưỡng, tự động order, hiểu ẩm thực Việt Nam. Tham gia waitlist.">
+<meta name="theme-color" content="#050505">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍜</text></svg>">
+<!-- Social preview (Threads / Facebook / Zalo / X) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="NomNom">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:title" content="NomNom – Chuyên gia dinh dưỡng trong túi bạn">
+<meta property="og:description" content="Theo dõi dinh dưỡng · Tự động order · Hiểu ẩm thực Việt Nam. Tham gia waitlist để trải nghiệm sớm.">
+<meta property="og:url" content="https://nomnom-landing.pages.dev/">
+<meta property="og:image" content="https://nomnom-landing.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="NomNom — Chuyên gia dinh dưỡng cho tất cả">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NomNom – Chuyên gia dinh dưỡng trong túi bạn">
+<meta name="twitter:description" content="Theo dõi dinh dưỡng · Tự động order · Hiểu ẩm thực Việt Nam.">
+<meta name="twitter:image" content="https://nomnom-landing.pages.dev/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Be+Vietnam+Pro:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1060,6 +1078,10 @@
   }
   .waitlist-input::placeholder { color: var(--text-3); }
   .waitlist-input:focus { border-color: var(--accent); }
+  .waitlist-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+  .waitlist-msg { min-height: 22px; margin-top: 14px; font-size: 14px; color: var(--text-2); text-align: center; transition: color 0.2s; }
+  .waitlist-msg.ok { color: var(--green); font-weight: 600; }
+  .waitlist-msg.err { color: var(--red); }
 
   /* ===== FOOTER ===== */
   footer {
@@ -2821,9 +2843,11 @@
   <div class="cta-title reveal" id="ctaTitle">Sẵn sàng ăn <span style="color:var(--accent);"><em>thông minh</em></span> hơn?</div>
   <div class="cta-sub reveal" data-vi="Tham gia waitlist. Bạn sẽ là những người đầu tiên trải nghiệm NomNom tại Sài Gòn." data-en="Join the waitlist. Be among the first to experience NomNom in Saigon.">Tham gia waitlist. Bạn sẽ là những người đầu tiên trải nghiệm NomNom tại Sài Gòn.</div>
   <div class="waitlist-form reveal">
-    <input class="waitlist-input" type="email" placeholder="Email của bạn" id="waitlistInput">
-    <button class="btn-primary" data-vi="Đăng ký →" data-en="Sign up →">Đăng ký →</button>
+    <input class="waitlist-input" type="email" placeholder="Email của bạn" id="waitlistInput" autocomplete="email" inputmode="email" enterkeyhint="send">
+    <input type="text" id="waitlistCompany" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" class="waitlist-hp">
+    <button class="btn-primary" id="waitlistBtn" type="button" data-vi="Đăng ký →" data-en="Sign up →">Đăng ký →</button>
   </div>
+  <div class="waitlist-msg" id="waitlistMsg" aria-live="polite"></div>
 </section>
 
 <!-- FOOTER -->
@@ -5463,6 +5487,56 @@ if (floatNavBtn) {
 // Apply persisted language (idempotent for 'vi' default)
 if (currentLang === 'en') setLang('en');
 
+
+// =============================================
+// WAITLIST → /api/waitlist (Cloudflare Pages Function, same origin)
+// =============================================
+(function initWaitlist() {
+  const input = document.getElementById('waitlistInput');
+  const btn   = document.getElementById('waitlistBtn');
+  const msg   = document.getElementById('waitlistMsg');
+  const hp    = document.getElementById('waitlistCompany');
+  if (!input || !btn || !msg) return;
+
+  const t = {
+    vi: { invalid: 'Email chưa đúng — kiểm tra lại nhé.', sending: 'Đang gửi…', ok: '✓ Đã ghi danh! Hẹn gặp bạn sớm.', dup: '✓ Email này đã có trong danh sách.', err: 'Lỗi kết nối — thử lại sau nhé.' },
+    en: { invalid: 'That email looks off — double-check it.', sending: 'Sending…', ok: "✓ You're on the list! See you soon.", dup: '✓ This email is already on the list.', err: 'Connection error — try again.' },
+  };
+  function say(key, cls) {
+    const m = t[currentLang] || t.vi;
+    msg.textContent = m[key];
+    msg.className = 'waitlist-msg' + (cls ? ' ' + cls : '');
+  }
+
+  async function submit() {
+    const email = input.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { say('invalid', 'err'); input.focus(); return; }
+    btn.disabled = true;
+    say('sending');
+    try {
+      const res = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, lang: currentLang, company: hp ? hp.value : '' }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        say(data.dup ? 'dup' : 'ok', 'ok');
+        input.value = '';
+        if (!data.dup && typeof spawnConfetti === 'function') spawnConfetti();
+      } else {
+        say(res.status === 400 ? 'invalid' : 'err', 'err');
+      }
+    } catch (e) {
+      say('err', 'err');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); submit(); } });
+})();
 </script>
 </body>
 </html>
