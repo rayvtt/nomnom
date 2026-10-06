@@ -1044,6 +1044,12 @@
     position: relative;
   }
   .order-map { width: 100%; height: 360px; background: #111; }
+  .order-map .leaflet-control-attribution {
+    background: rgba(0,0,0,0.45); color: var(--text-3); font-size: 9px; padding: 2px 6px;
+    border-top-left-radius: 6px; font-family: 'Be Vietnam Pro', sans-serif;
+  }
+  .order-map .leaflet-control-attribution a { color: var(--text-2); }
+  body.light-mode .order-map .leaflet-control-attribution { background: rgba(255,255,255,0.6); }
   .order-map-label {
     position: absolute; top: 14px; left: 14px; z-index: 500;
     background: var(--bg); padding: 8px 16px; border-radius: 12px;
@@ -4789,9 +4795,10 @@ function initOrderMap() {
   // Center on District 1, Ho Chi Minh City
   orderMap = L.map('orderMap', {
     zoomControl: false,
-    attributionControl: false,
+    attributionControl: true,
     scrollWheelZoom: true,
   }).setView([10.7769, 106.7009], 14);
+  orderMap.attributionControl.setPrefix('');
 
   updateMapTheme();
 
@@ -4892,10 +4899,15 @@ function updateMapTheme() {
   if (!orderMap) return;
   if (mapTileLayer) orderMap.removeLayer(mapTileLayer);
   const isLight = document.body.classList.contains('light-mode');
+  // Esri Canvas basemaps: free, no API key (CARTO basemaps now require one). Max native zoom 16.
   const tileUrl = isLight
-    ? 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-    : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
-  mapTileLayer = L.tileLayer(tileUrl, { maxZoom: 19 }).addTo(orderMap);
+    ? 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}'
+    : 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}';
+  mapTileLayer = L.tileLayer(tileUrl, {
+    maxZoom: 18,
+    maxNativeZoom: 16,
+    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ',
+  }).addTo(orderMap);
 }
 
 // Initialize map when section scrolls into view
