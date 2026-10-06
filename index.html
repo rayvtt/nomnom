@@ -1059,6 +1059,22 @@
   }
 
   /* ===== CTA ===== */
+  /* ===== COMPACT MODE: secondary sections hidden until "Khám phá thêm" ===== */
+  body:not(.show-more) .more-section { display: none !important; }
+  .more-expander {
+    padding: 72px 24px 24px; display: flex; flex-direction: column; align-items: center;
+    text-align: center; gap: 14px;
+  }
+  body.show-more .more-expander { display: none; }
+  .more-expander-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--text-3); font-weight: 700; }
+  .more-btn {
+    background: transparent; color: var(--text); border: 1.5px solid var(--card-border);
+    padding: 16px 32px; border-radius: 99px; font-size: 16px; font-weight: 700;
+    font-family: 'Be Vietnam Pro', sans-serif; cursor: pointer; transition: all 0.25s;
+  }
+  .more-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .more-hint { font-size: 13px; color: var(--text-3); max-width: 420px; line-height: 1.6; }
+
   .cta-section {
     padding: 160px 24px; display: flex; flex-direction: column; align-items: center;
     text-align: center; position: relative;
@@ -1810,11 +1826,9 @@
   <div class="nav-logo">Nom<span>Nom</span></div>
   <div class="nav-links">
     <a href="#tracking" data-vi="Tracking" data-en="Tracking">Tracking</a>
-    <a href="#gamify" data-vi="Gamify" data-en="Gamify">Gamify</a>
-    <a href="#voice" data-vi="Voice" data-en="Voice">Voice</a>
     <a href="#order" data-vi="Smart Order" data-en="Smart Order">Smart Order</a>
-    <a href="#group" data-vi="Nhóm" data-en="Groups">Nhóm</a>
     <a href="#cuisine" data-vi="Ẩm thực" data-en="Cuisine">Ẩm thực</a>
+    <a href="#gamify" data-vi="Thêm" data-en="More">Thêm</a>
     <div class="lang-toggle">
       <button class="active" onclick="setLang('vi')">VN</button>
       <button onclick="setLang('en')">EN</button>
@@ -2188,7 +2202,7 @@
 <!-- ==========================================
      1.5 WHO'S IT FOR
      ========================================== -->
-<section class="audience-section" id="audience">
+<section class="audience-section more-section" id="audience">
   <div class="section-label reveal" data-vi="Dành cho ai" data-en="Built for">Dành cho ai</div>
   <h2 class="section-title reveal" id="audienceTitle">Bạn ăn nhiều. <span style="color:var(--accent);">Cần biết rõ.</span></h2>
   <p class="section-sub reveal" data-vi="NomNom được xây cho những người Việt thật, với những vấn đề thật về dinh dưỡng — không phải copy-paste app Mỹ." data-en="NomNom is built for real Vietnamese people, with real nutrition problems — not a copy-paste of US apps.">NomNom được xây cho những người Việt thật, với những vấn đề thật về dinh dưỡng — không phải copy-paste app Mỹ.</p>
@@ -2232,7 +2246,7 @@
 <!-- ==========================================
      1.7 NUTRITION TIMELINE
      ========================================== -->
-<section class="timeline-section" id="timeline">
+<section class="timeline-section more-section" id="timeline">
   <div class="section-label reveal" data-vi="Lịch sử dinh dưỡng" data-en="Nutrition history">Lịch sử dinh dưỡng</div>
   <h2 class="section-title reveal" id="timelineTitle">Bạn ăn gì <span style="color:var(--accent);">tuần này?</span></h2>
   <p class="section-sub reveal" data-vi="Theo dõi xu hướng — không phải khoảnh khắc. Một bữa lệch không sao. Một tuần lệch là vấn đề." data-en="Track trends, not moments. One off-meal is fine. One off-week is a problem.">Theo dõi xu hướng — không phải khoảnh khắc. Một bữa lệch không sao. Một tuần lệch là vấn đề.</p>
@@ -2281,7 +2295,7 @@
 <!-- ==========================================
      2. GAMIFICATION SYSTEM
      ========================================== -->
-<section class="gamify-section" id="gamify">
+<section class="gamify-section more-section" id="gamify">
   <div class="section-label reveal" data-vi="Gamification" data-en="Gamification">Gamification</div>
   <h2 class="section-title reveal" id="gamifyTitle">Ăn lành. Tích điểm.<br><span style="color:var(--accent);">Mở khoá cheat meal.</span></h2>
   <p class="section-sub reveal" data-vi="Biến dinh dưỡng thành game. Streak, XP, badge — ăn healthy chưa bao giờ vui đến vậy." data-en="Turn nutrition into a game. Streaks, XP, badges — eating healthy has never been this fun.">Biến dinh dưỡng thành game. Streak, XP, badge — ăn healthy chưa bao giờ vui đến vậy.</p>
@@ -2338,7 +2352,7 @@
 <!-- ==========================================
      3. VOICE LOG INTERACTIVE
      ========================================== -->
-<section class="voice-section" id="voice">
+<section class="voice-section more-section" id="voice">
   <div class="section-label reveal" data-vi="Voice log" data-en="Voice log">Voice log</div>
   <h2 class="section-title reveal" id="voiceTitle">Nói là xong.<br><span style="color:var(--accent);">Không cần gõ.</span></h2>
   <p class="section-sub reveal" data-vi="Bữa ăn tự phát? Tap mic, nói, xong. AI phân tích và log tự động." data-en="Spontaneous meal? Tap mic, speak, done. AI analyzes and logs automatically.">Bữa ăn tự phát? Tap mic, nói, xong. AI phân tích và log tự động.</p>
@@ -2367,7 +2381,7 @@
 <!-- ==========================================
      3.8 AUTO-ORDER SETUP (CORE FEATURE)
      ========================================== -->
-<section class="setup-section" id="setup">
+<section class="setup-section more-section" id="setup">
   <div class="section-label reveal" data-vi="Tính năng cốt lõi" data-en="Core feature">Tính năng cốt lõi</div>
   <h2 class="section-title reveal" id="setupTitle">Một lần cài đặt.<br><span style="color:var(--green);">NN lo cả tháng.</span></h2>
   <p class="section-sub reveal" data-vi="30 phút trước mỗi bữa: bạn nhận push notification với 3 lựa chọn fit macro. Tap để duyệt. Đơn về tận cửa qua GrabFood/ShopeeFood." data-en="30 minutes before each meal: receive a push with 3 macro-fit options. Tap to approve. Delivered to your door via GrabFood/ShopeeFood.">30 phút trước mỗi bữa: bạn nhận push notification với 3 lựa chọn fit macro. Tap để duyệt. Đơn về tận cửa qua GrabFood/ShopeeFood.</p>
@@ -2550,7 +2564,7 @@
 <!-- ==========================================
      4.5 DINE-OUT MATCHER
      ========================================== -->
-<section class="dineout-section" id="dineout">
+<section class="dineout-section more-section" id="dineout">
   <div class="section-label reveal" data-vi="Khớp macro còn lại" data-en="Match remaining macros">Khớp macro còn lại</div>
   <h2 class="section-title reveal" id="dineoutTitle">Còn 30g protein. <span style="color:var(--green);">Tìm món gì?</span></h2>
   <p class="section-sub reveal" data-vi="Đã ăn 2 bữa, chưa đủ macro? NomNom tìm món Việt fit chính xác lượng còn thiếu trong DB 1,200+ món." data-en="Two meals down, macros incomplete? NomNom finds Vietnamese dishes that fill the exact gap from our 1,200+ dish DB.">Đã ăn 2 bữa, chưa đủ macro? NomNom tìm món Việt fit chính xác lượng còn thiếu trong DB 1,200+ món.</p>
@@ -2615,7 +2629,7 @@
 <!-- ==========================================
      5. GROUP CHALLENGE LEADERBOARD
      ========================================== -->
-<section class="group-section" id="group">
+<section class="group-section more-section" id="group">
   <div class="section-label reveal" data-vi="Nhóm & Thách thức" data-en="Groups & Challenges">Nhóm & Thách thức</div>
   <h2 class="section-title reveal" id="groupTitle">Ăn lành cùng nhau.<br><span style="color:var(--accent);">Biến nó thành sport.</span></h2>
   <p class="section-sub reveal" data-vi="Lập nhóm, đặt goal, bảng xếp hạng live. Cùng streak, cùng thưởng." data-en="Create groups, set goals, live leaderboard. Shared streaks, shared rewards.">Lập nhóm, đặt goal, bảng xếp hạng live. Cùng streak, cùng thưởng.</p>
@@ -2700,7 +2714,7 @@
 <!-- ==========================================
      7. RECIPE HUB
      ========================================== -->
-<section class="recipe-section" id="recipes">
+<section class="recipe-section more-section" id="recipes">
   <div class="section-label reveal" data-vi="Công thức cộng đồng" data-en="Community Recipes">Công thức cộng đồng</div>
   <h2 class="section-title reveal" id="recipeTitle">1,200+ món Việt.<br><span style="color:var(--accent-2);">Phân tích dinh dưỡng đầy đủ.</span></h2>
   <p class="section-sub reveal" data-vi="Cơ sở dữ liệu mở — ai cũng có thể đóng góp công thức. Mỗi món được phân tích: macro, vi chất, chất lượng carb, và cảnh báo ẩn." data-en="Open database — anyone can contribute recipes. Every dish is analyzed: macros, micronutrients, carb quality, and hidden warnings.">Cơ sở dữ liệu mở — ai cũng có thể đóng góp công thức. Mỗi món được phân tích: macro, vi chất, chất lượng carb, và cảnh báo ẩn.</p>
@@ -2720,7 +2734,7 @@
 <!-- ==========================================
      7.5 AI RECIPE ANALYZER
      ========================================== -->
-<section class="analyzer-section" id="analyzer">
+<section class="analyzer-section more-section" id="analyzer">
   <div class="section-label reveal" data-vi="AI phân tích recipe" data-en="AI recipe analysis">AI phân tích recipe</div>
   <h2 class="section-title reveal" id="analyzerTitle">Nhập nguyên liệu. <span style="color:var(--purple);">AI dán nhãn.</span></h2>
   <p class="section-sub reveal" data-vi="Nấu món homemade hay món lạ ngoài DB? Paste recipe, NomNom tính calo, macro, cảnh báo dinh dưỡng — trong 3 giây." data-en="Cooking homemade or a dish not in our DB? Paste the recipe, NomNom computes calories, macros, nutrition warnings — in 3 seconds.">Nấu món homemade hay món lạ ngoài DB? Paste recipe, NomNom tính calo, macro, cảnh báo dinh dưỡng — trong 3 giây.</p>
@@ -2758,7 +2772,7 @@
 <!-- ==========================================
      8. RESTAURANT VENDOR HUB
      ========================================== -->
-<section class="vendor-section" id="vendors">
+<section class="vendor-section more-section" id="vendors">
   <div class="section-label reveal" data-vi="Dành cho nhà hàng" data-en="For Restaurants">Dành cho nhà hàng</div>
   <h2 class="section-title reveal" id="vendorTitle">Dán nhãn dinh dưỡng<br><span style="color:var(--purple);">toàn bộ menu.</span></h2>
   <p class="section-sub reveal" data-vi="NomNom phân tích tự động bằng AI. Nhà hàng chỉ cần review và điều chỉnh. Khách hàng tin hơn, đặt nhiều hơn." data-en="NomNom auto-analyzes with AI. Restaurants just review and adjust. Customers trust more, order more.">NomNom phân tích tự động bằng AI. Nhà hàng chỉ cần review và điều chỉnh. Khách hàng tin hơn, đặt nhiều hơn.</p>
@@ -2798,7 +2812,7 @@
 </section>
 
 <!-- STATS -->
-<section class="stats-section">
+<section class="stats-section more-section">
   <div class="stats-grid">
     <div class="stat-item reveal">
       <div class="stat-number" data-target="1200" id="stat1">0</div>
@@ -2818,7 +2832,7 @@
 <!-- ==========================================
      SOCIAL PROOF + REFERRAL
      ========================================== -->
-<section class="proof-section" id="proof">
+<section class="proof-section more-section" id="proof">
   <div class="section-label reveal" data-vi="Cộng đồng waitlist" data-en="Waitlist community">Cộng đồng waitlist</div>
   <div class="proof-counter reveal" id="proofCounter">0</div>
   <div class="proof-counter-sub reveal"><span class="proof-counter-pulse"></span><span data-vi="người đang chờ NomNom" data-en="people waiting for NomNom">người đang chờ NomNom</span></div>
@@ -2845,6 +2859,13 @@
 </section>
 
 <!-- CTA -->
+<!-- Expander: reveals the 12 secondary sections above (gamify, voice, setup, dine-out, group, recipes, analyzer, vendors, stats, proof…) -->
+<div class="more-expander reveal" id="moreExpander">
+  <div class="more-expander-label" data-vi="Còn nhiều hơn nữa" data-en="There's more">Còn nhiều hơn nữa</div>
+  <button class="more-btn" id="moreBtn" type="button" data-vi="Khám phá thêm 8 tính năng ↓" data-en="Explore 8 more features ↓">Khám phá thêm 8 tính năng ↓</button>
+  <div class="more-hint" data-vi="Gamification · Voice log · Auto-order setup · Dine-out · Thách thức nhóm · Recipe Hub · AI phân tích · Nhà hàng B2B" data-en="Gamification · Voice log · Auto-order setup · Dine-out · Group challenge · Recipe Hub · AI analyzer · Restaurant B2B">Gamification · Voice log · Auto-order setup · Dine-out · Thách thức nhóm · Recipe Hub · AI phân tích · Nhà hàng B2B</div>
+</div>
+
 <section class="cta-section" id="cta">
   <div class="cta-title reveal" id="ctaTitle">Sẵn sàng ăn <span style="color:var(--accent);"><em>thông minh</em></span> hơn?</div>
   <div class="cta-sub reveal" data-vi="Tham gia waitlist. Bạn sẽ là những người đầu tiên trải nghiệm NomNom tại Sài Gòn." data-en="Join the waitlist. Be among the first to experience NomNom in Saigon.">Tham gia waitlist. Bạn sẽ là những người đầu tiên trải nghiệm NomNom tại Sài Gòn.</div>
@@ -5499,6 +5520,42 @@ if (floatNavBtn) {
 // Apply persisted language (idempotent for 'vi' default)
 if (currentLang === 'en') setLang('en');
 
+
+// =============================================
+// COMPACT MODE — secondary sections hidden until expanded
+// =============================================
+(function initCompactMode() {
+  function expand() {
+    if (document.body.classList.contains('show-more')) return false;
+    document.body.classList.add('show-more');
+    // Hidden sections may contain Leaflet/observer-driven demos; nudge layout
+    window.dispatchEvent(new Event('resize'));
+    return true;
+  }
+
+  const btn = document.getElementById('moreBtn');
+  if (btn) btn.addEventListener('click', () => {
+    expand();
+    const first = document.querySelector('.more-section');
+    if (first) requestAnimationFrame(() => first.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  });
+
+  // Any in-page link (nav, drawer, hero) that targets a hidden section expands first
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const target = document.getElementById(a.getAttribute('href').slice(1));
+    if (!target || !target.classList.contains('more-section')) return;
+    if (expand()) {
+      e.preventDefault();
+      requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+    }
+  });
+
+  // Deep link straight to a hidden section (e.g. /#gamify) still works
+  const hashTarget = location.hash && document.getElementById(location.hash.slice(1));
+  if (hashTarget && hashTarget.classList.contains('more-section')) expand();
+})();
 
 // =============================================
 // WAITLIST → /api/waitlist (Cloudflare Pages Function, same origin)
