@@ -1,0 +1,8 @@
+{
+  "name": "nomnom-cf-build-shim",
+  "private": true,
+  "description": "Cloudflare Pages build shim for branches without the Expo app. See mobile/README.md.",
+  "dependencies": {
+    "nomnom-static-build": "file:./static-build"
+  }
+}

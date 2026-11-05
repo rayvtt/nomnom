@@ -1,0 +1,6 @@
+{
+  "name": "nomnom-static-build",
+  "version": "1.0.0",
+  "private": true,
+  "bin": { "expo": "cli.js" }
+}
