@@ -9,7 +9,7 @@
 // Configure in Cloudflare Pages → Settings → Environment variables:
 //   ANTHROPIC_API_KEY   (required, mark as secret)
 //   NOMNOM_ACCESS_CODE  (optional; if set, clients must send x-nomnom-code)
-//   NOMNOM_MODEL        (optional; default claude-opus-5-5)
+//   NOMNOM_MODEL        (optional; default claude-haiku-5-5 — cheapest; e.g. claude-sonnet-5-5 for more accuracy)
 //   NOMNOM_EFFORT       (optional; low | medium | high — default low for snappy logging)
 //
 // Raw fetch instead of the Anthropic SDK because this repo has no npm/bundler
@@ -118,7 +118,9 @@ export async function onRequestPost({ request, env }) {
       (text ? `User said: """${text}"""` : 'No text — parse the photo.'),
   });
 
-  const model = env.NOMNOM_MODEL || 'claude-opus-5-5';
+  const model = env.NOMNOM_MODEL || 'claude-haiku-5-5';
+  // Server-side refusal fallback exists for Opus/Sonnet/Fable, not Haiku.
+  const useFallback = !model.startsWith('claude-haiku');
   const effort = ['low', 'medium', 'high'].includes(env.NOMNOM_EFFORT) ? env.NOMNOM_EFFORT : 'low';
 
   let res;
@@ -131,12 +133,12 @@ export async function onRequestPost({ request, env }) {
         'anthropic-version': '2026-10-21',
         // Server-side refusal fallback: if a safety classifier declines, the
         // API re-runs the request on Anthropic's recommended fallback model.
-        'anthropic-beta': 'server-side-fallback-2026-07-01',
+        ...(useFallback ? { 'anthropic-beta': 'server-side-fallback-2026-07-01' } : {}),
       },
       body: JSON.stringify({
         model,
         max_tokens: 16000,
-        fallbacks: 'default',
+        ...(useFallback ? { fallbacks: 'default' } : {}),
         output_config: { effort, format: { type: 'json_schema', schema: OUTPUT_SCHEMA } },
         system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content }],

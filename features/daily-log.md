@@ -21,7 +21,7 @@ A companion app to the landing page that makes logging seamless. Open it on your
    - ⌨️ **Type**: free text, with several items in one sentence.
    - 📷 **Photo**: iOS gives the choice of camera or library. The app resizes the photo to ≤1568 px JPEG on the client before upload and keeps a 120 px thumbnail for the log and cabinet.
 2. **Parse**:
-   - **AI** (`/api/parse`): Claude (`claude-opus-5-5`, effort `low` for speed) returns `{reply, items[]}` constrained by `output_config.format` JSON schema. The system prompt includes the NomNom reference table so Vietnamese dishes are grounded in our own data (the moat). It is prompt-cached. Server-side refusal fallback is enabled (`fallbacks: "default"`).
+   - **AI** (`/api/parse`): Claude (`claude-haiku-5-5`, the cheapest model — about $0.10 / $0.50 per million input/output tokens — at effort `low` for speed) returns `{reply, items[]}` constrained by `output_config.format` JSON schema. The system prompt includes the NomNom reference table so Vietnamese dishes are grounded in our own data (the moat). It is prompt-cached. Server-side refusal fallback (`fallbacks: "default"`) is added automatically when `NOMNOM_MODEL` is an Opus/Sonnet model (Haiku has none).
    - **Offline fallback** (`localParse`): strips diacritics and matches aliases against `vn-foods.js`. It understands quantities (`2`, `two`, `hai`, `x2`, `half`/`nửa`), size words (`large`/`đặc biệt` ×1.3, `small`/`nhỏ` ×0.7) and medication words. The app uses it when AI isn't configured, the network is down, or the API errors.
 3. **Review sheet**: per item you see servings (±0.5 stepper), macros, the top micronutrient %DV chips, confidence, the AI's assumptions, and a delete button. Supplements and meds get a "Save to cabinet, remind at HH:MM" option (pre-checked for photo scans or when a time was mentioned). **Log it** commits the items, with Undo. Settings has an *auto-log without review* toggle.
 4. **Views** (tab bar):
@@ -49,7 +49,7 @@ Nutrient keys (19): `kcal, protein_g, carbs_g, fat_g, fiber_g, sugar_g, sodium_m
 Cloudflare Pages auto-detects `functions/`, so no build step is needed. In **Pages → Settings → Environment variables** (Production):
 - `ANTHROPIC_API_KEY`: required (encrypt it as a secret).
 - `NOMNOM_ACCESS_CODE`: optional. If set, users must enter it in Settings. Use it to keep strangers from spending your API budget while the URL is public.
-- `NOMNOM_MODEL` / `NOMNOM_EFFORT`: optional overrides (default `claude-opus-5-5` / `low`).
+- `NOMNOM_MODEL` / `NOMNOM_EFFORT`: optional overrides (default `claude-haiku-5-5` / `low`; set `NOMNOM_MODEL=claude-sonnet-5-5` if estimates or label reading need more accuracy).
 
 Without the key, the header pill shows **Offline** and the local parser handles text. Photo parsing needs AI.
 
