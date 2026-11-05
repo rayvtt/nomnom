@@ -1,6 +1,6 @@
 // NomNom Log service worker — offline app shell.
 // Network-first so deploys show up immediately; cache is the offline fallback.
-const CACHE = 'nomnom-log-v1';
+const CACHE = 'nomnom-log-v2';
 const SHELL = ['./', './index.html', './vn-foods.js', './manifest.webmanifest', './icon.svg', './apple-touch-icon.png'];
 
 self.addEventListener('install', (e) => {

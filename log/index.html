@@ -3,310 +3,299 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>NomNom Log – Nhật ký dinh dưỡng</title>
-<meta name="description" content="Nói hoặc chụp ảnh — NomNom ghi lại dinh dưỡng, khoáng chất và vitamin cho bạn.">
-<meta name="theme-color" content="#050505">
+<title>NomNom – Nhật ký dinh dưỡng</title>
+<meta name="description" content="Nói hoặc chụp ảnh — NomNom ghi lại bữa ăn, thuốc và vận động cho bạn.">
+<meta name="theme-color" content="#F2F2F7">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="NomNom Log">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="NomNom">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+  /* ============================================================
+     DESIGN: Apple system font (SF Pro on iPhone), large readable
+     sizes in rem (scaled by the user's text-size choice and the
+     iPhone's own Larger Text setting), high-contrast iOS colours.
+     ============================================================ */
   :root {
-    --bg: #050505; --bg-2: #0A0A0A; --bg-3: #111;
-    --text: #F5F0E4; --text-2: #8A8070; --text-3: #4A4540;
-    --accent: #FF6A28; --accent-2: #FF9F1C;
-    --green: #34D399; --green-dim: #1A6B4D;
-    --red: #EF4444; --purple: #A78BFA; --blue: #60A5FA;
-    --card-bg: rgba(255,255,255,0.03); --card-border: rgba(255,255,255,0.06);
-    --card-hover: rgba(255,255,255,0.06);
-    --nav-bg: rgba(5,5,5,0.78);
-    --sheet-bg: #0E0E0E;
-    --track: rgba(255,255,255,0.07);
+    --bg: #F2F2F7;           /* iOS grouped background */
+    --card: #FFFFFF;
+    --text: #000000;
+    --text-2: #3C3C43;       /* secondary, high contrast */
+    --text-3: #6C6C70;
+    --sep: #C6C6C8;
+    --fill: #E5E5EA;
+    --fill-2: #F2F2F7;
+    --accent: #C2410C;       /* NomNom orange, darkened for 5:1 contrast on white */
+    --accent-soft: #FFF1EA;
+    --on-accent: #FFFFFF;
+    --green: #1E7A34;
+    --green-soft: #E6F4EA;
+    --red: #C5001A;
+    --red-soft: #FDECEE;
+    --blue: #0A60C9;
+    --bar-protein: #E8590C;
+    --bar-carbs: #D99100;
+    --bar-fat: #2F9E44;
+    --bar-water: #1C7ED6;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06);
     --safe-b: env(safe-area-inset-bottom, 0px);
     --safe-t: env(safe-area-inset-top, 0px);
   }
-  body.light-mode {
-    --bg: #FAFAF7; --bg-2: #F0EDE6; --bg-3: #E8E4DC;
-    --text: #1A1814; --text-2: #6B6560; --text-3: #9A948E;
-    --green-dim: #A7F3D0;
-    --card-bg: rgba(0,0,0,0.03); --card-border: rgba(0,0,0,0.08);
-    --card-hover: rgba(0,0,0,0.06);
-    --nav-bg: rgba(250,250,247,0.82);
-    --sheet-bg: #FFFFFF;
-    --track: rgba(0,0,0,0.07);
+  html.dark {
+    --bg: #000000;
+    --card: #1C1C1E;
+    --text: #FFFFFF;
+    --text-2: #EBEBF5;
+    --text-3: #AEAEB2;
+    --sep: #3A3A3C;
+    --fill: #2C2C2E;
+    --fill-2: #2C2C2E;
+    --accent: #FF8A4C;
+    --accent-soft: #3A2318;
+    --on-accent: #000000;
+    --green: #30D158;
+    --green-soft: #12301B;
+    --red: #FF6B6B;
+    --red-soft: #3A1618;
+    --blue: #64A8FF;
+    --bar-protein: #FF8A4C;
+    --bar-carbs: #FFC233;
+    --bar-fat: #4ADE80;
+    --bar-water: #64A8FF;
+    --shadow: none;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { background: var(--bg); }
+  html { background: var(--bg); -webkit-text-size-adjust: 100%; }
   body {
-    font-family: 'Outfit', sans-serif; color: var(--text);
-    min-height: 100vh; min-height: 100dvh;
-    transition: background 0.3s, color 0.3s;
-    -webkit-font-smoothing: antialiased;
-    overscroll-behavior-y: none;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1rem; line-height: 1.4; color: var(--text); background: var(--bg);
+    min-height: 100vh; min-height: 100dvh; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none;
   }
-  button, input, select, textarea { font-family: inherit; color: inherit; }
+  button, input, select, textarea { font: inherit; color: inherit; }
   button { cursor: pointer; border: none; background: none; }
-  .serif { font-family: 'Instrument Serif', serif; font-weight: 400; }
-  .muted { color: var(--text-2); }
-  .faint { color: var(--text-3); }
+  .num { font-variant-numeric: tabular-nums; }
   .hidden { display: none !important; }
+  .sub { color: var(--text-3); }
+  svg.i { width: 1.35em; height: 1.35em; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
-  /* ---------- App shell ---------- */
-  .app { max-width: 520px; margin: 0 auto; padding: calc(var(--safe-t) + 64px) 16px calc(var(--safe-b) + 190px); }
-  header.top {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
-    padding: calc(var(--safe-t) + 10px) 16px 10px;
-    background: var(--nav-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    border-bottom: 1px solid var(--card-border);
-  }
-  .top-inner { max-width: 520px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
-  .logo { font-family: 'Instrument Serif', serif; font-size: 26px; letter-spacing: -0.5px; }
-  .logo span { color: var(--accent); font-style: italic; }
-  .logo small { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-2); margin-left: 6px; }
-  .spacer { flex: 1; }
-  .ai-pill { font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 99px; border: 1px solid var(--card-border); color: var(--text-2); display: flex; align-items: center; gap: 6px; }
-  .ai-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); display: inline-block; }
-  .ai-pill.on i { background: var(--green); box-shadow: 0 0 8px var(--green); }
-  .lang-toggle { display: flex; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 99px; padding: 2px; }
-  .lang-toggle button { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 99px; color: var(--text-2); }
-  .lang-toggle button.active { background: var(--accent); color: #fff; }
+  .app { max-width: 40rem; margin: 0 auto; padding: calc(var(--safe-t) + 0.75rem) 1rem calc(var(--safe-b) + 150px); }
 
-  /* ---------- Cards ---------- */
-  .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 22px; padding: 18px; margin-bottom: 14px; }
-  .card h3 { font-size: 13px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .card h3 .right { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 500; }
-  .row { display: flex; align-items: center; gap: 10px; }
-  .btn { padding: 10px 16px; border-radius: 14px; font-weight: 600; font-size: 14px; background: var(--card-hover); border: 1px solid var(--card-border); }
-  .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border: none; }
-  .btn.small { padding: 6px 11px; font-size: 12px; border-radius: 10px; }
-  .btn.danger { color: var(--red); }
-  .btn.block { width: 100%; padding: 15px; font-size: 16px; border-radius: 16px; }
-  .btn:active { transform: scale(0.97); }
+  /* Large title (iOS style) */
+  .title-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 0.75rem; margin: 0.5rem 0.25rem 1rem; }
+  h1 { font-size: 2rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+  .title-row h1 { white-space: nowrap; }
+  .title-row > div:first-child { min-width: 0; }
+  .title-row .date { font-size: 1rem; color: var(--text-3); margin-top: 0.15rem; }
+  .day-nav { display: flex; gap: 0.5rem; }
+  .round-btn { width: 2.75rem; height: 2.75rem; border-radius: 50%; background: var(--card); box-shadow: var(--shadow); display: grid; place-items: center; color: var(--accent); flex-shrink: 0; }
+  .round-btn:disabled { color: var(--sep); }
+  .link-btn { color: var(--accent); font-weight: 600; font-size: 1rem; padding: 0.25rem 0; }
 
-  /* ---------- Date nav ---------- */
-  .date-nav { display: flex; align-items: center; justify-content: space-between; margin: 4px 2px 14px; }
-  .date-nav .lbl { text-align: center; }
-  .date-nav .lbl .d { font-family: 'Instrument Serif', serif; font-size: 30px; line-height: 1; }
-  .date-nav .lbl .s { font-size: 12px; color: var(--text-2); margin-top: 3px; }
-  .icon-btn { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--card-bg); border: 1px solid var(--card-border); font-size: 18px; color: var(--text-2); }
-  .icon-btn:disabled { opacity: 0.3; }
+  /* Section + card */
+  .section-title { font-size: 1.05rem; font-weight: 600; color: var(--text-2); margin: 1.5rem 0.5rem 0.5rem; display: flex; justify-content: space-between; align-items: baseline; }
+  .section-title .sub { font-weight: 400; font-size: 0.95rem; }
+  .card { background: var(--card); border-radius: 1rem; padding: 1rem 1.1rem; box-shadow: var(--shadow); }
+  .card + .card { margin-top: 0.75rem; }
 
-  /* ---------- Summary ---------- */
-  .summary { display: grid; grid-template-columns: 132px 1fr; gap: 18px; align-items: center; }
-  .ring-wrap { position: relative; width: 132px; height: 132px; }
-  .ring-wrap svg { transform: rotate(-90deg); }
-  .ring-wrap .ring-txt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .ring-txt .big { font-family: 'Instrument Serif', serif; font-size: 38px; line-height: 1; }
-  .ring-txt .sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
-  .ring-fg { transition: stroke-dashoffset 0.8s cubic-bezier(.2,.8,.2,1); }
-  .macro { margin-bottom: 11px; }
-  .macro:last-child { margin-bottom: 0; }
-  .macro .top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
-  .macro .top b { font-weight: 600; }
-  .bar { height: 7px; background: var(--track); border-radius: 99px; overflow: hidden; }
-  .bar > i { display: block; height: 100%; border-radius: 99px; transition: width 0.8s cubic-bezier(.2,.8,.2,1); }
+  /* Calorie summary */
+  .cal-big { display: flex; align-items: baseline; gap: 0.4rem; }
+  .cal-big b { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.02em; line-height: 1.05; }
+  .cal-big span { font-size: 1.1rem; color: var(--text-3); }
+  .cal-label { font-size: 1.05rem; color: var(--text-2); margin-bottom: 0.2rem; }
+  .bigbar { height: 0.85rem; background: var(--fill); border-radius: 1rem; overflow: hidden; margin: 0.85rem 0 1rem; }
+  .bigbar i { display: block; height: 100%; background: var(--accent); border-radius: 1rem; transition: width 0.6s ease; }
+  .equation { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; border-top: 1px solid var(--sep); padding-top: 0.85rem; }
+  .equation div { text-align: center; }
+  .equation b { display: block; font-size: 1.35rem; font-weight: 600; }
+  .equation span { font-size: 0.9rem; color: var(--text-3); }
 
-  /* ---------- Doses ---------- */
-  .dose { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--card-border); }
-  .dose:first-of-type { border-top: none; padding-top: 0; }
-  .dose .t { font-family: 'Instrument Serif', serif; font-size: 22px; width: 58px; }
-  .dose .n { flex: 1; min-width: 0; }
-  .dose .n b { display: block; font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .dose .n span { font-size: 12px; color: var(--text-2); }
-  .dose .done { color: var(--green); font-weight: 600; font-size: 13px; }
-  .dose.due .t { color: var(--accent-2); }
+  /* Nutrient rows */
+  .nrow { padding: 0.65rem 0; border-top: 1px solid var(--sep); }
+  .nrow:first-child { border-top: none; padding-top: 0.1rem; }
+  .nrow .top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+  .nrow .name { font-size: 1.05rem; font-weight: 500; }
+  .nrow .val { font-size: 1rem; color: var(--text-2); }
+  .nrow .val b { color: var(--text); font-weight: 600; }
+  .bar { height: 0.6rem; background: var(--fill); border-radius: 1rem; overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 1rem; transition: width 0.6s ease; }
+  .tag { display: inline-block; font-size: 0.85rem; font-weight: 600; padding: 0.1rem 0.5rem; border-radius: 0.4rem; margin-left: 0.35rem; }
+  .tag.over { color: var(--red); background: var(--red-soft); }
+  .tag.ok { color: var(--green); background: var(--green-soft); }
 
-  /* ---------- Timeline ---------- */
-  .entry { display: flex; gap: 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--card-border); cursor: pointer; }
-  .entry:first-of-type { border-top: none; padding-top: 0; }
-  .entry .ico { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; font-size: 21px; background: var(--card-hover); flex-shrink: 0; overflow: hidden; }
-  .entry .ico img { width: 100%; height: 100%; object-fit: cover; }
-  .entry .body { flex: 1; min-width: 0; }
-  .entry .body b { display: block; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .entry .body span { font-size: 12px; color: var(--text-2); }
-  .entry .kc { text-align: right; }
-  .entry .kc b { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; }
-  .entry .kc span { display: block; font-size: 11px; color: var(--text-2); }
-  .empty { text-align: center; padding: 18px 8px; color: var(--text-2); font-size: 14px; line-height: 1.5; }
-  .empty .e { font-size: 34px; display: block; margin-bottom: 6px; }
+  /* List rows (iOS inset grouped) */
+  .list { background: var(--card); border-radius: 1rem; overflow: hidden; box-shadow: var(--shadow); }
+  .row { display: flex; align-items: center; gap: 0.85rem; padding: 0.85rem 1.1rem; min-height: 3.4rem; width: 100%; text-align: left; position: relative; }
+  .row + .row::before { content: ''; position: absolute; top: 0; left: 1.1rem; right: 0; height: 1px; background: var(--sep); }
+  .row.has-ico + .row.has-ico::before { left: 4.1rem; }
+  .ico { width: 2.2rem; height: 2.2rem; border-radius: 0.55rem; display: grid; place-items: center; flex-shrink: 0; color: #fff; overflow: hidden; }
+  .ico svg.i { width: 1.25rem; height: 1.25rem; }
+  .ico img { width: 100%; height: 100%; object-fit: cover; }
+  .ico.food { background: #E8590C; } .ico.drink { background: #1C7ED6; } .ico.supplement { background: #2F9E44; } .ico.medication { background: #7048E8; } .ico.exercise { background: #D6336C; }
+  .row .main { flex: 1; min-width: 0; }
+  .row .main .t { font-size: 1.05rem; font-weight: 500; }
+  .row .main .s { font-size: 0.92rem; color: var(--text-3); margin-top: 0.1rem; }
+  .row .end { text-align: right; flex-shrink: 0; color: var(--text-2); font-size: 1rem; display: flex; align-items: center; gap: 0.25rem; }
+  .row .end b { font-weight: 600; color: var(--text); }
+  .row .chev { color: var(--text-3); width: 1.1rem; height: 1.1rem; }
+  .row.tap:active { background: var(--fill-2); }
+  .row .value { color: var(--text-3); font-size: 1rem; text-align: right; }
+  .empty { text-align: center; padding: 1.4rem 1rem; color: var(--text-3); font-size: 1rem; line-height: 1.5; }
 
-  /* ---------- Nutrient bars ---------- */
-  .nutr { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  .nrow .top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
-  .nrow .top .v { color: var(--text-2); font-variant-numeric: tabular-nums; }
-  .nrow .top .p { font-weight: 600; margin-left: 8px; font-variant-numeric: tabular-nums; }
-  .tabs-mini { display: flex; gap: 6px; margin-bottom: 14px; }
-  .chip { padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-2); white-space: nowrap; }
-  .chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
-  .chips-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; scrollbar-width: none; }
-  .chips-scroll::-webkit-scrollbar { display: none; }
-  .insight { font-size: 13px; line-height: 1.55; padding: 12px 14px; border-radius: 14px; background: rgba(255,106,40,0.08); border: 1px solid rgba(255,106,40,0.18); margin-top: 14px; }
-  .insight b { color: var(--accent); }
-  .insight.good { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.2); }
-  .insight.good b { color: var(--green); }
+  /* Buttons */
+  .btn { min-height: 3rem; padding: 0.7rem 1.2rem; border-radius: 0.8rem; font-weight: 600; font-size: 1.05rem; background: var(--fill); color: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; }
+  .btn.primary { background: var(--accent); color: var(--on-accent); }
+  .btn.danger { color: var(--red); background: var(--red-soft); }
+  .btn.block { width: 100%; }
+  .btn.small { min-height: 2.5rem; padding: 0.4rem 0.9rem; font-size: 0.98rem; }
+  .btn:active { opacity: 0.75; }
+  .btn:disabled { opacity: 0.4; }
+  .btn-row { display: flex; gap: 0.6rem; }
+  .btn-row .btn { flex: 1; }
 
-  /* ---------- History chart ---------- */
-  .chart svg { width: 100%; height: 170px; display: block; }
-  .chart .bar-r { cursor: pointer; transition: opacity 0.2s; }
-  .chart .bar-r:hover { opacity: 0.8; }
-  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
-  .stat { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 12px; text-align: center; }
-  .stat b { display: block; font-family: 'Instrument Serif', serif; font-size: 28px; font-weight: 400; line-height: 1.1; }
-  .stat span { font-size: 11px; color: var(--text-2); }
+  /* Segmented control */
+  .seg { display: flex; background: var(--fill); border-radius: 0.65rem; padding: 0.15rem; }
+  .seg button { flex: 1; padding: 0.55rem 0.4rem; border-radius: 0.55rem; font-size: 1rem; font-weight: 500; color: var(--text-2); }
+  .seg button.on { background: var(--card); color: var(--text); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
 
-  /* ---------- Cabinet ---------- */
-  .cab { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--card-border); }
-  .cab:first-of-type { border-top: none; padding-top: 0; }
-  .cab .ico { width: 48px; height: 48px; border-radius: 14px; background: var(--card-hover); display: grid; place-items: center; font-size: 22px; overflow: hidden; flex-shrink: 0; }
-  .cab .ico img { width: 100%; height: 100%; object-fit: cover; }
-  .cab .body { flex: 1; min-width: 0; }
-  .cab .body b { display: block; font-weight: 600; font-size: 15px; }
-  .cab .body span { font-size: 12px; color: var(--text-2); }
-  .cab .acts { display: flex; flex-direction: column; gap: 6px; }
+  .insight { margin-top: 0.75rem; padding: 0.85rem 1rem; border-radius: 0.85rem; background: var(--accent-soft); font-size: 1rem; line-height: 1.5; }
+  .insight.good { background: var(--green-soft); }
 
-  /* ---------- Forms ---------- */
-  label.f { display: block; font-size: 12px; font-weight: 600; color: var(--text-2); margin: 12px 0 6px; letter-spacing: 0.3px; }
-  .inp, select.inp, textarea.inp { width: 100%; padding: 12px 14px; border-radius: 14px; background: var(--card-bg); border: 1px solid var(--card-border); font-size: 16px; outline: none; }
-  .inp:focus { border-color: var(--accent); }
-  textarea.inp { min-height: 96px; resize: vertical; line-height: 1.5; }
-  .seg { display: flex; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 3px; }
-  .seg button { flex: 1; padding: 9px; border-radius: 11px; font-size: 13px; font-weight: 600; color: var(--text-2); }
-  .seg button.active { background: var(--card-hover); color: var(--text); box-shadow: 0 1px 0 var(--card-border); }
-  .switch { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--card-border); font-size: 14px; gap: 12px; }
-  .switch:first-of-type { border-top: none; }
-  .switch small { display: block; color: var(--text-2); font-size: 12px; margin-top: 2px; }
-  .tgl { position: relative; width: 48px; height: 28px; border-radius: 99px; background: var(--track); flex-shrink: 0; transition: background 0.2s; }
-  .tgl::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
-  .tgl.on { background: var(--green); }
-  .tgl.on::after { transform: translateX(20px); }
+  /* Dock + tab bar */
+  /* Bottom chrome uses fixed sizes (like iOS tab bars) so large text never squeezes the content. */
+  .dock { position: fixed; left: 0; right: 0; bottom: calc(var(--safe-b) + 58px); z-index: 45; padding: 8px 14px; background: var(--bg); border-top: 1px solid var(--sep); }
+  .dock-inner { max-width: 40rem; margin: 0 auto; display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 8px; }
+  .dock .btn { min-height: 52px; font-size: 19px; padding: 0 8px; white-space: nowrap; border-radius: 14px; }
+  .dock .btn svg.i { width: 24px; height: 24px; }
+  nav.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 44; background: var(--card); border-top: 1px solid var(--sep); padding: 2px 4px calc(var(--safe-b) + 2px); }
+  .tabbar-inner { max-width: 40rem; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .tabbar button { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 0; font-size: 13px; font-weight: 500; color: var(--text-3); min-height: 54px; justify-content: center; }
+  .tabbar button svg.i { width: 24px; height: 24px; }
+  .tabbar button.on { color: var(--accent); font-weight: 600; }
 
-  /* ---------- Capture dock ---------- */
-  .dock { position: fixed; left: 0; right: 0; bottom: calc(var(--safe-b) + 66px); z-index: 45; display: flex; justify-content: center; align-items: center; gap: 22px; pointer-events: none; }
-  .dock > * { pointer-events: auto; }
-  .dock .side { width: 52px; height: 52px; border-radius: 50%; background: var(--nav-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--card-border); display: grid; place-items: center; font-size: 22px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
-  .mic { width: 78px; height: 78px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: grid; place-items: center; box-shadow: 0 10px 34px rgba(255,106,40,0.45); position: relative; }
-  .mic svg { width: 32px; height: 32px; }
-  .mic::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(255,106,40,0.35); animation: pulse 2.4s infinite; }
-  @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 100% { transform: scale(1.25); opacity: 0; } }
-  .mic:active { transform: scale(0.94); }
-
-  nav.tabbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 44; background: var(--nav-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-top: 1px solid var(--card-border); padding: 6px 8px calc(var(--safe-b) + 6px); }
-  .tabbar-inner { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
-  .tabbar button { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; font-size: 10.5px; font-weight: 600; color: var(--text-3); }
-  .tabbar button .ti { font-size: 20px; filter: grayscale(1); opacity: 0.7; }
-  .tabbar button.active { color: var(--accent); }
-  .tabbar button.active .ti { filter: none; opacity: 1; }
-
-  /* ---------- Sheet ---------- */
-  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 80; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  /* Sheet */
+  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .backdrop.open { opacity: 1; pointer-events: auto; }
-  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 81; max-width: 560px; margin: 0 auto; background: var(--sheet-bg); border-radius: 26px 26px 0 0; border: 1px solid var(--card-border); border-bottom: none; padding: 10px 18px calc(var(--safe-b) + 18px); max-height: 88vh; max-height: 88dvh; overflow-y: auto; transform: translateY(105%); transition: transform 0.32s cubic-bezier(.2,.9,.25,1); }
-  .sheet.open { transform: translateY(0); }
-  .sheet .grab { width: 40px; height: 5px; border-radius: 99px; background: var(--track); margin: 0 auto 14px; }
-  .sheet h2 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 30px; line-height: 1.1; margin-bottom: 6px; }
-  .sheet .lead { color: var(--text-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
-  .sheet .actions { display: flex; gap: 10px; margin-top: 18px; }
-  .sheet .actions .btn { flex: 1; padding: 14px; }
-  .sheet .actions.sticky { position: sticky; bottom: calc(-1 * (var(--safe-b) + 18px)); margin: 18px -18px calc(-1 * (var(--safe-b) + 18px)); padding: 12px 18px calc(var(--safe-b) + 18px); background: var(--sheet-bg); border-top: 1px solid var(--card-border); }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 81; max-width: 40rem; margin: 0 auto; background: var(--bg); border-radius: 1.1rem 1.1rem 0 0; padding: 0.6rem 1.1rem calc(var(--safe-b) + 1.1rem); max-height: 92vh; max-height: 92dvh; overflow-y: auto; transform: translateY(105%); transition: transform 0.3s cubic-bezier(.2,.9,.25,1); visibility: hidden; }
+  .sheet.open { transform: translateY(0); visibility: visible; }
+  .sheet .grab { width: 2.5rem; height: 0.3rem; border-radius: 1rem; background: var(--sep); margin: 0 auto 0.9rem; }
+  .sheet h2 { font-size: 1.6rem; font-weight: 700; line-height: 1.2; margin-bottom: 0.4rem; }
+  .sheet .lead { color: var(--text-2); font-size: 1.02rem; margin-bottom: 1rem; line-height: 1.5; }
+  .sheet .actions { display: flex; gap: 0.6rem; margin-top: 1.1rem; }
+  .sheet .actions .btn { flex: 1; }
+  .sheet .actions.sticky { position: sticky; bottom: calc(-1 * (var(--safe-b) + 1.1rem)); margin: 1.1rem -1.1rem calc(-1 * (var(--safe-b) + 1.1rem)); padding: 0.8rem 1.1rem calc(var(--safe-b) + 1.1rem); background: var(--bg); border-top: 1px solid var(--sep); }
 
-  .listening { text-align: center; padding: 10px 0 4px; }
-  .wave { display: flex; justify-content: center; gap: 5px; height: 46px; align-items: center; margin: 10px 0 16px; }
-  .wave i { width: 5px; border-radius: 99px; background: linear-gradient(var(--accent), var(--accent-2)); animation: wave 1s ease-in-out infinite; }
-  .wave i:nth-child(2) { animation-delay: .1s } .wave i:nth-child(3) { animation-delay: .2s } .wave i:nth-child(4) { animation-delay: .3s } .wave i:nth-child(5) { animation-delay: .4s } .wave i:nth-child(6) { animation-delay: .5s } .wave i:nth-child(7) { animation-delay: .6s }
-  @keyframes wave { 0%,100% { height: 10px } 50% { height: 44px } }
-  .transcript { font-size: 20px; line-height: 1.45; min-height: 60px; padding: 8px 4px; }
-  .transcript .interim { color: var(--text-2); }
+  /* Forms */
+  label.f { display: block; font-size: 1rem; font-weight: 600; color: var(--text-2); margin: 1rem 0.2rem 0.45rem; }
+  .inp { width: 100%; min-height: 3.1rem; padding: 0.7rem 0.9rem; border-radius: 0.8rem; background: var(--card); border: 1px solid var(--sep); font-size: 1.1rem; outline: none; }
+  .inp:focus { border-color: var(--accent); }
+  textarea.inp { min-height: 7rem; resize: vertical; line-height: 1.5; }
+  .unit-inp { display: flex; align-items: center; background: var(--card); border: 1px solid var(--sep); border-radius: 0.8rem; padding-right: 0.9rem; }
+  .unit-inp .inp { border: none; background: none; }
+  .unit-inp span { color: var(--text-3); font-size: 1.05rem; }
+  .err { color: var(--red); font-size: 1rem; margin: 0.6rem 0.2rem 0; font-weight: 500; }
+  .opt { display: flex; align-items: center; gap: 0.85rem; width: 100%; text-align: left; padding: 0.95rem 1rem; border-radius: 0.9rem; background: var(--card); border: 2px solid transparent; box-shadow: var(--shadow); margin-bottom: 0.6rem; }
+  .opt.on { border-color: var(--accent); }
+  .opt .radio { width: 1.5rem; height: 1.5rem; border-radius: 50%; border: 2px solid var(--sep); flex-shrink: 0; display: grid; place-items: center; }
+  .opt.on .radio { border-color: var(--accent); background: var(--accent); }
+  .opt.on .radio::after { content: ''; width: 0.55rem; height: 0.55rem; border-radius: 50%; background: var(--on-accent); }
+  .opt .ot { font-size: 1.08rem; font-weight: 600; }
+  .opt .od { font-size: 0.95rem; color: var(--text-3); margin-top: 0.1rem; }
+  .switch { width: 3.2rem; height: 1.95rem; border-radius: 1rem; background: var(--fill); position: relative; flex-shrink: 0; transition: background 0.2s; }
+  .switch::after { content: ''; position: absolute; top: 0.15rem; left: 0.15rem; width: 1.65rem; height: 1.65rem; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: transform 0.2s; }
+  .switch.on { background: #34C759; }
+  .switch.on::after { transform: translateX(1.25rem); }
 
-  .thinking { text-align: center; padding: 28px 0 18px; }
-  .thinking .orb { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: conic-gradient(var(--accent), var(--accent-2), var(--purple), var(--accent)); animation: spin 1.2s linear infinite; -webkit-mask: radial-gradient(circle, transparent 52%, #000 54%); mask: radial-gradient(circle, transparent 52%, #000 54%); }
+  /* Capture */
+  .listening { text-align: center; }
+  .pulse { width: 5rem; height: 5rem; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; margin: 0.5rem auto 1rem; animation: pulse 1.6s infinite; }
+  .pulse svg.i { width: 2.2rem; height: 2.2rem; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(194,65,12,0.45); } 70% { box-shadow: 0 0 0 1.2rem rgba(194,65,12,0); } 100% { box-shadow: 0 0 0 0 rgba(194,65,12,0); } }
+  .transcript { font-size: 1.35rem; line-height: 1.45; min-height: 4rem; padding: 0.75rem; text-align: left; background: var(--card); border-radius: 0.9rem; }
+  .transcript .interim { color: var(--text-3); }
+  .spinner { width: 3rem; height: 3rem; border-radius: 50%; border: 0.3rem solid var(--fill); border-top-color: var(--accent); animation: spin 0.9s linear infinite; margin: 1.5rem auto 1rem; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .thinking .phrase { font-size: 15px; color: var(--text-2); }
+  .center { text-align: center; }
+  .photo-prev { width: 100%; max-height: 16rem; object-fit: contain; border-radius: 0.9rem; background: var(--card); margin-bottom: 0.75rem; }
+  .examples { display: flex; flex-direction: column; gap: 0.45rem; }
+  .examples button { text-align: left; padding: 0.75rem 0.9rem; border-radius: 0.75rem; background: var(--card); font-size: 1rem; color: var(--text-2); }
 
-  .ritem { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 14px; margin-bottom: 10px; }
-  .ritem .hd { display: flex; align-items: flex-start; gap: 10px; }
-  .ritem .hd .nm { flex: 1; min-width: 0; }
-  .ritem .hd .nm b { font-size: 16px; font-weight: 600; display: block; }
-  .ritem .hd .nm span { font-size: 12px; color: var(--text-2); }
-  .badge { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; background: var(--card-hover); color: var(--text-2); display: inline-block; }
-  .badge.food { color: var(--accent); } .badge.drink { color: var(--blue); } .badge.supplement { color: var(--green); } .badge.medication { color: var(--purple); }
-  .badge.low { color: var(--red); } .badge.medium { color: var(--accent-2); } .badge.high { color: var(--green); }
-  .macros-line { display: flex; gap: 14px; margin-top: 10px; font-size: 13px; color: var(--text-2); flex-wrap: wrap; }
-  .macros-line b { color: var(--text); font-weight: 600; }
-  .assume { font-size: 12px; color: var(--text-2); margin-top: 8px; line-height: 1.45; font-style: italic; }
-  .stepper { display: flex; align-items: center; gap: 4px; background: var(--card-hover); border-radius: 12px; padding: 3px; }
-  .stepper button { width: 30px; height: 30px; border-radius: 9px; font-size: 18px; font-weight: 600; }
-  .stepper span { min-width: 34px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .micro-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .micro-chips span { font-size: 11px; padding: 3px 8px; border-radius: 99px; background: var(--card-hover); color: var(--text-2); }
-  .cab-opt { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--card-border); font-size: 13px; }
-  .cab-opt input[type=time] { padding: 6px 8px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--card-border); font-size: 14px; }
-  .photo-prev { width: 100%; max-height: 260px; object-fit: contain; border-radius: 18px; background: var(--card-bg); margin-bottom: 12px; }
-  .ex-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-  .ntable { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
-  .ntable td { padding: 7px 0; border-top: 1px solid var(--card-border); }
-  .ntable td:last-child { text-align: right; color: var(--text-2); font-variant-numeric: tabular-nums; }
+  /* Review */
+  .ritem { background: var(--card); border-radius: 1rem; padding: 1rem; margin-bottom: 0.75rem; box-shadow: var(--shadow); }
+  .ritem .hd { display: flex; gap: 0.75rem; align-items: flex-start; }
+  .ritem .hd .main { flex: 1; min-width: 0; }
+  .ritem .t { font-size: 1.15rem; font-weight: 600; }
+  .ritem .s { font-size: 0.95rem; color: var(--text-3); margin-top: 0.15rem; }
+  .ritem .facts { display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem; margin-top: 0.75rem; font-size: 1rem; color: var(--text-2); }
+  .ritem .facts b { color: var(--text); }
+  .ritem .note { font-size: 0.95rem; color: var(--text-3); margin-top: 0.6rem; line-height: 1.45; }
+  .ritem .foot { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 0.85rem; padding-top: 0.75rem; border-top: 1px solid var(--sep); }
+  .stepper { display: flex; align-items: center; background: var(--fill); border-radius: 0.7rem; }
+  .stepper button { width: 2.8rem; height: 2.6rem; font-size: 1.4rem; font-weight: 500; color: var(--accent); }
+  .stepper span { min-width: 4.4rem; text-align: center; font-weight: 600; font-size: 1rem; }
+  .cab-opt { display: flex; align-items: center; gap: 0.65rem; margin-top: 0.75rem; font-size: 1rem; flex-wrap: wrap; }
+  .cab-opt input[type=checkbox] { width: 1.4rem; height: 1.4rem; accent-color: var(--accent); }
+  .cab-opt input[type=time] { min-height: 2.6rem; padding: 0.3rem 0.6rem; border-radius: 0.6rem; border: 1px solid var(--sep); background: var(--card); font-size: 1rem; }
+  .conf { font-size: 0.88rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 0.4rem; background: var(--fill); color: var(--text-2); white-space: nowrap; }
+  .conf.low { color: var(--red); background: var(--red-soft); }
 
-  .toast { position: fixed; left: 50%; top: calc(var(--safe-t) + 70px); transform: translate(-50%, -20px); background: var(--text); color: var(--bg); padding: 11px 16px; border-radius: 14px; font-size: 14px; font-weight: 500; z-index: 100; opacity: 0; pointer-events: none; transition: all 0.25s; display: flex; gap: 12px; align-items: center; max-width: 92vw; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .chart svg { width: 100%; height: 12rem; display: block; }
+
+  /* Onboarding */
+  .onb { position: fixed; inset: 0; z-index: 90; background: var(--bg); overflow-y: auto; }
+  .onb-inner { max-width: 34rem; margin: 0 auto; padding: calc(var(--safe-t) + 1.25rem) 1.25rem calc(var(--safe-b) + 7rem); }
+  .onb .steps { display: flex; gap: 0.35rem; margin-bottom: 1.5rem; }
+  .onb .steps i { flex: 1; height: 0.3rem; border-radius: 1rem; background: var(--fill); }
+  .onb .steps i.on { background: var(--accent); }
+  .onb h1 { margin-bottom: 0.6rem; }
+  .onb .lead { font-size: 1.1rem; color: var(--text-2); line-height: 1.5; margin-bottom: 1.25rem; }
+  .onb-foot { position: fixed; left: 0; right: 0; bottom: 0; z-index: 91; background: var(--bg); border-top: 1px solid var(--sep); padding: 0.75rem 1.25rem calc(var(--safe-b) + 0.75rem); }
+  .onb-foot .btn-row { max-width: 34rem; margin: 0 auto; }
+  .onb-foot .btn { min-height: 3.4rem; font-size: 1.1rem; }
+  .brand { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; }
+
+  .toast { position: fixed; left: 50%; top: calc(var(--safe-t) + 0.75rem); transform: translate(-50%, -1rem); background: var(--text); color: var(--bg); padding: 0.85rem 1.1rem; border-radius: 0.9rem; font-size: 1rem; font-weight: 500; z-index: 100; opacity: 0; pointer-events: none; transition: all 0.25s; display: flex; gap: 1rem; align-items: center; max-width: 92vw; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
   .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
-  .toast button { font-weight: 700; color: var(--accent); font-size: 14px; }
-
-  .fade-in { animation: fadeUp 0.45s cubic-bezier(.2,.8,.2,1) both; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-  .install-tip { font-size: 13px; line-height: 1.55; color: var(--text-2); }
-  .install-tip b { color: var(--text); }
-  a.link { color: var(--accent); text-decoration: none; }
-  @media (max-width: 380px) {
-    .summary { grid-template-columns: 112px 1fr; gap: 14px; }
-    .ring-wrap, .ring-wrap svg { width: 112px; height: 112px; }
-    .ring-txt .big { font-size: 32px; }
-  }
+  .toast button { font-weight: 700; color: var(--bg); text-decoration: underline; font-size: 1rem; }
+  .ntable { width: 100%; border-collapse: collapse; font-size: 1rem; }
+  .ntable td { padding: 0.6rem 0; border-top: 1px solid var(--sep); }
+  .ntable tr:first-child td { border-top: none; }
+  .ntable td:last-child { text-align: right; color: var(--text-2); }
+  .size-sample { color: var(--text-2); margin-top: 0.2rem; }
 </style>
 </head>
 <body>
 
-<header class="top">
-  <div class="top-inner">
-    <div class="logo">Nom<span>Nom</span><small>Log</small></div>
-    <div class="spacer"></div>
-    <div class="ai-pill" id="aiPill" data-action="aiInfo"><i></i><span id="aiPillTxt">…</span></div>
-    <div class="lang-toggle">
-      <button data-action="lang" data-lang="vi">VN</button>
-      <button data-action="lang" data-lang="en">EN</button>
-    </div>
-  </div>
-</header>
-
 <main class="app">
   <section id="view-today"></section>
   <section id="view-history" class="hidden"></section>
-  <section id="view-cabinet" class="hidden"></section>
-  <section id="view-settings" class="hidden"></section>
+  <section id="view-meds" class="hidden"></section>
+  <section id="view-profile" class="hidden"></section>
 </main>
 
-<div class="dock">
-  <button class="side" data-action="photo" aria-label="Photo">📷</button>
-  <button class="mic" data-action="record" aria-label="Record">
-    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>
-  </button>
-  <button class="side" data-action="type" aria-label="Type">⌨️</button>
+<div class="dock" id="dock">
+  <div class="dock-inner">
+    <button class="btn primary" data-action="record" id="dockSpeak"></button>
+    <button class="btn" data-action="photo" id="dockPhoto"></button>
+    <button class="btn" data-action="type" id="dockType"></button>
+  </div>
 </div>
 
-<nav class="tabbar">
+<nav class="tabbar" id="tabbar">
   <div class="tabbar-inner">
-    <button data-action="tab" data-tab="today" class="active"><span class="ti">📅</span><span data-vi="Hôm nay" data-en="Today">Hôm nay</span></button>
-    <button data-action="tab" data-tab="history"><span class="ti">📈</span><span data-vi="Lịch sử" data-en="History">Lịch sử</span></button>
-    <button data-action="tab" data-tab="cabinet"><span class="ti">💊</span><span data-vi="Tủ thuốc" data-en="Cabinet">Tủ thuốc</span></button>
-    <button data-action="tab" data-tab="settings"><span class="ti">⚙️</span><span data-vi="Cài đặt" data-en="Settings">Cài đặt</span></button>
+    <button data-action="tab" data-tab="today" class="on"></button>
+    <button data-action="tab" data-tab="history"></button>
+    <button data-action="tab" data-tab="meds"></button>
+    <button data-action="tab" data-tab="profile"></button>
   </div>
 </nav>
 
+<div class="onb hidden" id="onb"></div>
 <div class="backdrop" id="backdrop" data-action="closeSheet"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="photoInput" accept="image/*" class="hidden">
 <input type="file" id="importInput" accept="application/json,.json" class="hidden">
 
@@ -314,119 +303,157 @@
 import { NUTRIENTS, NUTRIENT_KEYS, DAILY_VALUES, FOODS, SUPPLEMENTS, MED_WORDS, nutrientsFromArray } from './vn-foods.js';
 
 // =====================================================================
+// ICONS — a small, consistent line-icon set (used sparingly)
+// =====================================================================
+const P = {
+  mic: '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/>',
+  camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  pencil: '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>',
+  today: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  chart: '<line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>',
+  pill: '<path d="M10.5 20.5 3.5 13.5a4.95 4.95 0 1 1 7-7l7 7a4.95 4.95 0 1 1-7 7z"/><line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>',
+  person: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  food: '<path d="M3 11h18a9 9 0 0 1-18 0z"/><path d="M9 7c0-1.5 1.5-1.5 1.5-3M14 7c0-1.5 1.5-1.5 1.5-3"/>',
+  drink: '<path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8z"/>',
+  exercise: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  chevR: '<polyline points="9 18 15 12 9 6"/>',
+  chevL: '<polyline points="15 18 9 12 15 6"/>',
+  check: '<polyline points="20 6 9 17 4 12"/>',
+};
+const icon = (n) => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${P[n] || ''}</svg>`;
+const KIND_ICON = { food: 'food', drink: 'drink', supplement: 'pill', medication: 'pill', exercise: 'exercise' };
+
+// =====================================================================
 // PERSISTENCE — namespaced like the landing page: nomnom.<scope>.dailylog
 // =====================================================================
-function scope() {
-  try { const u = JSON.parse(localStorage.getItem('nomnom.auth.user') || 'null'); return u && u.id ? u.id : 'guest'; }
-  catch { return 'guest'; }
-}
+function authUser() { try { return JSON.parse(localStorage.getItem('nomnom.auth.user') || 'null'); } catch { return null; } }
+function scope() { const u = authUser(); return u && u.id ? u.id : 'guest'; }
 const STORE_KEY = () => `nomnom.${scope()}.dailylog`;
-const DEFAULT_STATE = () => ({
-  version: 1,
-  entries: [],     // {id, ts, kind, name, name_vi, brand, serving, servings, confidence, assumptions, source, nutrients, thumb?, cabinetId?}
-  cabinet: [],     // {id, kind, name, brand, serving, nutrients, times[], thumb?, createdAt}
-  doses: {},       // 'YYYY-MM-DD|cabId|HH:MM' -> entryId
-  settings: { sex: 'female', kcal: null, autoLog: false, accessCode: '', notify: false },
-});
+const DEFAULT_SETTINGS = { textSize: 'l', view: 'simple', theme: 'auto', autoLog: false, accessCode: '', notify: false, kcalOverride: null };
+const DEFAULT_STATE = () => ({ version: 2, profile: null, entries: [], cabinet: [], doses: {}, settings: { ...DEFAULT_SETTINGS } });
 function loadState() {
   try {
     const raw = JSON.parse(localStorage.getItem(STORE_KEY()) || 'null');
     if (!raw) return DEFAULT_STATE();
     const d = DEFAULT_STATE();
-    return { ...d, ...raw, settings: { ...d.settings, ...(raw.settings || {}) } };
+    const st = { ...d, ...raw, settings: { ...d.settings, ...(raw.settings || {}) } };
+    if (st.settings.kcal && !st.settings.kcalOverride) st.settings.kcalOverride = st.settings.kcal; // v1 → v2
+    return st;
   } catch { return DEFAULT_STATE(); }
 }
-function save() {
-  try { localStorage.setItem(STORE_KEY(), JSON.stringify(S)); }
-  catch (e) { toast(t('storageFull')); }
-}
+function save() { try { localStorage.setItem(STORE_KEY(), JSON.stringify(S)); } catch { toast(t('storageFull')); } }
 let S = loadState();
 let currentLang = localStorage.getItem('nomnom.lang') || 'vi';
-if (localStorage.getItem('nomnom.theme') === 'light') document.body.classList.add('light-mode');
 
 // =====================================================================
 // I18N
 // =====================================================================
 const T = {
-  today: ['Hôm nay', 'Today'], yesterday: ['Hôm qua', 'Yesterday'],
-  consumed: ['đã nạp', 'eaten'], of: ['trên', 'of'], kcalLeft: ['kcal còn lại', 'kcal left'], kcalOver: ['kcal vượt', 'kcal over'],
-  doses: ['Thuốc & bổ sung', 'Meds & supplements'], take: ['Uống', 'Take'], taken: ['Đã uống', 'Taken'], dueNow: ['Đến giờ', 'Due now'],
-  log: ['Nhật ký', 'Log'], items: ['mục', 'items'], item: ['mục', 'item'],
-  emptyLog: ['Chưa có gì. Nhấn 🎙 và nói “Mình vừa ăn bún bò Huế”, hoặc 📷 chụp lọ vitamin.', 'Nothing yet. Tap 🎙 and say “I just had bún bò for lunch”, or 📷 snap a supplement bottle.'],
-  minerals: ['Khoáng chất', 'Minerals'], vitamins: ['Vitamin', 'Vitamins'], macros: ['Đa lượng', 'Macros'],
-  limit: ['giới hạn', 'limit'],
-  lowOn: ['Đang thiếu', 'Running low on'], overOn: ['Vượt mức', 'Over the limit on'], tryFood: ['Thử thêm', 'Try adding'],
-  allGood: ['Tuyệt! Các vi chất chính đều ổn hôm nay.', 'Nice! Key micronutrients look covered.'],
-  listening: ['Đang nghe…', 'Listening…'], speakNow: ['Nói món bạn vừa ăn, uống hoặc thuốc vừa dùng.', 'Say what you ate, drank, or took.'],
+  tabToday: ['Hôm nay', 'Today'], tabHistory: ['Lịch sử', 'History'], tabMeds: ['Thuốc', 'Medicines'], tabProfile: ['Hồ sơ', 'Profile'],
+  speak: ['Nói', 'Speak'], photo: ['Chụp ảnh', 'Photo'], type: ['Gõ chữ', 'Type'],
+  today: ['Hôm nay', 'Today'], yesterday: ['Hôm qua', 'Yesterday'], backToday: ['Về hôm nay', 'Back to today'],
+  hello: ['Chào', 'Hi'],
+  calLeft: ['Calo còn lại hôm nay', 'Calories left today'], calOver: ['Đã vượt mục tiêu', 'Over your target by'],
+  target: ['Mục tiêu', 'Target'], eaten: ['Đã ăn', 'Eaten'], exercise: ['Vận động', 'Exercise'],
+  mainNutrients: ['Dinh dưỡng chính', 'Key nutrients'],
+  medsToday: ['Thuốc hôm nay', 'Medicines today'], take: ['Đã uống', 'Mark taken'], dueNow: ['Đến giờ uống', 'Due now'],
+  logged: ['Đã ghi', 'Logged'], loggedToday: ['Đã ghi hôm nay', 'Logged today'],
+  emptyLog: ['Chưa có gì. Nhấn “Nói” bên dưới và nói, ví dụ: “Trưa nay tôi ăn một tô bún bò”.', 'Nothing yet. Tap “Speak” below and say, for example: “I had a bowl of bún bò for lunch”.'],
+  vitMin: ['Vitamin & khoáng chất', 'Vitamins & minerals'], seeVitMin: ['Xem vitamin & khoáng chất', 'See vitamins & minerals'],
+  minerals: ['Khoáng chất', 'Minerals'], vitamins: ['Vitamin', 'Vitamins'], limitNote: ['Nên giữ dưới mức này', 'Best kept below this'],
+  over: ['vượt', 'over'], good: ['đủ', 'good'],
+  lowOn: ['Bạn còn thiếu', 'You are low on'], tryFood: ['Gợi ý', 'Try'], tooMuch: ['Hơi nhiều', 'A bit high on'],
+  allGood: ['Tốt lắm! Các chất quan trọng đều ổn.', 'Well done! Your key nutrients look good.'],
+  min: ['phút', 'min'], burned: ['đã đốt', 'burned'], duration: ['Thời gian', 'Duration'],
+  listening: ['Đang nghe…', 'Listening…'], speakNow: ['Hãy nói bạn đã ăn, uống, uống thuốc hay tập gì.', 'Say what you ate, drank, took, or what exercise you did.'],
   done: ['Xong', 'Done'], typeInstead: ['Gõ thay', 'Type instead'], cancel: ['Huỷ', 'Cancel'],
-  whatDidYou: ['Bạn vừa ăn gì?', 'What did you have?'],
-  typeLead: ['Gõ hoặc nhấn 🎙 trên bàn phím iPhone để đọc. Có thể ghi nhiều món một lúc.', 'Type, or tap 🎙 on the iPhone keyboard to dictate. Several things at once is fine.'],
-  typePh: ['VD: Trưa nay ăn bún bò Huế với ly trà đá, uống 1 viên vitamin D', 'e.g. Just had bún bò for lunch with an iced tea, took 1 vitamin D'],
-  analyze: ['Phân tích', 'Analyze'],
-  noSR: ['Thiết bị này chưa hỗ trợ nhận giọng nói trong app — dùng 🎙 trên bàn phím nhé.', 'Speech recognition isn’t available here — use the 🎙 on your keyboard instead.'],
-  srError: ['Không nghe rõ. Thử lại hoặc gõ nhé.', 'Didn’t catch that. Try again or type it.'],
-  thinking: [['Đang nhận diện món…', 'Đang tra cơ sở dữ liệu NomNom…', 'Đang tính đa lượng…', 'Đang ước tính khoáng chất & vitamin…'], ['Detecting dishes…', 'Checking the NomNom database…', 'Calculating macros…', 'Estimating minerals & vitamins…']],
-  review: ['Kiểm tra lại', 'Review'], logIt: ['Ghi vào nhật ký', 'Log it'], nothingFound: ['Không tìm thấy món nào để ghi.', 'Nothing to log found.'],
-  addCabinet: ['Lưu vào tủ thuốc, nhắc lúc', 'Save to cabinet, remind at'],
-  logged: ['Đã ghi', 'Logged'], undo: ['Hoàn tác', 'Undo'], deleted: ['Đã xoá', 'Deleted'],
+  whatDid: ['Bạn đã ăn gì, uống gì hay tập gì?', 'What did you eat, take, or do?'],
+  typeLead: ['Mẹo: nhấn nút micro trên bàn phím iPhone để đọc thay vì gõ.', 'Tip: tap the microphone on the iPhone keyboard to dictate instead of typing.'],
+  typePh: ['Ví dụ: Trưa nay ăn bún bò Huế và một ly trà đá', 'Example: I had bún bò for lunch and an iced tea'],
+  examples: ['Ví dụ', 'Examples'], analyze: ['Tiếp tục', 'Continue'],
+  noSR: ['Trình duyệt này chưa nghe được giọng nói. Hãy nhấn nút micro trên bàn phím để đọc.', 'Voice input isn’t available in this browser. Tap the microphone on the keyboard to dictate.'],
+  srError: ['Chưa nghe rõ. Hãy thử lại hoặc gõ chữ.', 'Didn’t catch that. Please try again or type it.'],
+  thinking: ['Đang phân tích…', 'Working it out…'], thinking2: ['Đang tính dinh dưỡng cho bạn', 'Calculating the nutrition for you'],
+  review: ['Kiểm tra lại', 'Please check'], logIt: ['Lưu vào nhật ký', 'Save to log'], nothingFound: ['Không tìm thấy gì để ghi.', 'Nothing to log was found.'],
+  addCabinet: ['Lưu vào mục Thuốc và nhắc lúc', 'Save to Medicines and remind me at'],
+  saved: ['Đã lưu', 'Saved'], undo: ['Hoàn tác', 'Undo'], deleted: ['Đã xoá', 'Deleted'], items: ['mục', 'items'], item: ['mục', 'item'],
   photoTitle: ['Phân tích ảnh', 'Analyze photo'],
-  photoLead: ['Lọ vitamin, hộp thuốc hay đĩa đồ ăn. Với lọ thuốc bổ, hãy để rõ bảng “Supplement Facts”.', 'Supplement bottle, med box or a plate of food. For supplements, make the “Supplement Facts” panel visible.'],
-  photoNotePh: ['Ghi chú (tuỳ chọn): VD “uống 2 viên”', 'Note (optional): e.g. “took 2 of these”'],
-  photoNeedsAI: ['Phân tích ảnh cần AI (chưa cấu hình). Hãy gõ tên sản phẩm hoặc chọn mẫu có sẵn trong Tủ thuốc.', 'Photo analysis needs AI (not configured). Type the product name, or pick a preset in the Cabinet.'],
-  offlineReply: ['Chế độ offline — ước tính từ cơ sở dữ liệu NomNom.', 'Offline mode — estimated from the NomNom database.'],
+  photoLead: ['Ảnh lọ thuốc bổ, hộp thuốc hoặc đĩa thức ăn. Với lọ thuốc bổ, hãy chụp rõ bảng thành phần (Supplement Facts).', 'A supplement bottle, medicine box or a plate of food. For supplements, photograph the Supplement Facts panel clearly.'],
+  photoNotePh: ['Ghi chú (không bắt buộc): ví dụ “uống 2 viên mỗi sáng”', 'Note (optional): e.g. “2 every morning”'],
+  aiUnavailable: ['Chưa phân tích ảnh được', 'Couldn’t analyze the photo'],
+  offlineReply: ['Ước tính từ cơ sở dữ liệu NomNom (chế độ ngoại tuyến).', 'Estimated from the NomNom database (offline mode).'],
   notRecognized: ['Chưa nhận ra', 'Didn’t recognize'],
-  aiOn: ['AI', 'AI'], aiOff: ['Offline', 'Offline'],
-  aiOnInfo: ['AI đang bật: giọng nói, chữ và ảnh được Claude phân tích. Chỉ nội dung bạn gửi được chuyển đi; nhật ký lưu trên máy.', 'AI is on: voice, text and photos are parsed by Claude. Only what you submit is sent; your log stays on this device.'],
-  aiOffInfo: ['Đang dùng bộ phân tích offline với ~50 món Việt & thuốc bổ phổ biến. Triển khai trên Cloudflare Pages kèm ANTHROPIC_API_KEY để bật AI.', 'Using the offline parser (~50 Vietnamese dishes & common supplements). Deploy on Cloudflare Pages with ANTHROPIC_API_KEY to enable AI.'],
-  week: ['Tuần', 'Week'], month: ['Tháng', 'Month'],
-  avgDay: ['Trung bình mỗi ngày đã ghi', 'Average per logged day'],
-  daysLogged: ['ngày đã ghi', 'days logged'], avgKcal: ['kcal TB', 'avg kcal'], adherence: ['uống đúng', 'adherence'],
-  tapBar: ['Nhấn vào cột để xem ngày đó', 'Tap a bar to open that day'],
-  cabinet: ['Tủ thuốc', 'Cabinet'], cabLead: ['Thuốc bổ & thuốc bạn dùng thường xuyên. Đặt giờ để nhắc và ghi chỉ với một chạm.', 'Supplements & meds you take regularly. Set times to get reminders and log with one tap.'],
-  scanBottle: ['📷 Quét lọ', '📷 Scan bottle'], addManual: ['+ Thêm', '+ Add'], logNow: ['Ghi ngay', 'Log now'], edit: ['Sửa', 'Edit'], del: ['Xoá', 'Delete'],
-  emptyCab: ['Chưa có gì. Quét lọ vitamin hoặc thêm thủ công.', 'Empty. Scan a supplement bottle or add one manually.'],
-  noTimes: ['Không nhắc', 'No reminder'],
-  reminders: ['Nhắc nhở', 'Reminders'],
-  icsBtn: ['Thêm nhắc nhở vào Lịch iPhone', 'Add reminders to iPhone Calendar'],
-  icsLead: ['Tạo file lịch lặp lại hằng ngày có báo thức — nhắc cả khi app đóng.', 'Creates daily repeating calendar events with alerts — works even when the app is closed.'],
-  notifyInApp: ['Thông báo khi app đang mở', 'Notify while app is open'],
-  notifyInAppSub: ['iOS 16.4+: cần thêm app vào Màn hình chính.', 'iOS 16.4+: requires adding the app to your Home Screen.'],
-  name: ['Tên', 'Name'], brand: ['Thương hiệu', 'Brand'], serving: ['Mỗi lần dùng', 'Serving'], type: ['Loại', 'Type'], times: ['Giờ nhắc (cách nhau bởi dấu phẩy)', 'Reminder times (comma-separated)'],
-  preset: ['Dinh dưỡng từ mẫu', 'Nutrients from preset'], none: ['Không có', 'None'],
-  supplement: ['Thuốc bổ', 'Supplement'], medication: ['Thuốc', 'Medication'], food: ['Món ăn', 'Food'], drink: ['Đồ uống', 'Drink'],
-  saveBtn: ['Lưu', 'Save'], saved: ['Đã lưu', 'Saved'],
-  settings: ['Cài đặt', 'Settings'], profile: ['Mục tiêu', 'Targets'], sex: ['Giới tính (cho chuẩn RDA)', 'Sex (for RDA targets)'], female: ['Nữ', 'Female'], male: ['Nam', 'Male'],
-  kcalTarget: ['Mục tiêu kcal/ngày', 'Daily kcal target'],
-  autoLog: ['Ghi ngay không cần xem lại', 'Log instantly without review'], autoLogSub: ['Vẫn có nút Hoàn tác.', 'You can still Undo.'],
-  theme: ['Giao diện sáng', 'Light mode'],
-  accessCode: ['Mã truy cập AI (nếu máy chủ yêu cầu)', 'AI access code (if the server requires one)'],
-  data: ['Dữ liệu', 'Data'], exportJson: ['Xuất JSON', 'Export JSON'], exportCsv: ['Xuất CSV', 'Export CSV'], importJson: ['Nhập JSON', 'Import JSON'], wipe: ['Xoá toàn bộ', 'Erase all'],
-  wipeConfirm: ['Xoá toàn bộ nhật ký và tủ thuốc trên máy này?', 'Erase the entire log and cabinet on this device?'],
+  servings: ['phần', 'serving'], perServing: ['Mỗi phần', 'Per serving'],
+  confidence: { low: ['chưa chắc', 'unsure'], medium: ['ước tính', 'estimate'], high: ['chính xác', 'confident'] },
+  kind: { food: ['Món ăn', 'Food'], drink: ['Đồ uống', 'Drink'], supplement: ['Thuốc bổ', 'Supplement'], medication: ['Thuốc', 'Medicine'], exercise: ['Vận động', 'Exercise'] },
+  week: ['Tuần', 'Week'], month: ['Tháng', 'Month'], calPerDay: ['Calo mỗi ngày', 'Calories per day'],
+  daysLogged: ['Số ngày đã ghi', 'Days logged'], avgCal: ['Calo trung bình mỗi ngày', 'Average calories per day'],
+  avgEx: ['Vận động trung bình mỗi ngày', 'Average exercise per day'], adherence: ['Uống thuốc đúng giờ', 'Medicines taken on time'],
+  avgNutrients: ['Trung bình mỗi ngày', 'Daily average'], tapBar: ['Nhấn vào một cột để xem ngày đó.', 'Tap a bar to open that day.'],
+  show: ['Hiển thị', 'Show'], dashedLine: ['Đường gạch ngang là mục tiêu.', 'The dashed line is your target.'],
+  medsLead: ['Thuốc và thuốc bổ bạn dùng hằng ngày. Đặt giờ để được nhắc, và ghi lại chỉ với một chạm.', 'Medicines and supplements you take regularly. Set times to be reminded and log them with one tap.'],
+  scanBottle: ['Chụp lọ thuốc', 'Scan a bottle'], addManual: ['Thêm bằng tay', 'Add manually'], logNow: ['Ghi ngay', 'Log now'], edit: ['Sửa', 'Edit'], del: ['Xoá', 'Delete'],
+  emptyMeds: ['Chưa có thuốc nào. Hãy chụp lọ thuốc hoặc thêm bằng tay.', 'Nothing here yet. Scan a bottle or add one manually.'],
+  noReminder: ['Không nhắc', 'No reminder'], remindAt: ['Nhắc lúc', 'Reminder at'],
+  reminders: ['Nhắc nhở', 'Reminders'], icsBtn: ['Thêm nhắc nhở vào Lịch iPhone', 'Add reminders to iPhone Calendar'],
+  icsLead: ['Lịch iPhone sẽ báo đúng giờ mỗi ngày, kể cả khi app đang đóng.', 'Your iPhone Calendar will alert you every day, even when the app is closed.'],
+  notifyInApp: ['Báo khi app đang mở', 'Alert while app is open'],
+  name: ['Tên', 'Name'], brand: ['Hãng', 'Brand'], serving: ['Mỗi lần dùng', 'Dose'], kindLabel: ['Loại', 'Type'], timesLabel: ['Giờ nhắc (cách nhau bởi dấu phẩy)', 'Reminder times (separate with commas)'],
+  preset: ['Chọn loại có sẵn (để tính vitamin)', 'Choose a common one (for vitamin values)'], none: ['Không chọn', 'None'],
+  save: ['Lưu', 'Save'],
+  profile: ['Hồ sơ', 'Profile'], aboutYou: ['Thông tin của bạn', 'About you'], dailyTargets: ['Mục tiêu mỗi ngày', 'Daily targets'],
+  sex: ['Giới tính', 'Sex'], female: ['Nữ', 'Female'], male: ['Nam', 'Male'], age: ['Tuổi', 'Age'], height: ['Chiều cao', 'Height'], weight: ['Cân nặng', 'Weight'],
+  activity: ['Mức vận động', 'Activity level'], goal: ['Mục tiêu', 'Goal'], years: ['tuổi', 'years'],
+  calories: ['Calo', 'Calories'], targetsHow: ['Tính theo tuổi, giới tính, chiều cao, cân nặng và mức vận động của bạn (công thức Mifflin-St Jeor và khuyến nghị dinh dưỡng theo độ tuổi).', 'Based on your age, sex, height, weight and activity (Mifflin-St Jeor formula and age-specific nutrition guidelines).'],
+  ownKcal: ['Tự đặt mục tiêu calo', 'Set my own calorie target'], auto: ['Tự động', 'Automatic'],
+  autoHint: ['Để trống để dùng mức tự động', 'Leave empty to use the automatic target'],
+  display: ['Hiển thị', 'Display'], textSize: ['Cỡ chữ', 'Text size'], sizeM: ['Vừa', 'Standard'], sizeL: ['Lớn', 'Large'], sizeXL: ['Rất lớn', 'Extra large'],
+  viewMode: ['Chế độ xem', 'View'], simple: ['Đơn giản', 'Simple'], detailed: ['Chi tiết', 'Detailed'],
+  simpleDesc: ['Calo, đạm, nước và thuốc — gọn và dễ nhìn.', 'Calories, protein, water and medicines — clean and easy.'],
+  detailedDesc: ['Thêm vitamin, khoáng chất và biểu đồ từng chất.', 'Adds vitamins, minerals and charts for each nutrient.'],
+  appearance: ['Giao diện', 'Appearance'], themeAuto: ['Tự động', 'Automatic'], themeLight: ['Sáng', 'Light'], themeDark: ['Tối', 'Dark'],
+  language: ['Ngôn ngữ', 'Language'],
+  quickLog: ['Lưu ngay, bỏ qua bước kiểm tra', 'Save right away, skip the check step'],
+  aiTitle: ['Phân tích bằng AI', 'AI analysis'], aiOn: ['Đang hoạt động', 'Working'], aiOff: ['Chưa hoạt động', 'Not working'], aiChecking: ['Đang kiểm tra…', 'Checking…'],
+  accessCode: ['Mã truy cập AI (nếu có)', 'AI access code (if required)'], aiRecheck: ['Kiểm tra lại', 'Check again'],
+  install: ['Cài lên màn hình chính', 'Add to Home Screen'],
+  installTip: ['Trong Safari, nhấn nút Chia sẻ, rồi chọn “Thêm vào MH chính”. NomNom sẽ mở như một ứng dụng.', 'In Safari, tap the Share button, then “Add to Home Screen”. NomNom then opens like an app.'],
+  data: ['Dữ liệu', 'Data'], exportJson: ['Xuất bản sao (JSON)', 'Export backup (JSON)'], exportCsv: ['Xuất bảng tính (CSV)', 'Export spreadsheet (CSV)'], importJson: ['Nhập bản sao', 'Import backup'],
+  redoSetup: ['Thiết lập lại hồ sơ', 'Redo profile setup'], wipe: ['Xoá toàn bộ dữ liệu', 'Erase all data'],
+  wipeConfirm: ['Xoá toàn bộ nhật ký, thuốc và hồ sơ trên máy này?', 'Erase the whole log, medicines and profile on this device?'],
   imported: ['Đã nhập', 'Imported'], badFile: ['File không hợp lệ', 'Invalid file'],
-  install: ['Cài lên iPhone', 'Install on iPhone'],
-  installTip: ['Mở trang này bằng <b>Safari</b> → nhấn <b>Chia sẻ</b> <span>⎋</span> → <b>Thêm vào MH chính</b>. NomNom Log sẽ mở toàn màn hình như một app.', 'Open this page in <b>Safari</b> → tap <b>Share</b> <span>⎋</span> → <b>Add to Home Screen</b>. NomNom Log then opens full-screen like an app.'],
-  privacy: ['Nhật ký lưu trên máy này (localStorage). Chỉ câu nói/ảnh bạn gửi mới được chuyển tới AI để phân tích.', 'Your log is stored on this device (localStorage). Only the words/photos you submit are sent to the AI parser.'],
-  storageFull: ['Bộ nhớ đầy — hãy xuất & xoá bớt dữ liệu.', 'Storage full — export and clear some data.'],
-  servings: ['phần', 'serving(s)'], details: ['Chi tiết', 'Details'], totalFor: ['Tổng cho', 'Total for'],
-  confidence: { low: ['ít chắc', 'low confidence'], medium: ['khá chắc', 'medium confidence'], high: ['chắc chắn', 'high confidence'] },
+  privacy: ['Dữ liệu được lưu trên máy này. Chỉ câu bạn nói hoặc ảnh bạn gửi mới được chuyển đi để phân tích.', 'Your data stays on this device. Only what you say or photograph is sent for analysis.'],
+  storageFull: ['Bộ nhớ đầy — hãy xuất bản sao và xoá bớt.', 'Storage is full — export a backup and clear some data.'],
   reminderFor: ['Đến giờ uống', 'Time to take'],
-  backToToday: ['Về hôm nay', 'Back to today'],
-  apiErr: ['AI lỗi — đã dùng bộ phân tích offline.', 'AI error — used the offline parser instead.'],
-  badCode: ['Sai mã truy cập AI (xem Cài đặt).', 'Wrong AI access code (see Settings).'],
-  refusal: ['AI không thể phân tích nội dung này.', 'The AI couldn’t analyze this.'],
-  back: ['Quay lại', 'Back'],
+  next: ['Tiếp tục', 'Continue'], back: ['Quay lại', 'Back'], start: ['Bắt đầu', 'Get started'], step: ['Bước', 'Step'],
+  welcome: ['Chào mừng bạn', 'Welcome'],
+  welcomeLead: ['NomNom giúp bạn ghi lại bữa ăn, thuốc và vận động chỉ bằng giọng nói. Trước tiên, hãy chọn ngôn ngữ.', 'NomNom helps you keep track of meals, medicines and exercise just by speaking. First, choose your language.'],
+  aboutTitle: ['Giới thiệu về bạn', 'About you'], aboutLead: ['Để tính mục tiêu dinh dưỡng phù hợp với bạn.', 'So we can work out the right nutrition targets for you.'],
+  yourName: ['Tên của bạn (không bắt buộc)', 'Your name (optional)'],
+  bodyTitle: ['Chiều cao và cân nặng', 'Height and weight'], bodyLead: ['Bạn có thể đổi lại bất cứ lúc nào trong Hồ sơ.', 'You can change these any time in Profile.'],
+  actTitle: ['Bạn vận động thế nào?', 'How active are you?'], goalTitle: ['Mục tiêu của bạn', 'Your goal'],
+  displayTitle: ['Chọn cỡ chữ dễ đọc', 'Choose an easy text size'], displayLead: ['Chọn cỡ chữ bạn đọc thoải mái nhất.', 'Pick the size that is most comfortable to read.'],
+  sampleText: ['Bữa trưa: bún bò Huế, 560 calo', 'Lunch: bún bò Huế, 560 calories'],
+  doneTitle: ['Mục tiêu mỗi ngày của bạn', 'Your daily targets'],
+  doneLead: ['Dựa trên thông tin bạn vừa nhập. Bạn có thể xem và sửa trong Hồ sơ.', 'Based on what you entered. You can review and change them in Profile.'],
+  errAge: ['Vui lòng nhập tuổi (10–110).', 'Please enter your age (10–110).'],
+  errHeight: ['Vui lòng nhập chiều cao (100–230 cm).', 'Please enter your height (100–230 cm).'],
+  errWeight: ['Vui lòng nhập cân nặng (25–250 kg).', 'Please enter your weight (25–250 kg).'],
+  liters: ['lít', 'liters'], ofDaily: ['nhu cầu ngày', 'of daily need'],
 };
-function t(key) {
-  const v = T[key];
-  if (!v) return key;
-  return Array.isArray(v) ? v[currentLang === 'vi' ? 0 : 1] : v;
-}
-const L = (pair) => pair[currentLang === 'vi' ? 0 : 1];
-function applyStaticLang() {
-  document.documentElement.lang = currentLang;
-  document.querySelectorAll('[data-vi]').forEach(el => { el.textContent = el.dataset[currentLang]; });
-  document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
-}
+const ACTIVITY = {
+  sedentary: { f: 1.2, t: ['Ít vận động', 'Mostly sitting'], d: ['Ngồi nhiều, ít đi lại', 'Desk work or resting, little walking'] },
+  light: { f: 1.375, t: ['Vận động nhẹ', 'Lightly active'], d: ['Đi bộ, làm việc nhà, tập nhẹ 1–3 buổi/tuần', 'Walking, housework, light exercise 1–3 times a week'] },
+  moderate: { f: 1.55, t: ['Vận động vừa', 'Moderately active'], d: ['Tập thể dục 3–5 buổi/tuần', 'Exercise 3–5 times a week'] },
+  active: { f: 1.725, t: ['Vận động nhiều', 'Very active'], d: ['Tập nặng hoặc làm việc chân tay hằng ngày', 'Hard exercise or physical work every day'] },
+};
+const GOALS = {
+  lose: { d: -400, t: ['Giảm cân', 'Lose weight'], s: ['Giảm nhẹ nhàng, khoảng 0,4 kg/tuần', 'Gently, about 0.4 kg per week'] },
+  keep: { d: 0, t: ['Giữ cân, ăn uống lành mạnh', 'Stay at my weight, eat healthier'], s: ['Cân bằng dinh dưỡng mỗi ngày', 'Balanced nutrition every day'] },
+  gain: { d: 300, t: ['Tăng cân / tăng cơ', 'Gain weight / muscle'], s: ['Thêm năng lượng và đạm', 'More energy and protein'] },
+};
+function t(key) { const v = T[key]; if (!v) return key; return Array.isArray(v) ? v[currentLang === 'vi' ? 0 : 1] : v; }
+const L = (pair) => (pair ? pair[currentLang === 'vi' ? 0 : 1] : '');
 
 // =====================================================================
 // UTILS
@@ -442,8 +469,6 @@ const addDays = (k, n) => { const d = keyToDate(k); d.setDate(d.getDate() + n); 
 const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
 const locale = () => currentLang === 'vi' ? 'vi-VN' : 'en-US';
 const NUT = Object.fromEntries(NUTRIENTS.map(n => [n.key, n]));
-const KIND_ICON = { food: '🍜', drink: '🥤', supplement: '💊', medication: '🩺' };
-
 function fmtN(v, key) {
   if (key === 'kcal' || Math.abs(v) >= 100) return Math.round(v).toLocaleString(locale());
   if (Math.abs(v) >= 10) return (Math.round(v * 10) / 10).toLocaleString(locale());
@@ -455,31 +480,23 @@ function cleanNutrients(n) {
   if (n) NUTRIENT_KEYS.forEach(k => { const v = Number(n[k]); out[k] = Number.isFinite(v) && v > 0 ? v : 0; });
   return out;
 }
-function entryTotals(e) {
-  const out = {}; const s = Number(e.servings) || 0;
-  NUTRIENT_KEYS.forEach(k => { out[k] = (e.nutrients?.[k] || 0) * s; });
-  return out;
-}
+function entryTotals(e) { const out = {}; const s = Number(e.servings) || 0; NUTRIENT_KEYS.forEach(k => { out[k] = (e.nutrients?.[k] || 0) * s; }); return out; }
 function sumEntries(list) {
-  const tot = zeroNutrients();
-  list.forEach(e => { const et = entryTotals(e); NUTRIENT_KEYS.forEach(k => tot[k] += et[k]); });
+  const tot = zeroNutrients(); tot.burned = 0; tot.exMin = 0;
+  list.forEach(e => {
+    if (e.kind === 'exercise') { tot.burned += Number(e.burned) || 0; tot.exMin += Number(e.minutes) || 0; return; }
+    const et = entryTotals(e); NUTRIENT_KEYS.forEach(k => tot[k] += et[k]);
+  });
   return tot;
 }
-function targets() {
-  const dv = { ...DAILY_VALUES[S.settings.sex === 'male' ? 'male' : 'female'] };
-  const k = Number(S.settings.kcal);
-  if (k >= 800 && k <= 6000) {
-    const r = k / dv.kcal; dv.kcal = k;
-    dv.carbs_g = Math.round(dv.carbs_g * r); dv.fat_g = Math.round(dv.fat_g * r);
-  }
-  return dv;
-}
 const entriesOn = (k) => S.entries.filter(e => dateKey(new Date(e.ts)) === k).sort((a, b) => a.ts - b.ts);
-function pctColor(p, isLimit) {
-  if (isLimit) return p > 100 ? 'var(--red)' : p > 75 ? 'var(--accent-2)' : 'var(--green)';
-  return p >= 90 ? 'var(--green)' : p >= 50 ? 'var(--accent-2)' : 'var(--red)';
+const displayName = (e) => (currentLang === 'vi' && e.name_vi ? e.name_vi : e.name);
+const nName = (key) => L([NUT[key].vi, NUT[key].en]);
+function statusOf(p, isLimit) {
+  if (isLimit) return p > 100 ? 'over' : 'ok';
+  return p >= 90 ? 'ok' : p >= 50 ? 'mid' : 'low';
 }
-function displayName(e) { return currentLang === 'vi' && e.name_vi ? e.name_vi : e.name; }
+const statusColor = (s) => s === 'ok' ? 'var(--green)' : s === 'mid' ? 'var(--bar-carbs)' : 'var(--red)';
 
 let toastTimer;
 function toast(msg, undoFn) {
@@ -488,7 +505,69 @@ function toast(msg, undoFn) {
   el.classList.add('show');
   if (undoFn) $('#toastUndo').onclick = () => { undoFn(); el.classList.remove('show'); };
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), undoFn ? 5000 : 2600);
+  toastTimer = setTimeout(() => el.classList.remove('show'), undoFn ? 6000 : 3500);
+}
+
+// =====================================================================
+// DISPLAY — text size, appearance
+// =====================================================================
+let systemBasePx = 17;
+function measureSystemBase() {
+  // On iPhone this follows Settings → Display & Brightness → Text Size (Dynamic Type).
+  const probe = document.createElement('div');
+  probe.style.cssText = 'font: -apple-system-body; position: absolute; visibility: hidden;';
+  probe.textContent = 'x'; document.body.appendChild(probe);
+  const px = parseFloat(getComputedStyle(probe).fontSize);
+  probe.remove();
+  systemBasePx = px >= 12 && px <= 40 ? Math.max(px, 17) : 17;
+}
+const SIZE_SCALE = { m: 1, l: 1.12, xl: 1.25 };
+function applyDisplay() {
+  document.documentElement.style.fontSize = `${(systemBasePx * (SIZE_SCALE[S.settings.textSize] || 1)).toFixed(1)}px`;
+  const dark = S.settings.theme === 'dark' || (S.settings.theme === 'auto' && matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.classList.toggle('dark', dark);
+  $('meta[name=theme-color]').content = dark ? '#000000' : '#F2F2F7';
+  document.documentElement.lang = currentLang;
+}
+
+// =====================================================================
+// PROFILE + TARGETS
+// =====================================================================
+const DEFAULT_PROFILE = { name: '', sex: 'female', age: 45, height_cm: 158, weight_kg: 55, activity: 'light', goal: 'keep' };
+function targetsFor(p0, override) {
+  const p = { ...DEFAULT_PROFILE, ...(p0 || {}) };
+  const female = p.sex !== 'male';
+  const dv = { ...DAILY_VALUES[female ? 'female' : 'male'] };
+  const a = Number(p.age), w = Number(p.weight_kg), h = Number(p.height_cm);
+  if (a >= 51) { if (female) { dv.calcium_mg = 1200; dv.iron_mg = 8; dv.fiber_g = 21; } else dv.fiber_g = 30; }
+  if (a >= 71) { dv.calcium_mg = 1200; dv.vit_d_mcg = 20; }
+  const bmr = 10 * w + 6.25 * h - 5 * a + (female ? -161 : 5);
+  const tdee = bmr * (ACTIVITY[p.activity] || ACTIVITY.light).f;
+  let kcal = Math.round((tdee + (GOALS[p.goal] || GOALS.keep).d) / 10) * 10;
+  kcal = Math.max(female ? 1200 : 1500, kcal);
+  if (Number(override) >= 800 && Number(override) <= 6000) kcal = Number(override);
+  dv.kcal = kcal;
+  dv.protein_g = Math.max(45, Math.round(w * (a >= 60 ? 1.2 : 1.0) * (p.goal === 'gain' ? 1.2 : 1)));
+  dv.fat_g = Math.round(kcal * 0.3 / 9);
+  dv.carbs_g = Math.max(100, Math.round((kcal - dv.protein_g * 4 - dv.fat_g * 9) / 4));
+  dv.sugar_g = Math.round(kcal * 0.1 / 4);
+  dv.water_ml = Math.round(w * 35 / 100) * 100;
+  return dv;
+}
+const targets = () => targetsFor(S.profile, S.settings.kcalOverride);
+function landingProfile() {
+  // Pre-fill from the landing page's profile module if the user filled it in there.
+  try {
+    const p = JSON.parse(localStorage.getItem(`nomnom.${scope()}.profile`) || 'null');
+    if (!p) return {};
+    const out = {};
+    if (Number(p.age)) out.age = Number(p.age);
+    if (Number(p.weight)) out.weight_kg = Number(p.weight);
+    if (Number(p.height)) out.height_cm = Number(p.height);
+    if (p.gender === 'male' || p.sex === 'male') out.sex = 'male';
+    if (p.gender === 'female' || p.sex === 'female') out.sex = 'female';
+    return out;
+  } catch { return {}; }
 }
 
 // =====================================================================
@@ -508,22 +587,55 @@ function closeSheet() {
 }
 
 // =====================================================================
-// LOCAL (OFFLINE) PARSER — matches against the NomNom reference DB
+// LOCAL (OFFLINE) PARSER — foods, supplements, medicines, exercise
 // =====================================================================
 const norm = (s) => s.toLowerCase().replace(/đ/g, 'd').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   .replace(/[^a-z0-9\s.,;:+&/-]/g, ' ').replace(/\s+/g, ' ').trim();
 const QTY = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, half: 0.5, mot: 1, hai: 2, ba: 3, bon: 4, nua: 0.5 };
-const CATALOG = [...FOODS, ...SUPPLEMENTS]
-  .flatMap(f => f.alias.map(a => ({ alias: norm(a), food: f })))
-  .sort((a, b) => b.alias.length - a.alias.length);
-
+const CATALOG = [...FOODS, ...SUPPLEMENTS].flatMap(f => f.alias.map(a => ({ alias: norm(a), food: f }))).sort((a, b) => b.alias.length - a.alias.length);
+const EXERCISES = [
+  { met: 4.3, vi: 'Đi bộ nhanh', en: 'Brisk walking', alias: ['di bo nhanh', 'brisk walk', 'brisk walking', 'power walk'] },
+  { met: 3.5, vi: 'Đi bộ', en: 'Walking', alias: ['di bo', 'tan bo', 'walk', 'walked', 'walking', 'steps', 'buoc'] },
+  { met: 9.8, vi: 'Chạy bộ', en: 'Running', alias: ['chay bo', 'run', 'ran', 'running', 'jog', 'jogging', 'jogged'] },
+  { met: 7.0, vi: 'Đạp xe', en: 'Cycling', alias: ['dap xe', 'xe dap', 'cycling', 'cycled', 'bike', 'biked', 'biking'] },
+  { met: 6.0, vi: 'Bơi', en: 'Swimming', alias: ['boi loi', 'di boi', 'swim', 'swam', 'swimming'] },
+  { met: 2.5, vi: 'Yoga', en: 'Yoga', alias: ['yoga'] },
+  { met: 3.0, vi: 'Dưỡng sinh / Thái cực quyền', en: 'Tai chi / stretching', alias: ['duong sinh', 'thai cuc quyen', 'tai chi', 'stretching', 'gian co'] },
+  { met: 5.0, vi: 'Tập gym', en: 'Gym workout', alias: ['tap gym', 'gym', 'weights', 'weight training', 'lifting'] },
+  { met: 5.0, vi: 'Nhảy / khiêu vũ', en: 'Dancing', alias: ['khieu vu', 'nhay aerobic', 'aerobic', 'zumba', 'dance', 'dancing', 'danced'] },
+  { met: 5.5, vi: 'Cầu lông', en: 'Badminton', alias: ['cau long', 'badminton'] },
+  { met: 4.1, vi: 'Pickleball / Tennis', en: 'Pickleball / tennis', alias: ['pickleball', 'tennis', 'quan vot'] },
+  { met: 7.0, vi: 'Đá bóng', en: 'Football', alias: ['da bong', 'football', 'soccer'] },
+  { met: 3.8, vi: 'Làm vườn', en: 'Gardening', alias: ['lam vuon', 'gardening'] },
+  { met: 3.3, vi: 'Dọn nhà', en: 'Housework', alias: ['don nha', 'lau nha', 'housework', 'cleaning'] },
+].map(x => ({ ...x, alias: x.alias.map(norm) }));
+const wordRe = (w) => new RegExp(`(^|\\s)${w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\s|$)`);
+function parseMinutes(seg) {
+  const m = seg.match(/(\d+(?:[.,]\d+)?)\s*(gio|tieng|hours?|hrs?|h)(\s|$)/);
+  let mins = m ? parseFloat(m[1].replace(',', '.')) * 60 : 0;
+  const mm = seg.match(/(\d+)\s*(phut|minutes?|mins?|p)(\s|$)/);
+  if (mm) mins += parseInt(mm[1], 10);
+  if (!mins && /(nua tieng|nua gio|half an hour|half hour)/.test(seg)) mins = 30;
+  if (!mins && /(mot tieng|mot gio|an hour|one hour)/.test(seg)) mins = 60;
+  const steps = seg.match(/(\d[\d.,]*)\s*(steps|buoc)/);
+  if (!mins && steps) mins = Math.round(parseInt(steps[1].replace(/[.,]/g, ''), 10) / 100);
+  return mins || 30;
+}
 function localParse(text) {
-  const lang = currentLang;
-  const n = norm(text);
-  const segments = n.split(/[,;.+&]| and | va | voi | with | plus | roi | then | cung voi /).map(s => s.trim()).filter(Boolean);
+  const lang = currentLang; const weight = Number(S.profile?.weight_kg) || 60;
+  // Split on separators; protect decimals like "1.5 hours" by only splitting on "." followed by a space/end.
+  const segments = norm(text).split(/[,;+&]|\.(?=\s|$)| and | va | voi | with | plus | roi | then | sau do /).map(s => s.trim()).filter(Boolean);
   const items = []; const unknown = [];
   for (const seg of segments) {
-    const hit = CATALOG.find(c => new RegExp(`(^|\\s)${c.alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\s|$)`).test(seg));
+    const ex = EXERCISES.find(e => e.alias.some(a => wordRe(a).test(seg)));
+    if (ex) {
+      const minutes = parseMinutes(seg);
+      items.push({ kind: 'exercise', name: lang === 'vi' ? ex.vi : ex.en, name_vi: ex.vi, brand: '', serving: '', servings: 1, confidence: 'medium',
+        assumptions: lang === 'vi' ? `Ước tính theo cân nặng ${weight} kg.` : `Estimated for your weight of ${weight} kg.`, reminder_time: '',
+        minutes, kcal_burned: Math.round(ex.met * weight * minutes / 60), nutrients: zeroNutrients() });
+      continue;
+    }
+    const hit = CATALOG.find(c => wordRe(c.alias).test(seg));
     if (hit) {
       const idx = seg.indexOf(hit.alias);
       const before = seg.slice(0, idx).trim().split(' ').filter(Boolean).slice(-3).reverse();
@@ -542,20 +654,17 @@ function localParse(text) {
         if (/(morning|buoi sang|moi sang)/.test(seg)) reminder = '08:00';
         else if (/(night|before bed|buoi toi|moi toi|truoc khi ngu)/.test(seg)) reminder = '21:00';
       }
-      items.push({
-        kind: f.kind, name: lang === 'vi' ? f.vi : f.en, name_vi: f.vi, brand: '',
-        serving: f.serving[lang], servings: Math.round(qty * 100) / 100, confidence: 'medium',
-        assumptions: lang === 'vi' ? 'Ước tính từ cơ sở dữ liệu NomNom (khẩu phần tiêu chuẩn).' : 'Estimated from the NomNom database (standard portion).',
-        reminder_time: reminder, nutrients: nutrientsFromArray(f.n),
-      });
+      items.push({ kind: f.kind, name: lang === 'vi' ? f.vi : f.en, name_vi: f.vi, brand: '', serving: f.serving[lang],
+        servings: Math.round(qty * 100) / 100, confidence: 'medium', assumptions: t('offlineReply'), reminder_time: reminder,
+        minutes: 0, kcal_burned: 0, nutrients: nutrientsFromArray(f.n) });
       continue;
     }
-    const med = MED_WORDS.map(norm).find(w => new RegExp(`(^|\\s)${w}(\\s|$)`).test(seg));
+    const med = MED_WORDS.map(norm).find(w => wordRe(w).test(seg));
     if (med) {
       const generic = ['thuoc', 'medication', 'medicine', 'meds', 'med', 'pill', 'pills'].includes(med);
-      const nm = generic ? (lang === 'vi' ? 'Thuốc' : 'Medication') : med.replace(/\b\w/g, c => c.toUpperCase());
+      const nm = generic ? (lang === 'vi' ? 'Thuốc' : 'Medicine') : med.replace(/\b\w/g, c => c.toUpperCase());
       items.push({ kind: 'medication', name: nm, name_vi: generic ? 'Thuốc' : nm, brand: '', serving: lang === 'vi' ? '1 liều' : '1 dose', servings: 1,
-        confidence: 'medium', assumptions: '', reminder_time: '', nutrients: zeroNutrients() });
+        confidence: 'medium', assumptions: '', reminder_time: '', minutes: 0, kcal_burned: 0, nutrients: zeroNutrients() });
       continue;
     }
     if (seg.split(' ').length <= 8 && !/^(ok|okay|um|uh|so|vay|thi|toi|minh|em|anh|i)$/.test(seg)) unknown.push(seg);
@@ -568,36 +677,50 @@ function localParse(text) {
 // =====================================================================
 // AI PARSER — /api/parse (Cloudflare Pages Function → Claude)
 // =====================================================================
-let aiConfigured = false;
+let aiState = { ok: null, reason: '' };   // ok: true | false | null (checking)
 async function checkAI() {
+  aiState = { ok: null, reason: '' };
+  const vi = currentLang === 'vi';
   try {
-    const r = await fetch('/api/parse', { headers: { accept: 'application/json' } });
-    const j = r.ok ? await r.json() : null;
-    aiConfigured = !!(j && j.configured);
-  } catch { aiConfigured = false; }
-  renderAIPill();
-}
-function renderAIPill() {
-  $('#aiPill').classList.toggle('on', aiConfigured);
-  $('#aiPillTxt').textContent = aiConfigured ? t('aiOn') : t('aiOff');
+    const r = await fetch('/api/parse', { headers: { accept: 'application/json' }, cache: 'no-store', credentials: 'same-origin' });
+    const ct = r.headers.get('content-type') || '';
+    if (!r.ok) aiState = { ok: false, reason: `HTTP ${r.status}` };
+    else if (!ct.includes('json')) aiState = { ok: false, reason: vi ? 'máy chủ trả lời không đúng (có thể cần đăng nhập lại — hãy tải lại trang)' : 'unexpected server reply (you may need to sign in again — reload the page)' };
+    else {
+      const j = await r.json();
+      aiState = j.configured ? { ok: true, reason: '' } : { ok: false, reason: vi ? 'máy chủ chưa có ANTHROPIC_API_KEY' : 'the server has no ANTHROPIC_API_KEY' };
+    }
+  } catch {
+    aiState = { ok: false, reason: vi ? 'không kết nối được (mất mạng hoặc phiên đăng nhập hết hạn — hãy tải lại trang)' : 'could not connect (offline, or your sign-in expired — reload the page)' };
+  }
+  if (currentTab === 'profile') renderProfile();
+  return aiState.ok;
 }
 async function parseInput({ text = '', image = null }) {
-  if (aiConfigured) {
+  // Always re-check right before analyzing so a stale status never blocks the AI.
+  if (aiState.ok !== true) await checkAI();
+  const vi = currentLang === 'vi';
+  let failReason = aiState.ok ? '' : aiState.reason;
+  if (aiState.ok) {
     try {
+      const p = S.profile || DEFAULT_PROFILE;
       const r = await fetch('/api/parse', {
-        method: 'POST',
+        method: 'POST', credentials: 'same-origin',
         headers: { 'content-type': 'application/json', ...(S.settings.accessCode ? { 'x-nomnom-code': S.settings.accessCode } : {}) },
-        body: JSON.stringify({ text, image, lang: currentLang, local_time: new Date().toString().slice(0, 33) }),
+        body: JSON.stringify({ text, image, lang: currentLang, local_time: new Date().toString().slice(0, 33), profile: { sex: p.sex, age: p.age, weight_kg: p.weight_kg } }),
       });
       const j = await r.json().catch(() => ({}));
       if (r.ok && Array.isArray(j.items)) return j;
-      if (j.error === 'bad_access_code') toast(t('badCode'));
-      else if (j.error === 'refusal') return { items: [], reply: t('refusal'), source: 'ai' };
-      else toast(t('apiErr'));
-    } catch { toast(t('apiErr')); }
+      if (j.error === 'refusal') return { items: [], reply: vi ? 'AI không thể phân tích nội dung này.' : 'The AI couldn’t analyze this.', source: 'ai' };
+      failReason = j.error === 'bad_access_code' ? (vi ? 'sai mã truy cập AI (xem Hồ sơ)' : 'wrong AI access code (see Profile)')
+        : j.error === 'rate_limited' ? (vi ? 'AI đang bận, thử lại sau ít phút' : 'the AI is busy, try again in a minute')
+        : `${j.error || 'HTTP ' + r.status}${j.status ? ' ' + j.status : ''}${j.detail ? ': ' + j.detail : ''}`;
+    } catch { failReason = vi ? 'mất kết nối khi gửi' : 'connection lost while sending'; }
   }
-  if (!text) return { items: [], reply: t('photoNeedsAI'), source: 'local' };
-  return localParse(text);
+  if (!text) return { items: [], reply: `${t('aiUnavailable')}: ${failReason}.`, source: 'error' };
+  const res = localParse(text);
+  if (failReason && aiState.ok) res.reply = `${vi ? 'AI lỗi' : 'AI error'} (${failReason}). ${res.reply}`;
+  return res;
 }
 
 // =====================================================================
@@ -605,80 +728,62 @@ async function parseInput({ text = '', image = null }) {
 // =====================================================================
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let rec = null;
-
 function startRecord() {
   if (!SR) { openComposer('', t('noSR')); return; }
-  let finalTxt = ''; let interim = ''; let cancelled = false; let submitted = false;
+  let finalTxt = '', interim = '', cancelled = false, submitted = false;
   rec = new SR();
   rec.lang = currentLang === 'vi' ? 'vi-VN' : 'en-US';
   rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
   const paint = () => { const el = $('#transcript'); if (el) el.innerHTML = `${esc(finalTxt)} <span class="interim">${esc(interim)}</span>`; };
   rec.onresult = (ev) => {
     interim = '';
-    for (let i = ev.resultIndex; i < ev.results.length; i++) {
-      const r = ev.results[i];
-      if (r.isFinal) finalTxt += r[0].transcript + ' '; else interim += r[0].transcript;
-    }
+    for (let i = ev.resultIndex; i < ev.results.length; i++) { const r = ev.results[i]; if (r.isFinal) finalTxt += r[0].transcript + ' '; else interim += r[0].transcript; }
     paint();
   };
   rec.onerror = (ev) => {
-    if (cancelled) return;
-    cancelled = true;
+    if (cancelled) return; cancelled = true;
     if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') openComposer('', t('noSR'));
     else openComposer((finalTxt + interim).trim(), t('srError'));
   };
   rec.onend = () => {
-    if (cancelled || submitted) return;
-    submitted = true;
+    if (cancelled || submitted) return; submitted = true;
     const txt = (finalTxt + interim).trim();
     if (txt) submitText(txt); else openComposer('', t('srError'));
   };
-  openSheet(`
-    <div class="listening">
+  openSheet(`<div class="listening">
+      <div class="pulse">${icon('mic')}</div>
       <h2>${t('listening')}</h2>
       <p class="lead">${t('speakNow')}</p>
-      <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="transcript" id="transcript"></div>
-      <div class="actions">
-        <button class="btn" data-action="recType">${t('typeInstead')}</button>
-        <button class="btn primary" data-action="recStop">${t('done')}</button>
-      </div>
+      <div class="actions"><button class="btn" data-action="recType">${t('typeInstead')}</button><button class="btn primary" data-action="recStop">${t('done')}</button></div>
     </div>`, () => { if (rec && !submitted) { cancelled = true; try { rec.abort(); } catch {} } });
   rec._cancel = () => { cancelled = true; try { rec.abort(); } catch {} return (finalTxt + interim).trim(); };
   try { rec.start(); } catch { openComposer('', t('noSR')); }
 }
-
 function openComposer(prefill = '', note = '') {
-  const examples = currentLang === 'vi'
-    ? ['Trưa nay ăn bún bò Huế', 'Cà phê sữa đá', 'Uống 1 viên vitamin D', '2 ổ bánh mì thịt']
-    : ['Just had bún bò for lunch', 'Iced coffee with milk', 'Took 1 vitamin D', 'Two bánh mì'];
+  const ex = currentLang === 'vi'
+    ? ['Trưa nay ăn một tô bún bò Huế', 'Uống một ly cà phê sữa đá', 'Uống 1 viên vitamin D', 'Đi bộ 30 phút']
+    : ['I had a bowl of bún bò for lunch', 'An iced coffee with milk', 'Took 1 vitamin D', 'Walked for 30 minutes'];
   openSheet(`
-    <h2>${t('whatDidYou')}</h2>
-    <p class="lead">${note ? `<b style="color:var(--accent-2)">${esc(note)}</b><br>` : ''}${t('typeLead')}</p>
+    <h2>${t('whatDid')}</h2>
+    ${note ? `<p class="lead" style="color:var(--red)">${esc(note)}</p>` : ''}
     <textarea class="inp" id="composer" placeholder="${esc(t('typePh'))}">${esc(prefill)}</textarea>
-    <div class="ex-chips">${examples.map(x => `<button class="chip" data-action="example" data-text="${esc(x)}">${esc(x)}</button>`).join('')}</div>
-    <div class="actions">
-      <button class="btn" data-action="closeSheet">${t('cancel')}</button>
-      <button class="btn primary" data-action="composerSend">${t('analyze')}</button>
-    </div>`);
+    <p class="sub" style="margin:0.6rem 0.2rem 0;font-size:0.95rem">${t('typeLead')}</p>
+    <div class="section-title" style="margin-top:1rem">${t('examples')}</div>
+    <div class="examples">${ex.map(x => `<button data-action="example" data-text="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+    <div class="actions"><button class="btn" data-action="closeSheet">${t('cancel')}</button><button class="btn primary" data-action="composerSend">${t('analyze')}</button></div>`);
   setTimeout(() => $('#composer')?.focus(), 350);
 }
-
 let pendingPhoto = null;
 async function handlePhoto(file) {
   if (!file) return;
-  try { pendingPhoto = await resizeImage(file); }
-  catch { toast(t('badFile')); return; }
+  try { pendingPhoto = await resizeImage(file); } catch { toast(t('badFile')); return; }
   openSheet(`
     <h2>${t('photoTitle')}</h2>
     <p class="lead">${t('photoLead')}</p>
     <img class="photo-prev" src="${pendingPhoto.dataUrl}" alt="">
     <input class="inp" id="photoNote" placeholder="${esc(t('photoNotePh'))}">
-    ${aiConfigured ? '' : `<p class="lead" style="margin-top:12px;color:var(--accent-2)">${t('photoNeedsAI')}</p>`}
-    <div class="actions">
-      <button class="btn" data-action="closeSheet">${t('cancel')}</button>
-      <button class="btn primary" data-action="photoSend">${t('analyze')}</button>
-    </div>`);
+    <div class="actions"><button class="btn" data-action="closeSheet">${t('cancel')}</button><button class="btn primary" data-action="photoSend">${t('analyze')}</button></div>`);
 }
 function loadImg(file) {
   return new Promise((res, rej) => {
@@ -688,39 +793,24 @@ function loadImg(file) {
     img.src = url;
   });
 }
-function drawScaled(img, max, quality) {
+function drawScaled(img, max, q) {
   const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
   const c = document.createElement('canvas');
   c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
   c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-  return c.toDataURL('image/jpeg', quality);
+  return c.toDataURL('image/jpeg', q);
 }
 async function resizeImage(file) {
   const img = await loadImg(file);
   const dataUrl = drawScaled(img, 1568, 0.85);
-  const thumb = drawScaled(img, 120, 0.7);
-  return { dataUrl, thumb, media_type: 'image/jpeg', data: dataUrl.split(',')[1] };
+  return { dataUrl, thumb: drawScaled(img, 120, 0.7), media_type: 'image/jpeg', data: dataUrl.split(',')[1] };
 }
-
-let thinkingTimer;
-function showThinking() {
-  const phrases = L(T.thinking); let i = 0;
-  openSheet(`<div class="thinking"><div class="orb"></div><div class="phrase" id="phrase">${phrases[0]}</div></div>`);
-  clearInterval(thinkingTimer);
-  thinkingTimer = setInterval(() => { const el = $('#phrase'); if (!el) return clearInterval(thinkingTimer); i = (i + 1) % phrases.length; el.textContent = phrases[i]; }, 1100);
-}
-async function submitText(text) {
-  showThinking();
-  const res = await parseInput({ text });
-  clearInterval(thinkingTimer);
-  handleParsed(res, { source: 'voice-text', text });
-}
+function showThinking() { openSheet(`<div class="center"><div class="spinner"></div><h2>${t('thinking')}</h2><p class="lead">${t('thinking2')}</p></div>`); }
+async function submitText(text) { showThinking(); handleParsed(await parseInput({ text }), { source: 'voice-text' }); }
 async function submitPhoto(note) {
   const photo = pendingPhoto; if (!photo) return;
-  if (!aiConfigured && !note) { closeSheet(); openComposer('', t('photoNeedsAI')); return; }
   showThinking();
-  const res = await parseInput({ text: note, image: aiConfigured ? { media_type: photo.media_type, data: photo.data } : null });
-  clearInterval(thinkingTimer);
+  const res = await parseInput({ text: note, image: { media_type: photo.media_type, data: photo.data } });
   handleParsed(res, { source: 'photo', thumb: photo.thumb });
   pendingPhoto = null;
 }
@@ -728,16 +818,18 @@ async function submitPhoto(note) {
 // =====================================================================
 // REVIEW + LOGGING
 // =====================================================================
-let reviewItems = []; let reviewMeta = {};
+let reviewItems = [], reviewMeta = {};
 function handleParsed(res, meta) {
   reviewItems = (res.items || []).map(it => ({
     ...it,
     servings: Number(it.servings) > 0 ? Number(it.servings) : 1,
+    minutes: Number(it.minutes) > 0 ? Number(it.minutes) : (it.kind === 'exercise' ? 30 : 0),
+    burned: Number(it.kcal_burned) > 0 ? Number(it.kcal_burned) : 0,
     nutrients: cleanNutrients(it.nutrients),
     _toCabinet: (it.kind === 'supplement' || it.kind === 'medication') && (meta.source === 'photo' || !!it.reminder_time),
     _time: it.reminder_time || '',
   }));
-  reviewMeta = { ...meta, reply: res.reply, aiSource: res.source };
+  reviewMeta = { ...meta, reply: res.reply };
   if (!reviewItems.length) {
     openSheet(`<h2>${t('review')}</h2><p class="lead">${esc(res.reply || t('nothingFound'))}</p>
       <div class="actions"><button class="btn" data-action="closeSheet">${t('cancel')}</button><button class="btn primary" data-action="type">${t('typeInstead')}</button></div>`);
@@ -746,47 +838,53 @@ function handleParsed(res, meta) {
   if (S.settings.autoLog) { commitReview(); return; }
   renderReview();
 }
-function microChips(n, servings) {
+function itemFacts(it) {
+  if (it.kind === 'exercise') return `<span><b>${fmtN(it.minutes)}</b> ${t('min')}</span><span><b>${fmtN(it.burned, 'kcal')}</b> kcal ${t('burned')}</span>`;
+  if (it.kind === 'medication') return '';
+  const n = it.nutrients, s = it.servings;
+  return `<span><b>${fmtN(n.kcal * s, 'kcal')}</b> kcal</span><span>${nName('protein_g')} <b>${fmtN(n.protein_g * s)} g</b></span>` +
+    (S.settings.view === 'detailed' ? `<span>${nName('carbs_g')} <b>${fmtN(n.carbs_g * s)} g</b></span><span>${nName('fat_g')} <b>${fmtN(n.fat_g * s)} g</b></span>${n.sodium_mg ? `<span>${nName('sodium_mg')} <b>${fmtN(n.sodium_mg * s)} mg</b></span>` : ''}` : '');
+}
+function topMicros(n, s) {
   const dv = targets();
-  return NUTRIENTS.filter(x => x.group === 'mineral' || x.group === 'vitamin')
-    .map(x => ({ x, p: (n[x.key] * servings) / dv[x.key] * 100 }))
-    .filter(o => o.p >= 8).sort((a, b) => b.p - a.p).slice(0, 6)
-    .map(o => `<span style="${o.x.limit && o.p > 50 ? 'color:var(--red)' : ''}">${L([o.x.vi, o.x.en])} ${Math.round(o.p)}%</span>`).join('');
+  return NUTRIENTS.filter(x => (x.group === 'mineral' || x.group === 'vitamin') && !x.limit)
+    .map(x => ({ x, p: n[x.key] * s / dv[x.key] * 100 })).filter(o => o.p >= 15).sort((a, b) => b.p - a.p).slice(0, 4)
+    .map(o => `${L([o.x.vi, o.x.en])} ${Math.round(o.p)}%`).join(', ');
 }
 function renderReview() {
   const cards = reviewItems.map((it, i) => {
-    const n = it.nutrients; const s = it.servings;
+    const isEx = it.kind === 'exercise';
+    const stepLabel = isEx ? `${fmtN(it.minutes)} ${t('min')}` : `${fmtN(it.servings)} ${t('servings')}`;
+    const micros = !isEx && it.kind !== 'medication' ? topMicros(it.nutrients, it.servings) : '';
     const conf = T.confidence[it.confidence] ? L(T.confidence[it.confidence]) : '';
     return `<div class="ritem">
       <div class="hd">
-        <div class="nm"><b>${esc(it.name)}</b><span>${esc([it.brand, it.serving].filter(Boolean).join(' · '))}</span>
-          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge ${it.kind}">${t(it.kind)}</span>${conf ? `<span class="badge ${it.confidence}">${conf}</span>` : ''}</div></div>
-        <div class="stepper"><button data-action="rStep" data-i="${i}" data-d="-0.5">−</button><span>${fmtN(s)}</span><button data-action="rStep" data-i="${i}" data-d="0.5">+</button></div>
+        <div class="ico ${it.kind}">${icon(KIND_ICON[it.kind] || 'food')}</div>
+        <div class="main"><div class="t">${esc(it.name)}</div><div class="s">${esc([L(T.kind[it.kind]), it.brand, it.serving].filter(Boolean).join(' · '))}</div>
+          ${conf ? `<span class="conf ${it.confidence === 'low' ? 'low' : ''}" style="display:inline-block;margin-top:0.35rem">${conf}</span>` : ''}</div>
       </div>
-      ${it.kind === 'medication' ? '' : `<div class="macros-line"><span><b>${fmtN(n.kcal * s, 'kcal')}</b> kcal</span><span>P <b>${fmtN(n.protein_g * s)}g</b></span><span>C <b>${fmtN(n.carbs_g * s)}g</b></span><span>F <b>${fmtN(n.fat_g * s)}g</b></span>${n.sodium_mg ? `<span>Na <b>${fmtN(n.sodium_mg * s)}mg</b></span>` : ''}</div>
-      <div class="micro-chips">${microChips(n, s)}</div>`}
-      ${it.assumptions ? `<div class="assume">${esc(it.assumptions)}</div>` : ''}
-      ${(it.kind === 'supplement' || it.kind === 'medication') ? `<label class="cab-opt"><input type="checkbox" data-action="rCab" data-i="${i}" ${it._toCabinet ? 'checked' : ''}> <span style="flex:1">${t('addCabinet')}</span><input type="time" data-i="${i}" class="rTime" value="${esc(it._time)}"></label>` : ''}
-      <div style="text-align:right;margin-top:8px"><button class="btn small danger" data-action="rDel" data-i="${i}">${t('del')}</button></div>
+      <div class="facts">${itemFacts(it)}</div>
+      ${micros ? `<div class="note">${t('vitMin')}: ${esc(micros)} ${t('ofDaily')}</div>` : ''}
+      ${it.assumptions ? `<div class="note">${esc(it.assumptions)}</div>` : ''}
+      ${(it.kind === 'supplement' || it.kind === 'medication') ? `<label class="cab-opt"><input type="checkbox" data-action="rCab" data-i="${i}" ${it._toCabinet ? 'checked' : ''}><span>${t('addCabinet')}</span><input type="time" data-i="${i}" class="rTime" value="${esc(it._time)}"></label>` : ''}
+      <div class="foot">
+        <div class="stepper"><button data-action="rStep" data-i="${i}" data-d="-1" aria-label="−">−</button><span>${stepLabel}</span><button data-action="rStep" data-i="${i}" data-d="1" aria-label="+">+</button></div>
+        <button class="btn small danger" data-action="rDel" data-i="${i}">${t('del')}</button>
+      </div>
     </div>`;
   }).join('');
-  openSheet(`
-    <h2>${t('review')}</h2>
-    <p class="lead">${esc(reviewMeta.reply || '')}</p>
-    ${cards}
-    <div class="actions sticky">
-      <button class="btn" data-action="closeSheet">${t('cancel')}</button>
-      <button class="btn primary" data-action="commit">${t('logIt')} (${reviewItems.length})</button>
-    </div>`);
+  openSheet(`<h2>${t('review')}</h2><p class="lead">${esc(reviewMeta.reply || '')}</p>${cards}
+    <div class="actions sticky"><button class="btn" data-action="closeSheet">${t('cancel')}</button><button class="btn primary" data-action="commit">${t('logIt')}</button></div>`);
 }
+function syncReviewTimes() { document.querySelectorAll('.rTime').forEach(el => { const it = reviewItems[+el.dataset.i]; if (it) it._time = el.value; }); }
 function logTimestamp() {
   const now = new Date();
   if (viewDate === todayKey()) return now.getTime();
   const d = keyToDate(viewDate); d.setHours(now.getHours(), now.getMinutes(), 0, 0); return d.getTime();
 }
 function commitReview() {
-  document.querySelectorAll('.rTime').forEach(el => { const i = +el.dataset.i; if (reviewItems[i]) reviewItems[i]._time = el.value; });
-  const ts = logTimestamp(); const added = []; const cabAdded = [];
+  syncReviewTimes();
+  const ts = logTimestamp(); const added = [], cabAdded = [];
   reviewItems.forEach((it, i) => {
     let cabinetId;
     if (it._toCabinet) {
@@ -795,37 +893,23 @@ function commitReview() {
       S.cabinet.push(c); cabAdded.push(c.id); cabinetId = c.id;
     }
     const e = { id: uid(), ts: ts + i, kind: it.kind, name: it.name, name_vi: it.name_vi || '', brand: it.brand || '', serving: it.serving || '',
-      servings: it.servings, confidence: it.confidence || 'medium', assumptions: it.assumptions || '', source: reviewMeta.source,
+      servings: it.kind === 'exercise' ? 1 : it.servings, confidence: it.confidence || 'medium', assumptions: it.assumptions || '', source: reviewMeta.source,
       nutrients: it.nutrients, thumb: reviewMeta.thumb || null, cabinetId };
+    if (it.kind === 'exercise') { e.minutes = it.minutes; e.burned = it.burned; }
     S.entries.push(e); added.push(e.id);
-    if (cabinetId && it._time) {
-      S.doses[`${dateKey(new Date(ts))}|${cabinetId}|${it._time}`] = e.id;
-    }
+    if (cabinetId && it._time) S.doses[`${dateKey(new Date(ts))}|${cabinetId}|${it._time}`] = e.id;
   });
   save(); closeSheet(); renderAll();
-  toast(`${t('logged')} ${added.length} ${t(added.length === 1 ? 'item' : 'items')}`, () => {
+  toast(`${t('saved')} ${added.length} ${t(added.length === 1 ? 'item' : 'items')}`, () => {
     S.entries = S.entries.filter(e => !added.includes(e.id));
     S.cabinet = S.cabinet.filter(c => !cabAdded.includes(c.id));
     Object.keys(S.doses).forEach(k => { if (added.includes(S.doses[k])) delete S.doses[k]; });
     save(); renderAll();
   });
-  burst();
-}
-function burst() {
-  const mic = $('.mic'); if (!mic) return;
-  const r = mic.getBoundingClientRect();
-  for (let i = 0; i < 14; i++) {
-    const p = document.createElement('div');
-    const a = (Math.PI * 2 * i) / 14; const d = 50 + Math.random() * 40;
-    p.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;width:7px;height:7px;border-radius:50%;z-index:90;pointer-events:none;background:${['var(--accent)', 'var(--accent-2)', 'var(--green)'][i % 3]};transition:all .7s cubic-bezier(.2,.8,.2,1)`;
-    document.body.appendChild(p);
-    requestAnimationFrame(() => { p.style.transform = `translate(${Math.cos(a) * d}px,${Math.sin(a) * d}px) scale(.3)`; p.style.opacity = '0'; });
-    setTimeout(() => p.remove(), 750);
-  }
 }
 
 // =====================================================================
-// DOSES (cabinet schedule) + REMINDERS
+// DOSES + REMINDERS
 // =====================================================================
 function dosesFor(k) {
   const list = [];
@@ -835,17 +919,13 @@ function dosesFor(k) {
 function takeDose(cabId, time, k) {
   const c = S.cabinet.find(x => x.id === cabId); if (!c) return;
   const d = keyToDate(k); const now = new Date();
-  if (k === todayKey()) d.setHours(now.getHours(), now.getMinutes()); else { const [h, m] = time.split(':').map(Number); d.setHours(h, m); }
+  if (k === todayKey() || !time) d.setHours(now.getHours(), now.getMinutes()); else { const [h, m] = time.split(':').map(Number); d.setHours(h, m); }
   const e = { id: uid(), ts: d.getTime(), kind: c.kind, name: c.name, name_vi: c.name_vi || '', brand: c.brand, serving: c.serving, servings: 1,
     confidence: 'high', assumptions: '', source: 'cabinet', nutrients: c.nutrients, thumb: c.thumb, cabinetId: c.id };
   S.entries.push(e);
   if (time) S.doses[`${k}|${cabId}|${time}`] = e.id;
-  save(); renderAll(); burst();
-  toast(`${t('logged')}: ${displayName(c)}`, () => {
-    S.entries = S.entries.filter(x => x.id !== e.id);
-    if (time) delete S.doses[`${k}|${cabId}|${time}`];
-    save(); renderAll();
-  });
+  save(); renderAll();
+  toast(`${t('saved')}: ${displayName(c)}`, () => { S.entries = S.entries.filter(x => x.id !== e.id); if (time) delete S.doses[`${k}|${cabId}|${time}`]; save(); renderAll(); });
 }
 const notified = new Set();
 function checkReminders() {
@@ -855,30 +935,28 @@ function checkReminders() {
     notified.add(d.key);
     const body = `${t('reminderFor')}: ${displayName(d.c)} (${d.c.serving})`;
     if (S.settings.notify && 'Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker?.ready) {
-      navigator.serviceWorker.ready.then(reg => reg.showNotification('NomNom Log', { body, icon: './apple-touch-icon.png', tag: d.key })).catch(() => toast(body));
+      navigator.serviceWorker.ready.then(reg => reg.showNotification('NomNom', { body, icon: './apple-touch-icon.png', tag: d.key })).catch(() => toast(body));
     } else toast(body);
     if (currentTab === 'today' && viewDate === k) renderToday();
   });
 }
-function icsEscape(s) { return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+const icsEscape = (s) => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
 function buildICS() {
   const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
-  const start = keyToDate(todayKey());
-  const ymd = `${start.getFullYear()}${pad(start.getMonth() + 1)}${pad(start.getDate())}`;
-  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NomNom//Log//EN', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:NomNom Log'];
+  const st = keyToDate(todayKey()); const ymd = `${st.getFullYear()}${pad(st.getMonth() + 1)}${pad(st.getDate())}`;
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NomNom//Log//EN', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:NomNom'];
   S.cabinet.forEach(c => (c.times || []).forEach(tm => {
     const [h, m] = tm.split(':');
-    const title = `${KIND_ICON[c.kind] || '💊'} ${displayName(c)}${c.serving ? ` — ${c.serving}` : ''}`;
+    const title = `${t('reminderFor')}: ${displayName(c)}${c.serving ? ` (${c.serving})` : ''}`;
     lines.push('BEGIN:VEVENT', `UID:${c.id}-${h}${m}@nomnom-log`, `DTSTAMP:${stamp}`, `DTSTART:${ymd}T${h}${m}00`, 'DURATION:PT5M', 'RRULE:FREQ=DAILY',
-      `SUMMARY:${icsEscape(title)}`, `DESCRIPTION:${icsEscape(`${t('reminderFor')}. ${location.origin}/log/`)}`,
+      `SUMMARY:${icsEscape(title)}`, `DESCRIPTION:${icsEscape(location.origin + '/log/')}`,
       'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsEscape(title)}`, 'TRIGGER:-PT0M', 'END:VALARM', 'END:VEVENT');
   }));
   lines.push('END:VCALENDAR');
   return lines.join('\r\n');
 }
 async function shareOrDownload(content, filename, type) {
-  const blob = new Blob([content], { type });
-  const file = new File([blob], filename, { type });
+  const blob = new Blob([content], { type }); const file = new File([blob], filename, { type });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try { await navigator.share({ files: [file], title: filename }); return; } catch (e) { if (e.name === 'AbortError') return; }
   }
@@ -887,238 +965,238 @@ async function shareOrDownload(content, filename, type) {
 }
 
 // =====================================================================
-// RENDER — TODAY (daily view, any date)
+// TODAY (daily view for any date)
 // =====================================================================
-let currentTab = 'today'; let viewDate = todayKey();
-function dayLabel(k) {
+let currentTab = 'today', viewDate = todayKey();
+function dayTitle(k) {
   if (k === todayKey()) return t('today');
   if (k === addDays(todayKey(), -1)) return t('yesterday');
-  return keyToDate(k).toLocaleDateString(locale(), { weekday: 'long' });
+  const s = keyToDate(k).toLocaleDateString(locale(), { weekday: 'long' });
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }
-function nutrientRows(tot, dv, group) {
-  return NUTRIENTS.filter(n => n.group === group).map(n => {
-    const p = dv[n.key] ? tot[n.key] / dv[n.key] * 100 : 0;
-    return `<div class="nrow"><div class="top"><span>${L([n.vi, n.en])}${n.limit ? ` <span class="faint">(${t('limit')})</span>` : ''}</span>
-      <span><span class="v">${fmtN(tot[n.key])} / ${fmtN(dv[n.key])} ${n.unit}</span><span class="p" style="color:${pctColor(p, n.limit)}">${Math.round(p)}%</span></span></div>
-      <div class="bar"><i style="width:${Math.min(100, p)}%;background:${pctColor(p, n.limit)}"></i></div></div>`;
-  }).join('');
+function nutrientRow(key, val, target, color) {
+  const meta = NUT[key]; const p = target ? val / target * 100 : 0;
+  const st = statusOf(p, meta.limit);
+  const tag = meta.limit ? (st === 'over' ? `<span class="tag over">${t('over')}</span>` : '') : (st === 'ok' ? `<span class="tag ok">${t('good')}</span>` : '');
+  return `<div class="nrow"><div class="top"><span class="name">${nName(key)}${tag}</span>
+    <span class="val num"><b>${fmtN(val, key)}</b> / ${fmtN(target, key)} ${meta.unit}</span></div>
+    <div class="bar"><i style="width:${Math.min(100, p)}%;background:${color && st !== 'over' ? color : statusColor(st === 'over' ? 'low' : st)}"></i></div>
+    ${meta.limit ? `<div class="sub" style="font-size:0.88rem;margin-top:0.25rem">${t('limitNote')}</div>` : ''}</div>`;
 }
 function bestFoodFor(key) {
   const idx = NUTRIENT_KEYS.indexOf(key);
-  return FOODS.filter(f => f.n[0] > 30).map(f => ({ f, score: f.n[idx] / f.n[0] })).sort((a, b) => b.score - a.score)[0]?.f;
+  return FOODS.filter(f => f.n[0] > 30).map(f => ({ f, s: f.n[idx] / f.n[0] })).sort((a, b) => b.s - a.s)[0]?.f;
 }
 function insightHTML(tot, dv, days = 1) {
-  const lows = NUTRIENTS.filter(n => (n.group === 'mineral' || n.group === 'vitamin') && !n.limit)
-    .map(n => ({ n, p: tot[n.key] / days / dv[n.key] * 100 })).filter(o => o.p < 50).sort((a, b) => a.p - b.p).slice(0, 3);
-  const overs = NUTRIENTS.filter(n => n.limit).map(n => ({ n, p: tot[n.key] / days / dv[n.key] * 100 })).filter(o => o.p > 100);
-  if (!lows.length && !overs.length) return `<div class="insight good"><b>✓</b> ${t('allGood')}</div>`;
+  const keys = S.settings.view === 'detailed'
+    ? NUTRIENTS.filter(n => (n.group === 'mineral' || n.group === 'vitamin' || n.key === 'fiber_g' || n.key === 'protein_g') && !n.limit).map(n => n.key)
+    : ['protein_g', 'calcium_mg', 'fiber_g', 'water_ml'];
+  const lows = keys.map(k => ({ k, p: tot[k] / days / dv[k] * 100 })).filter(o => o.p < 50).sort((a, b) => a.p - b.p).slice(0, 2);
+  const overs = ['sodium_mg', 'sugar_g'].map(k => ({ k, p: tot[k] / days / dv[k] * 100 })).filter(o => o.p > 100);
+  if (!lows.length && !overs.length) return `<div class="insight good">${t('allGood')}</div>`;
+  const and = currentLang === 'vi' ? ' và ' : ' and ';
   const parts = [];
   if (lows.length) {
-    const tip = bestFoodFor(lows[0].n.key);
-    parts.push(`${t('lowOn')} <b>${lows.map(o => `${L([o.n.vi, o.n.en])} (${Math.round(o.p)}%)`).join(', ')}</b>.${tip ? ` ${t('tryFood')}: ${esc(L([tip.vi, tip.en]))}.` : ''}`);
+    const tip = lows[0].k === 'water_ml' ? null : bestFoodFor(lows[0].k);
+    parts.push(`${t('lowOn')} <b>${lows.map(o => nName(o.k).toLowerCase()).join(and)}</b>.${tip ? ` ${t('tryFood')}: ${esc(L([tip.vi, tip.en]))}.` : ''}`);
   }
-  if (overs.length) parts.push(`${t('overOn')} <b>${overs.map(o => `${L([o.n.vi, o.n.en])} (${Math.round(o.p)}%)`).join(', ')}</b>.`);
+  if (overs.length) parts.push(`${t('tooMuch')} <b>${overs.map(o => nName(o.k).toLowerCase()).join(and)}</b>.`);
   return `<div class="insight">${parts.join('<br>')}</div>`;
 }
-let microTab = 'mineral';
+function vitMinHTML(tot, dv) {
+  return `<div class="section-title">${t('minerals')}</div><div class="card">${NUTRIENTS.filter(n => n.group === 'mineral').map(n => nutrientRow(n.key, tot[n.key], dv[n.key])).join('')}</div>
+    <div class="section-title">${t('vitamins')}</div><div class="card">${NUTRIENTS.filter(n => n.group === 'vitamin').map(n => nutrientRow(n.key, tot[n.key], dv[n.key])).join('')}</div>`;
+}
+function entryRow(e) {
+  const et = entryTotals(e); const isEx = e.kind === 'exercise';
+  const sub = isEx ? `${hhmm(new Date(e.ts))} · ${fmtN(e.minutes || 0)} ${t('min')}` : `${hhmm(new Date(e.ts))} · ${fmtN(e.servings)} × ${e.serving || ''}`;
+  const end = isEx ? `<b>−${fmtN(e.burned || 0, 'kcal')}</b>&nbsp;kcal` : e.kind === 'medication' ? `<span style="color:var(--green)">${icon('check')}</span>` : `<b>${fmtN(et.kcal, 'kcal')}</b>&nbsp;kcal`;
+  return `<button class="row has-ico tap" data-action="entry" data-id="${e.id}">
+    <div class="ico ${e.kind}">${e.thumb ? `<img src="${e.thumb}" alt="">` : icon(KIND_ICON[e.kind] || 'food')}</div>
+    <div class="main"><div class="t">${esc(displayName(e))}</div><div class="s">${esc(sub)}</div></div>
+    <div class="end num">${end}</div></button>`;
+}
 function renderToday() {
-  const k = viewDate; const list = entriesOn(k); const tot = sumEntries(list); const dv = targets();
-  const kcalP = Math.min(1, tot.kcal / dv.kcal); const C = 2 * Math.PI * 56;
-  const left = dv.kcal - tot.kcal;
-  const macros = [['protein_g', 'var(--accent)'], ['carbs_g', 'var(--accent-2)'], ['fat_g', 'var(--green)'], ['water_ml', 'var(--blue)']].map(([key, col]) => {
-    const p = tot[key] / dv[key] * 100;
-    return `<div class="macro"><div class="top"><span>${L([NUT[key].vi, NUT[key].en])}</span><span><b>${fmtN(tot[key])}</b><span class="muted"> / ${fmtN(dv[key])}${NUT[key].unit}</span></span></div><div class="bar"><i style="width:${Math.min(100, p)}%;background:${col}"></i></div></div>`;
-  }).join('');
-  const doses = dosesFor(k); const nowT = hhmm(new Date()); const isToday = k === todayKey();
-  const doseHTML = doses.length ? `<div class="card fade-in"><h3>💊 ${t('doses')}<span class="right muted">${doses.filter(d => S.doses[d.key]).length}/${doses.length}</span></h3>
-    ${doses.map(d => {
+  const k = viewDate, isToday = k === todayKey();
+  const list = entriesOn(k), tot = sumEntries(list), dv = targets();
+  const budget = dv.kcal + tot.burned; const left = budget - tot.kcal;
+  const pct = Math.min(100, tot.kcal / budget * 100);
+  const greet = S.profile?.name ? `${t('hello')} ${esc(S.profile.name)} · ` : '';
+  const doses = dosesFor(k); const nowT = hhmm(new Date());
+  const detailed = S.settings.view === 'detailed';
+  const doseHTML = doses.length ? `<div class="section-title">${t('medsToday')}<span class="sub">${doses.filter(d => S.doses[d.key]).length}/${doses.length}</span></div>
+    <div class="list">${doses.map(d => {
       const takenId = S.doses[d.key]; const te = takenId && S.entries.find(e => e.id === takenId);
       const due = isToday && !takenId && d.time <= nowT;
-      return `<div class="dose ${due ? 'due' : ''}"><div class="t">${d.time}</div><div class="n"><b>${esc(displayName(d.c))}</b><span>${esc([d.c.brand, d.c.serving].filter(Boolean).join(' · '))}${due ? ` · <span style="color:var(--accent-2)">${t('dueNow')}</span>` : ''}</span></div>
-        ${takenId ? `<span class="done">✓ ${te ? hhmm(new Date(te.ts)) : t('taken')}</span>` : `<button class="btn small ${due ? 'primary' : ''}" data-action="takeDose" data-c="${d.c.id}" data-t="${d.time}">${t('take')}</button>`}</div>`;
+      return `<div class="row has-ico"><div class="ico ${d.c.kind}">${d.c.thumb ? `<img src="${d.c.thumb}" alt="">` : icon('pill')}</div>
+        <div class="main"><div class="t">${esc(displayName(d.c))}</div><div class="s">${d.time}${d.c.serving ? ' · ' + esc(d.c.serving) : ''}${due ? ` · <b style="color:var(--red)">${t('dueNow')}</b>` : ''}</div></div>
+        ${takenId ? `<div class="end" style="color:var(--green)">${icon('check')} ${te ? hhmm(new Date(te.ts)) : ''}</div>` : `<button class="btn small ${due ? 'primary' : ''}" data-action="takeDose" data-c="${d.c.id}" data-t="${d.time}">${t('take')}</button>`}</div>`;
     }).join('')}</div>` : '';
-  const entriesHTML = list.length ? list.map(e => {
-    const et = entryTotals(e);
-    return `<div class="entry" data-action="entry" data-id="${e.id}">
-      <div class="ico">${e.thumb ? `<img src="${e.thumb}" alt="">` : (KIND_ICON[e.kind] || '🍽')}</div>
-      <div class="body"><b>${esc(displayName(e))}</b><span>${hhmm(new Date(e.ts))} · ${fmtN(e.servings)} × ${esc(e.serving || '')}</span></div>
-      <div class="kc">${e.kind === 'medication' ? '<span>✓</span>' : `<b>${fmtN(et.kcal, 'kcal')}</b><span>kcal</span>`}</div></div>`;
-  }).join('') : `<div class="empty"><span class="e">🎙</span>${t('emptyLog')}</div>`;
 
   $('#view-today').innerHTML = `
-    <div class="date-nav">
-      <button class="icon-btn" data-action="day" data-d="-1">‹</button>
-      <div class="lbl" ${isToday ? '' : 'data-action="day" data-d="0"'}><div class="d">${dayLabel(k)}</div><div class="s">${keyToDate(k).toLocaleDateString(locale(), { day: 'numeric', month: 'long', year: 'numeric' })}${isToday ? '' : ` · <a class="link">${t('backToToday')}</a>`}</div></div>
-      <button class="icon-btn" data-action="day" data-d="1" ${isToday ? 'disabled' : ''}>›</button>
+    <div class="title-row">
+      <div><h1>${dayTitle(k)}</h1><div class="date">${greet}${keyToDate(k).toLocaleDateString(locale(), { day: 'numeric', month: 'long' })}</div>
+        ${isToday ? '' : `<button class="link-btn" data-action="day" data-d="0">${t('backToday')}</button>`}</div>
+      <div class="day-nav"><button class="round-btn" data-action="day" data-d="-1" aria-label="${t('yesterday')}">${icon('chevL')}</button><button class="round-btn" data-action="day" data-d="1" ${isToday ? 'disabled' : ''} aria-label="next">${icon('chevR')}</button></div>
     </div>
-    <div class="card fade-in">
-      <div class="summary">
-        <div class="ring-wrap">
-          <svg width="132" height="132" viewBox="0 0 132 132"><circle cx="66" cy="66" r="56" fill="none" stroke="var(--track)" stroke-width="11"/>
-            <circle class="ring-fg" cx="66" cy="66" r="56" fill="none" stroke="${tot.kcal > dv.kcal ? 'var(--red)' : 'url(#rg)'}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - kcalP)}"/>
-            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6A28"/><stop offset="1" stop-color="#FF9F1C"/></linearGradient></defs></svg>
-          <div class="ring-txt"><div class="big">${fmtN(tot.kcal, 'kcal')}</div><div class="sub">${t('of')} ${fmtN(dv.kcal, 'kcal')} kcal</div><div class="sub" style="color:${left < 0 ? 'var(--red)' : 'var(--text-3)'}">${fmtN(Math.abs(left), 'kcal')} ${left < 0 ? t('kcalOver') : t('kcalLeft')}</div></div>
-        </div>
-        <div>${macros}</div>
+    <div class="card">
+      <div class="cal-label">${left >= 0 ? t('calLeft') : t('calOver')}</div>
+      <div class="cal-big num"><b style="${left < 0 ? 'color:var(--red)' : ''}">${fmtN(Math.abs(left), 'kcal')}</b><span>kcal</span></div>
+      <div class="bigbar"><i style="width:${pct}%;${left < 0 ? 'background:var(--red)' : ''}"></i></div>
+      <div class="equation num">
+        <div><b>${fmtN(dv.kcal, 'kcal')}</b><span>${t('target')}</span></div>
+        <div><b>${fmtN(tot.kcal, 'kcal')}</b><span>${t('eaten')}</span></div>
+        <div><b>${tot.burned ? '+' + fmtN(tot.burned, 'kcal') : '0'}</b><span>${t('exercise')}</span></div>
       </div>
+    </div>
+    <div class="section-title">${t('mainNutrients')}</div>
+    <div class="card">
+      ${nutrientRow('protein_g', tot.protein_g, dv.protein_g, 'var(--bar-protein)')}
+      ${detailed ? nutrientRow('carbs_g', tot.carbs_g, dv.carbs_g, 'var(--bar-carbs)') + nutrientRow('fat_g', tot.fat_g, dv.fat_g, 'var(--bar-fat)') + nutrientRow('fiber_g', tot.fiber_g, dv.fiber_g) : ''}
+      ${nutrientRow('water_ml', tot.water_ml, dv.water_ml, 'var(--bar-water)')}
+      ${detailed ? nutrientRow('sugar_g', tot.sugar_g, dv.sugar_g) + nutrientRow('sodium_mg', tot.sodium_mg, dv.sodium_mg) : ''}
+      ${list.length ? insightHTML(tot, dv) : ''}
     </div>
     ${doseHTML}
-    <div class="card fade-in"><h3>📝 ${t('log')}<span class="right muted">${list.length} ${t(list.length === 1 ? 'item' : 'items')}</span></h3>${entriesHTML}</div>
-    <div class="card fade-in">
-      <div class="tabs-mini">
-        <button class="chip ${microTab === 'mineral' ? 'active' : ''}" data-action="microTab" data-g="mineral">${t('minerals')}</button>
-        <button class="chip ${microTab === 'vitamin' ? 'active' : ''}" data-action="microTab" data-g="vitamin">${t('vitamins')}</button>
-        <button class="chip ${microTab === 'macro' ? 'active' : ''}" data-action="microTab" data-g="macro">${t('macros')}</button>
-      </div>
-      <div class="nutr">${nutrientRows(tot, dv, microTab)}</div>
-      ${list.length ? insightHTML(tot, dv) : ''}
-    </div>`;
+    <div class="section-title">${isToday ? t('loggedToday') : t('logged')}<span class="sub">${list.length} ${t(list.length === 1 ? 'item' : 'items')}</span></div>
+    <div class="list">${list.length ? list.map(entryRow).join('') : `<div class="empty">${t('emptyLog')}</div>`}</div>
+    ${detailed ? vitMinHTML(tot, dv) : `<div class="list" style="margin-top:1rem"><button class="row tap" data-action="vitSheet"><div class="main"><div class="t">${t('seeVitMin')}</div></div><svg class="i chev" viewBox="0 0 24 24">${P.chevR}</svg></button></div>`}`;
 }
-
 function openEntry(id) {
   const e = S.entries.find(x => x.id === id); if (!e) return;
-  const et = entryTotals(e);
-  const rows = NUTRIENTS.filter(n => et[n.key] > 0).map(n => `<tr><td>${L([n.vi, n.en])}</td><td>${fmtN(et[n.key])} ${n.unit}</td></tr>`).join('');
+  const isEx = e.kind === 'exercise'; const et = entryTotals(e);
+  const rows = isEx ? '' : NUTRIENTS.filter(n => et[n.key] > 0).map(n => `<tr><td>${L([n.vi, n.en])}</td><td class="num">${fmtN(et[n.key])} ${n.unit}</td></tr>`).join('');
+  const stepLabel = isEx ? `${fmtN(e.minutes || 0)} ${t('min')}` : `${fmtN(e.servings)} ${t('servings')}`;
   openSheet(`
     <h2>${esc(displayName(e))}</h2>
-    <p class="lead">${esc([e.brand, e.serving].filter(Boolean).join(' · '))} · ${new Date(e.ts).toLocaleString(locale(), { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}</p>
-    <div class="row" style="justify-content:space-between"><span class="badge ${e.kind}">${t(e.kind)}</span>
-      <div class="stepper"><button data-action="eStep" data-id="${e.id}" data-d="-0.5">−</button><span>${fmtN(e.servings)}</span><button data-action="eStep" data-id="${e.id}" data-d="0.5">+</button></div></div>
-    ${e.assumptions ? `<div class="assume">${esc(e.assumptions)}</div>` : ''}
-    ${rows ? `<table class="ntable">${rows}</table>` : ''}
+    <p class="lead">${esc([L(T.kind[e.kind]), e.brand, isEx ? '' : e.serving].filter(Boolean).join(' · '))}<br>${new Date(e.ts).toLocaleString(locale(), { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'long' })}</p>
+    ${isEx ? `<div class="card" style="margin-bottom:0.75rem"><div class="cal-big num"><b>${fmtN(e.burned || 0, 'kcal')}</b><span>kcal ${t('burned')}</span></div></div>` : ''}
+    <div class="card" style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.75rem"><span>${isEx ? t('duration') : t('perServing') + ': ' + esc(e.serving || '')}</span>
+      <div class="stepper"><button data-action="eStep" data-id="${e.id}" data-d="-1">−</button><span>${stepLabel}</span><button data-action="eStep" data-id="${e.id}" data-d="1">+</button></div></div>
+    ${e.assumptions ? `<p class="sub" style="margin:0 0.2rem 0.75rem;font-size:0.95rem">${esc(e.assumptions)}</p>` : ''}
+    ${rows ? `<div class="card"><table class="ntable">${rows}</table></div>` : ''}
     <div class="actions"><button class="btn danger" data-action="eDel" data-id="${e.id}">${t('del')}</button><button class="btn primary" data-action="closeSheet">${t('done')}</button></div>`);
 }
 
 // =====================================================================
-// RENDER — HISTORY (weekly / monthly)
+// HISTORY (weekly / monthly)
 // =====================================================================
-let histMode = 'week'; let histAnchor = todayKey(); let histMetric = 'kcal';
+let histMode = 'week', histAnchor = todayKey(), histMetric = 'kcal';
 function periodRange() {
   const d = keyToDate(histAnchor);
-  if (histMode === 'week') {
-    const dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow);
-    return Array.from({ length: 7 }, (_, i) => addDays(dateKey(d), i));
-  }
+  if (histMode === 'week') { const dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow); return Array.from({ length: 7 }, (_, i) => addDays(dateKey(d), i)); }
   const y = d.getFullYear(), m = d.getMonth(); const n = new Date(y, m + 1, 0).getDate();
   return Array.from({ length: n }, (_, i) => dateKey(new Date(y, m, i + 1)));
 }
 function renderHistory() {
-  const days = periodRange(); const dv = targets(); const tk = todayKey();
+  const days = periodRange(), dv = targets(), tk = todayKey(), detailed = S.settings.view === 'detailed';
   const perDay = days.map(k => { const l = entriesOn(k); return { k, list: l, tot: sumEntries(l) }; });
-  const logged = perDay.filter(d => d.list.length);
-  const sum = zeroNutrients(); logged.forEach(d => NUTRIENT_KEYS.forEach(n => sum[n] += d.tot[n]));
-  const nLogged = Math.max(1, logged.length);
-  const avg = Object.fromEntries(NUTRIENT_KEYS.map(n => [n, sum[n] / nLogged]));
+  const logged = perDay.filter(d => d.list.length); const n = Math.max(1, logged.length);
+  const sum = zeroNutrients(); let exMin = 0;
+  logged.forEach(d => { NUTRIENT_KEYS.forEach(x => sum[x] += d.tot[x]); exMin += d.tot.exMin; });
+  const avg = Object.fromEntries(NUTRIENT_KEYS.map(x => [x, sum[x] / n]));
   let sched = 0, taken = 0;
   days.filter(k => k <= tk).forEach(k => dosesFor(k).forEach(d => { if ((d.c.createdAt || 0) < keyToDate(k).getTime() + 86400000) { sched++; if (S.doses[d.key]) taken++; } }));
-
-  const W = 340, H = 170, padB = 22, padT = 10; const bw = W / days.length;
-  const vals = perDay.map(d => d.tot[histMetric]); const target = dv[histMetric];
+  const metric = detailed ? histMetric : 'kcal';
+  const W = 320, H = 180, padB = 24, padT = 8, bw = W / days.length;
+  const target = dv[metric]; const vals = perDay.map(d => d.tot[metric]);
   const maxV = Math.max(target * 1.25, ...vals, 1);
   const y = (v) => H - padB - (v / maxV) * (H - padB - padT);
-  const meta = NUT[histMetric];
+  const meta = NUT[metric];
   const bars = perDay.map((d, i) => {
-    const v = d.tot[histMetric]; const x = i * bw + bw * 0.18; const w = bw * 0.64; const p = target ? v / target * 100 : 0;
-    const col = v === 0 ? 'var(--track)' : pctColor(p, meta.limit);
+    const v = d.tot[metric]; const x = i * bw + bw * 0.15, w = bw * 0.7; const p = target ? v / target * 100 : 0;
+    const st = statusOf(p, meta.limit);
+    const col = v === 0 ? 'var(--fill)' : metric === 'kcal' ? (p > 110 ? 'var(--red)' : 'var(--accent)') : statusColor(st === 'over' ? 'low' : st);
     const lbl = histMode === 'week' ? keyToDate(d.k).toLocaleDateString(locale(), { weekday: 'narrow' }) : ((i + 1) % 5 === 0 || i === 0 ? String(i + 1) : '');
-    return `<g class="bar-r" data-action="openDay" data-k="${d.k}"><rect x="${i * bw}" y="0" width="${bw}" height="${H}" fill="transparent"/>
-      <rect x="${x}" y="${y(v)}" width="${w}" height="${Math.max(v ? 2 : 0, H - padB - y(v))}" rx="${Math.min(4, w / 2)}" fill="${col}" ${d.k === tk ? 'stroke="var(--text)" stroke-width="1"' : ''}/>
-      <text x="${i * bw + bw / 2}" y="${H - 6}" text-anchor="middle" font-size="10" fill="var(--text-3)" font-family="Outfit">${lbl}</text></g>`;
+    return `<g data-action="openDay" data-k="${d.k}" style="cursor:pointer"><rect x="${i * bw}" y="0" width="${bw}" height="${H}" fill="transparent"/>
+      <rect x="${x}" y="${y(v)}" width="${w}" height="${Math.max(v ? 3 : 0, H - padB - y(v))}" rx="${Math.min(5, w / 2)}" fill="${col}"/>
+      <text x="${i * bw + bw / 2}" y="${H - 6}" text-anchor="middle" font-size="12" fill="var(--text-3)" font-weight="${d.k === tk ? 700 : 400}" font-family="-apple-system, sans-serif">${lbl}</text></g>`;
   }).join('');
   const label = histMode === 'week'
     ? `${keyToDate(days[0]).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })} – ${keyToDate(days[6]).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })}`
     : keyToDate(days[0]).toLocaleDateString(locale(), { month: 'long', year: 'numeric' });
-  const metrics = ['kcal', 'protein_g', 'fiber_g', 'sugar_g', 'sodium_mg', 'calcium_mg', 'iron_mg', 'magnesium_mg', 'vit_d_mcg', 'vit_c_mg', 'water_ml'];
-  const nextDisabled = days[days.length - 1] >= tk;
+  const metrics = ['kcal', 'protein_g', 'carbs_g', 'fat_g', 'fiber_g', 'sugar_g', 'sodium_mg', 'calcium_mg', 'iron_mg', 'magnesium_mg', 'potassium_mg', 'vit_d_mcg', 'vit_c_mg', 'vit_b12_mcg', 'water_ml'];
+  const pastDays = days.filter(k => k <= tk).length;
 
   $('#view-history').innerHTML = `
-    <div class="seg" style="margin-bottom:14px">
-      <button class="${histMode === 'week' ? 'active' : ''}" data-action="histMode" data-m="week">${t('week')}</button>
-      <button class="${histMode === 'month' ? 'active' : ''}" data-action="histMode" data-m="month">${t('month')}</button>
+    <div class="title-row"><div><h1>${t('tabHistory')}</h1></div></div>
+    <div class="seg" style="margin-bottom:1rem">
+      <button class="${histMode === 'week' ? 'on' : ''}" data-action="histMode" data-m="week">${t('week')}</button>
+      <button class="${histMode === 'month' ? 'on' : ''}" data-action="histMode" data-m="month">${t('month')}</button>
     </div>
-    <div class="date-nav">
-      <button class="icon-btn" data-action="histNav" data-d="-1">‹</button>
-      <div class="lbl"><div class="d" style="font-size:24px">${label}</div></div>
-      <button class="icon-btn" data-action="histNav" data-d="1" ${nextDisabled ? 'disabled' : ''}>›</button>
+    <div class="title-row" style="align-items:center;margin-top:0">
+      <button class="round-btn" data-action="histNav" data-d="-1">${icon('chevL')}</button>
+      <div style="font-size:1.2rem;font-weight:600;text-align:center">${label}</div>
+      <button class="round-btn" data-action="histNav" data-d="1" ${days[days.length - 1] >= tk ? 'disabled' : ''}>${icon('chevR')}</button>
     </div>
-    <div class="card fade-in">
-      <div class="chips-scroll">${metrics.map(m => `<button class="chip ${m === histMetric ? 'active' : ''}" data-action="histMetric" data-m="${m}">${L([NUT[m].vi, NUT[m].en])}</button>`).join('')}</div>
+    <div class="card">
+      ${detailed ? `<label class="f" style="margin-top:0">${t('show')}</label><select class="inp" id="metricSel" style="margin-bottom:0.75rem">${metrics.map(m => `<option value="${m}" ${m === metric ? 'selected' : ''}>${nName(m)}</option>`).join('')}</select>` : `<div style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem">${t('calPerDay')}</div>`}
       <div class="chart"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-        <line x1="0" x2="${W}" y1="${y(target)}" y2="${y(target)}" stroke="var(--text-3)" stroke-dasharray="4 4" stroke-width="1"/>
-        ${bars}</svg></div>
-      <div class="row muted" style="font-size:12px;justify-content:space-between;margin-top:6px"><span>- - ${meta.limit ? t('limit') : 'RDA'}: ${fmtN(target)} ${meta.unit}</span><span>${t('tapBar')}</span></div>
-      <div class="stat-grid">
-        <div class="stat"><b>${logged.length}<span style="font-size:16px" class="muted">/${days.filter(k => k <= tk).length}</span></b><span>${t('daysLogged')}</span></div>
-        <div class="stat"><b>${fmtN(avg.kcal, 'kcal')}</b><span>${t('avgKcal')}</span></div>
-        <div class="stat"><b>${sched ? Math.round(taken / sched * 100) + '%' : '—'}</b><span>💊 ${t('adherence')}</span></div>
-      </div>
+        <line x1="0" x2="${W}" y1="${y(target)}" y2="${y(target)}" stroke="var(--text-3)" stroke-dasharray="5 5" stroke-width="1.5"/>${bars}</svg></div>
+      <p class="sub" style="font-size:0.92rem;margin-top:0.4rem">${t('dashedLine')} ${t('tapBar')}</p>
     </div>
-    <div class="card fade-in">
-      <h3>${t('avgDay')}</h3>
-      <div class="tabs-mini">
-        <button class="chip ${microTab === 'mineral' ? 'active' : ''}" data-action="microTab" data-g="mineral">${t('minerals')}</button>
-        <button class="chip ${microTab === 'vitamin' ? 'active' : ''}" data-action="microTab" data-g="vitamin">${t('vitamins')}</button>
-        <button class="chip ${microTab === 'macro' ? 'active' : ''}" data-action="microTab" data-g="macro">${t('macros')}</button>
-      </div>
-      <div class="nutr">${nutrientRows(avg, dv, microTab)}</div>
-      ${logged.length ? insightHTML(sum, dv, nLogged) : ''}
-    </div>`;
+    <div class="list" style="margin-top:1rem">
+      <div class="row"><div class="main"><div class="t">${t('daysLogged')}</div></div><div class="end num"><b>${logged.length}</b>&nbsp;/ ${pastDays}</div></div>
+      <div class="row"><div class="main"><div class="t">${t('avgCal')}</div></div><div class="end num"><b>${fmtN(avg.kcal, 'kcal')}</b>&nbsp;kcal</div></div>
+      <div class="row"><div class="main"><div class="t">${t('avgEx')}</div></div><div class="end num"><b>${fmtN(exMin / n)}</b>&nbsp;${t('min')}</div></div>
+      <div class="row"><div class="main"><div class="t">${t('adherence')}</div></div><div class="end num"><b>${sched ? Math.round(taken / sched * 100) + '%' : '—'}</b></div></div>
+    </div>
+    <div class="section-title">${t('avgNutrients')}</div>
+    <div class="card">
+      ${nutrientRow('protein_g', avg.protein_g, dv.protein_g, 'var(--bar-protein)')}
+      ${detailed ? nutrientRow('carbs_g', avg.carbs_g, dv.carbs_g, 'var(--bar-carbs)') + nutrientRow('fat_g', avg.fat_g, dv.fat_g, 'var(--bar-fat)') + nutrientRow('fiber_g', avg.fiber_g, dv.fiber_g) + nutrientRow('sodium_mg', avg.sodium_mg, dv.sodium_mg) : nutrientRow('calcium_mg', avg.calcium_mg, dv.calcium_mg)}
+      ${nutrientRow('water_ml', avg.water_ml, dv.water_ml, 'var(--bar-water)')}
+      ${logged.length ? insightHTML(sum, dv, n) : ''}
+    </div>
+    ${detailed ? vitMinHTML(avg, dv) : ''}`;
+  const sel = $('#metricSel'); if (sel) sel.onchange = () => { histMetric = sel.value; renderHistory(); };
 }
 
 // =====================================================================
-// RENDER — CABINET
+// MEDICINES (cabinet)
 // =====================================================================
-function renderCabinet() {
-  const items = S.cabinet.map(c => {
-    const micro = microChips(c.nutrients, 1);
-    return `<div class="cab">
-      <div class="ico">${c.thumb ? `<img src="${c.thumb}" alt="">` : (KIND_ICON[c.kind] || '💊')}</div>
-      <div class="body"><b>${esc(displayName(c))}</b><span>${esc([c.brand, c.serving].filter(Boolean).join(' · '))}</span><br>
-        <span>⏰ ${c.times && c.times.length ? c.times.join(', ') : t('noTimes')}</span>
-        ${micro ? `<div class="micro-chips">${micro}</div>` : ''}</div>
-      <div class="acts"><button class="btn small primary" data-action="cabLog" data-c="${c.id}">${t('logNow')}</button><button class="btn small" data-action="cabEdit" data-c="${c.id}">${t('edit')}</button></div>
-    </div>`;
-  }).join('');
+function renderMeds() {
+  const items = S.cabinet.map(c => `<div class="row has-ico">
+      <div class="ico ${c.kind}">${c.thumb ? `<img src="${c.thumb}" alt="">` : icon('pill')}</div>
+      <div class="main"><div class="t">${esc(displayName(c))}</div><div class="s">${esc([c.brand, c.serving].filter(Boolean).join(' · '))}</div>
+        <div class="s">${c.times && c.times.length ? `${t('remindAt')} ${c.times.join(', ')}` : t('noReminder')}</div></div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem"><button class="btn small primary" data-action="cabLog" data-c="${c.id}">${t('logNow')}</button><button class="btn small" data-action="cabEdit" data-c="${c.id}">${t('edit')}</button></div>
+    </div>`).join('');
   const hasTimes = S.cabinet.some(c => c.times && c.times.length);
-  $('#view-cabinet').innerHTML = `
-    <div class="card fade-in">
-      <h3>💊 ${t('cabinet')}</h3>
-      <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:14px">${t('cabLead')}</p>
-      <div class="row" style="margin-bottom:16px"><button class="btn primary" style="flex:1" data-action="photo">${t('scanBottle')}</button><button class="btn" style="flex:1" data-action="cabEdit" data-c="">${t('addManual')}</button></div>
-      ${items || `<div class="empty"><span class="e">🧴</span>${t('emptyCab')}</div>`}
+  $('#view-meds').innerHTML = `
+    <div class="title-row"><div><h1>${t('tabMeds')}</h1></div></div>
+    <p style="font-size:1.02rem;margin:0 0.25rem 1rem;line-height:1.5;color:var(--text-2)">${t('medsLead')}</p>
+    <div class="btn-row" style="margin-bottom:1rem"><button class="btn primary" data-action="photo">${icon('camera')} ${t('scanBottle')}</button><button class="btn" data-action="cabEdit" data-c="">${t('addManual')}</button></div>
+    <div class="list">${items || `<div class="empty">${t('emptyMeds')}</div>`}</div>
+    <div class="section-title">${t('reminders')}</div>
+    <div class="card">
+      <p style="font-size:1rem;line-height:1.5;margin-bottom:0.85rem;color:var(--text-2)">${t('icsLead')}</p>
+      <button class="btn block" data-action="ics" ${hasTimes ? '' : 'disabled'}>${t('icsBtn')}</button>
     </div>
-    <div class="card fade-in">
-      <h3>⏰ ${t('reminders')}</h3>
-      <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:12px">${t('icsLead')}</p>
-      <button class="btn block" data-action="ics" ${hasTimes ? '' : 'disabled style="opacity:.4"'}>📆 ${t('icsBtn')}</button>
-      <div class="switch" style="margin-top:12px"><div>${t('notifyInApp')}<small>${t('notifyInAppSub')}</small></div><button class="tgl ${S.settings.notify ? 'on' : ''}" data-action="notifyToggle"></button></div>
-    </div>`;
+    <div class="list" style="margin-top:0.75rem"><div class="row"><div class="main"><div class="t">${t('notifyInApp')}</div></div><button class="switch ${S.settings.notify ? 'on' : ''}" data-action="notifyToggle" aria-label="${t('notifyInApp')}"></button></div></div>`;
 }
 function openCabEdit(id) {
   const c = id ? S.cabinet.find(x => x.id === id) : null;
-  const presets = SUPPLEMENTS.map(p => `<option value="${p.id}">${esc(L([p.vi, p.en]))}</option>`).join('');
+  const kind = c ? c.kind : 'supplement';
   openSheet(`
-    <h2>${c ? t('edit') : t('addManual').replace('+ ', '')}</h2>
-    <label class="f">${t('type')}</label>
-    <div class="seg" id="cKind"><button class="${!c || c.kind === 'supplement' ? 'active' : ''}" data-action="segPick" data-v="supplement">${t('supplement')}</button><button class="${c && c.kind === 'medication' ? 'active' : ''}" data-action="segPick" data-v="medication">${t('medication')}</button></div>
-    ${c ? '' : `<label class="f">${t('preset')}</label><select class="inp" id="cPreset"><option value="">${t('none')}</option>${presets}</select>`}
+    <h2>${c ? t('edit') : t('addManual')}</h2>
+    <label class="f">${t('kindLabel')}</label>
+    <div class="seg" id="cKind"><button class="${kind === 'supplement' ? 'on' : ''}" data-action="segPick" data-v="supplement">${L(T.kind.supplement)}</button><button class="${kind === 'medication' ? 'on' : ''}" data-action="segPick" data-v="medication">${L(T.kind.medication)}</button></div>
+    ${c ? '' : `<label class="f">${t('preset')}</label><select class="inp" id="cPreset"><option value="">${t('none')}</option>${SUPPLEMENTS.map(p => `<option value="${p.id}">${esc(L([p.vi, p.en]))}</option>`).join('')}</select>`}
     <label class="f">${t('name')}</label><input class="inp" id="cName" value="${esc(c ? displayName(c) : '')}">
     <label class="f">${t('brand')}</label><input class="inp" id="cBrand" value="${esc(c?.brand || '')}">
     <label class="f">${t('serving')}</label><input class="inp" id="cServing" value="${esc(c?.serving || (currentLang === 'vi' ? '1 viên' : '1 tablet'))}">
-    <label class="f">${t('times')}</label><input class="inp" id="cTimes" placeholder="08:00, 21:00" value="${esc((c?.times || []).join(', '))}">
+    <label class="f">${t('timesLabel')}</label><input class="inp" id="cTimes" placeholder="08:00, 21:00" value="${esc((c?.times || []).join(', '))}">
     <div class="actions">${c ? `<button class="btn danger" data-action="cabDel" data-c="${c.id}">${t('del')}</button>` : `<button class="btn" data-action="closeSheet">${t('cancel')}</button>`}
-      <button class="btn primary" data-action="cabSave" data-c="${c ? c.id : ''}">${t('saveBtn')}</button></div>`);
+      <button class="btn primary" data-action="cabSave" data-c="${c ? c.id : ''}">${t('save')}</button></div>`);
   const sel = $('#cPreset');
-  if (sel) sel.onchange = () => {
-    const p = SUPPLEMENTS.find(x => x.id === sel.value); if (!p) return;
-    $('#cName').value = L([p.vi, p.en]); $('#cServing').value = L([p.serving.vi, p.serving.en]);
-  };
+  if (sel) sel.onchange = () => { const p = SUPPLEMENTS.find(x => x.id === sel.value); if (p) { $('#cName').value = L([p.vi, p.en]); $('#cServing').value = L([p.serving.vi, p.serving.en]); } };
 }
 function saveCab(id) {
-  const kind = $('#cKind .active')?.dataset.v || 'supplement';
+  const kind = $('#cKind .on')?.dataset.v || 'supplement';
   const name = $('#cName').value.trim(); if (!name) { $('#cName').focus(); return; }
   const times = $('#cTimes').value.split(/[,\s]+/).map(s => s.trim()).filter(Boolean)
-    .map(s => { const m = s.match(/^(\d{1,2})(?::|h)?(\d{2})?$/); return m ? `${pad(Math.min(23, +m[1]))}:${pad(Math.min(59, +(m[2] || 0)))}` : null; }).filter(Boolean);
+    .map(s => { const m = s.match(/^(\d{1,2})(?::|h|\.)?(\d{2})?$/); return m ? `${pad(Math.min(23, +m[1]))}:${pad(Math.min(59, +(m[2] || 0)))}` : null; }).filter(Boolean);
   const preset = SUPPLEMENTS.find(x => x.id === $('#cPreset')?.value);
   if (id) {
     const c = S.cabinet.find(x => x.id === id);
@@ -1131,75 +1209,198 @@ function saveCab(id) {
 }
 
 // =====================================================================
-// RENDER — SETTINGS
+// PROFILE
 // =====================================================================
-function renderSettings() {
-  const dv = targets();
-  $('#view-settings').innerHTML = `
-    <div class="card fade-in">
-      <h3>🎯 ${t('profile')}</h3>
-      <label class="f" style="margin-top:0">${t('sex')}</label>
-      <div class="seg"><button class="${S.settings.sex === 'female' ? 'active' : ''}" data-action="sex" data-v="female">${t('female')}</button><button class="${S.settings.sex === 'male' ? 'active' : ''}" data-action="sex" data-v="male">${t('male')}</button></div>
-      <label class="f">${t('kcalTarget')}</label>
-      <input class="inp" id="kcalInp" type="number" inputmode="numeric" min="800" max="6000" value="${dv.kcal}">
+function profileValue(f) {
+  const p = S.profile || DEFAULT_PROFILE;
+  switch (f) {
+    case 'name': return esc(p.name || '—');
+    case 'sex': return t(p.sex === 'male' ? 'male' : 'female');
+    case 'age': return `${p.age} ${t('years')}`;
+    case 'height_cm': return `${p.height_cm} cm`;
+    case 'weight_kg': return `${p.weight_kg} kg`;
+    case 'activity': return L(ACTIVITY[p.activity]?.t);
+    case 'goal': return L(GOALS[p.goal]?.t);
+  }
+  return '';
+}
+function targetsListHTML(dv) {
+  const row = (label, val) => `<div class="row"><div class="main"><div class="t">${label}</div></div><div class="end num"><b>${val}</b></div></div>`;
+  return row(t('calories'), `${fmtN(dv.kcal, 'kcal')} kcal`) + row(nName('protein_g'), `${dv.protein_g} g`) +
+    row(nName('carbs_g'), `${dv.carbs_g} g`) + row(nName('fat_g'), `${dv.fat_g} g`) +
+    row(nName('water_ml'), `${(dv.water_ml / 1000).toLocaleString(locale())} ${t('liters')}`) +
+    row(nName('calcium_mg'), `${fmtN(dv.calcium_mg)} mg`) + row(nName('vit_d_mcg'), `${dv.vit_d_mcg} µg`) + row(nName('fiber_g'), `${dv.fiber_g} g`);
+}
+function renderProfile() {
+  const p = S.profile || DEFAULT_PROFILE; const dv = targets();
+  const fieldRow = (f, label) => `<button class="row tap" data-action="editField" data-f="${f}"><div class="main"><div class="t">${label}</div></div><div class="value">${profileValue(f)}</div><svg class="i chev" viewBox="0 0 24 24">${P.chevR}</svg></button>`;
+  const segRow = (label, key, opts) => `<div class="row" style="flex-direction:column;align-items:stretch;gap:0.55rem"><div class="t" style="font-size:1.05rem;font-weight:500">${label}</div>
+    <div class="seg">${opts.map(([v, l]) => `<button class="${S.settings[key] === v ? 'on' : ''}" data-action="setSetting" data-k="${key}" data-v="${v}">${l}</button>`).join('')}</div></div>`;
+  const aiTxt = aiState.ok === null ? t('aiChecking') : aiState.ok ? t('aiOn') : `${t('aiOff')}: ${aiState.reason}`;
+  $('#view-profile').innerHTML = `
+    <div class="title-row"><div><h1>${p.name ? esc(p.name) : t('profile')}</h1><div class="date">${profileValue('age')} · ${profileValue('sex')}</div></div></div>
+    <div class="section-title">${t('aboutYou')}</div>
+    <div class="list">${fieldRow('name', t('name'))}${fieldRow('sex', t('sex'))}${fieldRow('age', t('age'))}${fieldRow('height_cm', t('height'))}${fieldRow('weight_kg', t('weight'))}${fieldRow('activity', t('activity'))}${fieldRow('goal', t('goal'))}</div>
+    <div class="section-title">${t('dailyTargets')}</div>
+    <div class="list">${targetsListHTML(dv)}
+      <button class="row tap" data-action="editField" data-f="kcalOverride"><div class="main"><div class="t">${t('ownKcal')}</div></div><div class="value">${S.settings.kcalOverride ? fmtN(S.settings.kcalOverride, 'kcal') + ' kcal' : t('auto')}</div><svg class="i chev" viewBox="0 0 24 24">${P.chevR}</svg></button></div>
+    <p class="sub" style="font-size:0.92rem;margin:0.5rem 0.5rem 0;line-height:1.45">${t('targetsHow')}</p>
+    <div class="section-title">${t('display')}</div>
+    <div class="list">
+      ${segRow(t('textSize'), 'textSize', [['m', t('sizeM')], ['l', t('sizeL')], ['xl', t('sizeXL')]])}
+      ${segRow(t('viewMode'), 'view', [['simple', t('simple')], ['detailed', t('detailed')]])}
+      ${segRow(t('appearance'), 'theme', [['auto', t('themeAuto')], ['light', t('themeLight')], ['dark', t('themeDark')]])}
+      <div class="row" style="flex-direction:column;align-items:stretch;gap:0.55rem"><div class="t" style="font-size:1.05rem;font-weight:500">${t('language')}</div>
+        <div class="seg"><button class="${currentLang === 'vi' ? 'on' : ''}" data-action="lang" data-lang="vi">Tiếng Việt</button><button class="${currentLang === 'en' ? 'on' : ''}" data-action="lang" data-lang="en">English</button></div></div>
+      <div class="row"><div class="main"><div class="t">${t('quickLog')}</div></div><button class="switch ${S.settings.autoLog ? 'on' : ''}" data-action="autoLog" aria-label="${t('quickLog')}"></button></div>
     </div>
-    <div class="card fade-in">
-      <div class="switch"><div>${t('autoLog')}<small>${t('autoLogSub')}</small></div><button class="tgl ${S.settings.autoLog ? 'on' : ''}" data-action="autoLog"></button></div>
-      <div class="switch"><div>${t('theme')}</div><button class="tgl ${document.body.classList.contains('light-mode') ? 'on' : ''}" data-action="theme"></button></div>
-      <label class="f">${t('accessCode')}</label>
-      <input class="inp" id="codeInp" type="password" autocomplete="off" value="${esc(S.settings.accessCode)}">
+    <div class="section-title">${t('aiTitle')}</div>
+    <div class="list">
+      <div class="row"><div class="main"><div class="t">${t('aiTitle')}</div><div class="s" style="color:${aiState.ok ? 'var(--green)' : aiState.ok === false ? 'var(--red)' : 'var(--text-3)'}">${esc(aiTxt)}</div></div><button class="btn small" data-action="aiRecheck">${t('aiRecheck')}</button></div>
+      <div class="row" style="flex-direction:column;align-items:stretch"><div class="t" style="font-size:1rem">${t('accessCode')}</div><input class="inp" id="codeInp" type="password" autocomplete="off" value="${esc(S.settings.accessCode)}" style="margin-top:0.5rem"></div>
     </div>
-    <div class="card fade-in">
-      <h3>📲 ${t('install')}</h3>
-      <p class="install-tip">${t('installTip')}</p>
+    <div class="section-title">${t('install')}</div>
+    <div class="card"><p style="font-size:1rem;line-height:1.55;color:var(--text-2)">${t('installTip')}</p></div>
+    <div class="section-title">${t('data')}</div>
+    <div class="list">
+      <button class="row tap" data-action="exportJson"><div class="main"><div class="t" style="color:var(--accent)">${t('exportJson')}</div></div></button>
+      <button class="row tap" data-action="exportCsv"><div class="main"><div class="t" style="color:var(--accent)">${t('exportCsv')}</div></div></button>
+      <button class="row tap" data-action="importJson"><div class="main"><div class="t" style="color:var(--accent)">${t('importJson')}</div></div></button>
+      <button class="row tap" data-action="redoSetup"><div class="main"><div class="t" style="color:var(--accent)">${t('redoSetup')}</div></div></button>
+      <button class="row tap" data-action="wipe"><div class="main"><div class="t" style="color:var(--red)">${t('wipe')}</div></div></button>
     </div>
-    <div class="card fade-in">
-      <h3>🗂 ${t('data')}</h3>
-      <div class="row" style="flex-wrap:wrap;gap:8px">
-        <button class="btn small" data-action="exportJson">${t('exportJson')}</button>
-        <button class="btn small" data-action="exportCsv">${t('exportCsv')}</button>
-        <button class="btn small" data-action="importJson">${t('importJson')}</button>
-        <button class="btn small danger" data-action="wipe">${t('wipe')}</button>
-      </div>
-      <p class="muted" style="font-size:12px;line-height:1.5;margin-top:12px">🔒 ${t('privacy')}</p>
-    </div>
-    <p class="faint" style="text-align:center;font-size:12px;margin:8px 0 20px"><a class="link" href="/">NomNom</a> · Chuyên gia dinh dưỡng cho tất cả.</p>`;
-  $('#kcalInp').onchange = (e) => { S.settings.kcal = Number(e.target.value) || null; save(); };
-  $('#codeInp').onchange = (e) => { S.settings.accessCode = e.target.value.trim(); save(); };
+    <p class="sub" style="font-size:0.92rem;margin:0.75rem 0.5rem 1rem;line-height:1.45">${t('privacy')}</p>`;
+  $('#codeInp').onchange = (e) => { S.settings.accessCode = e.target.value.trim(); save(); checkAI(); };
+}
+function optionList(name, opts, current) {
+  return opts.map(([v, title, desc]) => `<button class="opt ${String(current) === String(v) ? 'on' : ''}" data-action="pickOpt" data-name="${name}" data-v="${v}">
+    <span class="radio"></span><span><div class="ot">${title}</div>${desc ? `<div class="od">${desc}</div>` : ''}</span></button>`).join('');
+}
+const activityOpts = () => Object.entries(ACTIVITY).map(([k, v]) => [k, L(v.t), L(v.d)]);
+const goalOpts = () => Object.entries(GOALS).map(([k, v]) => [k, L(v.t), L(v.s)]);
+function openFieldEdit(f) {
+  const p = S.profile || { ...DEFAULT_PROFILE };
+  const num = (unit, val) => `<div class="unit-inp"><input class="inp" id="fInp" type="number" inputmode="decimal" value="${esc(val ?? '')}"><span>${unit}</span></div>`;
+  const titles = { name: t('name'), sex: t('sex'), age: t('age'), height_cm: t('height'), weight_kg: t('weight'), activity: t('activity'), goal: t('goal'), kcalOverride: t('ownKcal') };
+  let body = '';
+  if (f === 'name') body = `<input class="inp" id="fInp" value="${esc(p.name || '')}" autocomplete="given-name">`;
+  else if (f === 'sex') body = optionList('fOpt', [['female', t('female')], ['male', t('male')]], p.sex);
+  else if (f === 'age') body = num(t('years'), p.age);
+  else if (f === 'height_cm') body = num('cm', p.height_cm);
+  else if (f === 'weight_kg') body = num('kg', p.weight_kg);
+  else if (f === 'activity') body = optionList('fOpt', activityOpts(), p.activity);
+  else if (f === 'goal') body = optionList('fOpt', goalOpts(), p.goal);
+  else if (f === 'kcalOverride') body = `<p class="lead">${t('autoHint')}: ${fmtN(targetsFor(S.profile, null).kcal, 'kcal')} kcal.</p>${num('kcal', S.settings.kcalOverride || '')}`;
+  openSheet(`<h2>${titles[f]}</h2>${body}<div class="err hidden" id="fErr"></div>
+    <div class="actions"><button class="btn" data-action="closeSheet">${t('cancel')}</button><button class="btn primary" data-action="saveField" data-f="${f}">${t('save')}</button></div>`);
+  setTimeout(() => $('#fInp')?.focus(), 350);
+}
+function saveField(f) {
+  const p = S.profile || { ...DEFAULT_PROFILE };
+  const v = $('#fInp')?.value; const opt = $('#sheet .opt.on')?.dataset.v;
+  const bad = (msg) => { const e = $('#fErr'); e.textContent = msg; e.classList.remove('hidden'); };
+  if (f === 'name') p.name = v.trim();
+  else if (f === 'sex' || f === 'activity' || f === 'goal') { if (opt) p[f] = opt; }
+  else if (f === 'age') { const n = Math.round(+v); if (!(n >= 10 && n <= 110)) return bad(t('errAge')); p.age = n; }
+  else if (f === 'height_cm') { const n = +v; if (!(n >= 100 && n <= 230)) return bad(t('errHeight')); p.height_cm = Math.round(n); }
+  else if (f === 'weight_kg') { const n = +v; if (!(n >= 25 && n <= 250)) return bad(t('errWeight')); p.weight_kg = Math.round(n * 10) / 10; }
+  else if (f === 'kcalOverride') { const n = Math.round(+v); S.settings.kcalOverride = n >= 800 && n <= 6000 ? n : null; }
+  S.profile = p; save(); closeSheet(); renderAll(); toast(t('saved'));
 }
 
-function exportCsv() {
-  const head = ['date', 'time', 'kind', 'name', 'brand', 'servings', 'serving', 'source', ...NUTRIENT_KEYS];
-  const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const rows = [...S.entries].sort((a, b) => a.ts - b.ts).map(e => {
-    const d = new Date(e.ts); const et = entryTotals(e);
-    return [dateKey(d), hhmm(d), e.kind, displayName(e), e.brand, e.servings, e.serving, e.source, ...NUTRIENT_KEYS.map(k => Math.round(et[k] * 100) / 100)].map(q).join(',');
-  });
-  shareOrDownload([head.join(','), ...rows].join('\n'), `nomnom-log-${todayKey()}.csv`, 'text/csv');
+// =====================================================================
+// ONBOARDING — profile is created on first launch
+// =====================================================================
+const onb = { step: 0, d: null, err: '' };
+const ONB_STEPS = 6;
+function startOnboarding() {
+  const u = authUser();
+  onb.d = { ...DEFAULT_PROFILE, age: '', height_cm: '', weight_kg: '', name: (u && u.name) || '', ...landingProfile(), ...(S.profile || {}) };
+  onb.step = 0; onb.err = '';
+  $('#onb').classList.remove('hidden');
+  renderOnb();
+}
+function renderOnb() {
+  const d = onb.d, s = onb.step;
+  const steps = `<div class="steps" aria-label="${t('step')} ${s + 1}/${ONB_STEPS}">${Array.from({ length: ONB_STEPS }, (_, i) => `<i class="${i <= s ? 'on' : ''}"></i>`).join('')}</div>`;
+  const numInp = (id, unit, val, mode = 'numeric') => `<div class="unit-inp"><input class="inp" id="${id}" type="number" inputmode="${mode}" value="${esc(val)}"><span>${unit}</span></div>`;
+  let body = '';
+  if (s === 0) body = `<div class="brand">NomNom</div><h1>${t('welcome')}</h1><p class="lead">${t('welcomeLead')}</p>
+      ${optionList('lang', [['vi', 'Tiếng Việt'], ['en', 'English']], currentLang)}`;
+  if (s === 1) body = `<h1>${t('aboutTitle')}</h1><p class="lead">${t('aboutLead')}</p>
+      <label class="f">${t('yourName')}</label><input class="inp" id="oName" value="${esc(d.name)}" autocomplete="given-name">
+      <label class="f">${t('sex')}</label>${optionList('sex', [['female', t('female')], ['male', t('male')]], d.sex)}
+      <label class="f">${t('age')}</label>${numInp('oAge', t('years'), d.age)}`;
+  if (s === 2) body = `<h1>${t('bodyTitle')}</h1><p class="lead">${t('bodyLead')}</p>
+      <label class="f">${t('height')}</label>${numInp('oHeight', 'cm', d.height_cm)}
+      <label class="f">${t('weight')}</label>${numInp('oWeight', 'kg', d.weight_kg, 'decimal')}`;
+  if (s === 3) body = `<h1>${t('actTitle')}</h1><p class="lead">${t('aboutLead')}</p>${optionList('activity', activityOpts(), d.activity)}
+      <h1 style="font-size:1.5rem;margin-top:1.5rem">${t('goalTitle')}</h1>${optionList('goal', goalOpts(), d.goal)}`;
+  if (s === 4) {
+    const cur = SIZE_SCALE[S.settings.textSize] || 1;
+    body = `<h1>${t('displayTitle')}</h1><p class="lead">${t('displayLead')}</p>
+      ${[['m', t('sizeM')], ['l', t('sizeL')], ['xl', t('sizeXL')]].map(([v, l]) => `<button class="opt ${S.settings.textSize === v ? 'on' : ''}" data-action="pickOpt" data-name="textSize" data-v="${v}">
+        <span class="radio"></span><span><div class="ot">${l}</div><div class="size-sample" style="font-size:${(SIZE_SCALE[v] / cur).toFixed(3)}rem">${t('sampleText')}</div></span></button>`).join('')}
+      <h1 style="font-size:1.5rem;margin-top:1.5rem">${t('viewMode')}</h1>
+      ${optionList('view', [['simple', t('simple'), t('simpleDesc')], ['detailed', t('detailed'), t('detailedDesc')]], S.settings.view)}`;
+  }
+  if (s === 5) {
+    body = `<h1>${t('doneTitle')}</h1><p class="lead">${t('doneLead')}</p><div class="list">${targetsListHTML(targetsFor(d, null))}</div>
+      <p class="sub" style="font-size:0.92rem;margin:0.6rem 0.4rem 0;line-height:1.45">${t('targetsHow')}</p>`;
+  }
+  $('#onb').innerHTML = `<div class="onb-inner">${steps}${body}${onb.err ? `<div class="err">${esc(onb.err)}</div>` : ''}</div>
+    <div class="onb-foot"><div class="btn-row">${s > 0 ? `<button class="btn" data-action="onbBack">${t('back')}</button>` : ''}<button class="btn primary" data-action="onbNext">${s === ONB_STEPS - 1 ? t('start') : t('next')}</button></div></div>`;
+  $('#onb').scrollTop = 0;
+}
+function onbCollect() {
+  const d = onb.d;
+  if ($('#oName')) d.name = $('#oName').value.trim();
+  if ($('#oAge')) d.age = $('#oAge').value;
+  if ($('#oHeight')) d.height_cm = $('#oHeight').value;
+  if ($('#oWeight')) d.weight_kg = $('#oWeight').value;
+}
+function onbNext() {
+  onbCollect(); const d = onb.d; onb.err = '';
+  if (onb.step === 1 && !(+d.age >= 10 && +d.age <= 110)) onb.err = t('errAge');
+  if (onb.step === 2 && !(+d.height_cm >= 100 && +d.height_cm <= 230)) onb.err = t('errHeight');
+  else if (onb.step === 2 && !(+d.weight_kg >= 25 && +d.weight_kg <= 250)) onb.err = t('errWeight');
+  if (onb.err) { renderOnb(); return; }
+  if (onb.step < ONB_STEPS - 1) { onb.step++; renderOnb(); return; }
+  S.profile = { name: d.name, sex: d.sex, age: Math.round(+d.age), height_cm: Math.round(+d.height_cm), weight_kg: Math.round(+d.weight_kg * 10) / 10,
+    activity: d.activity, goal: d.goal, createdAt: S.profile?.createdAt || Date.now() };
+  save();
+  $('#onb').classList.add('hidden');
+  setTab('today');
 }
 
 // =====================================================================
 // ROUTING + ACTIONS
 // =====================================================================
+function renderChrome() {
+  $('#dockSpeak').innerHTML = `${icon('mic')} ${t('speak')}`;
+  $('#dockPhoto').textContent = t('photo');
+  $('#dockType').textContent = t('type');
+  const tabs = { today: ['today', 'tabToday'], history: ['chart', 'tabHistory'], meds: ['pill', 'tabMeds'], profile: ['person', 'tabProfile'] };
+  document.querySelectorAll('.tabbar button').forEach(b => { const [ic, lbl] = tabs[b.dataset.tab]; b.innerHTML = `${icon(ic)}<span>${t(lbl)}</span>`; b.classList.toggle('on', b.dataset.tab === currentTab); });
+}
 function renderAll() {
-  applyStaticLang(); renderAIPill();
+  applyDisplay(); renderChrome();
   if (currentTab === 'today') renderToday();
   if (currentTab === 'history') renderHistory();
-  if (currentTab === 'cabinet') renderCabinet();
-  if (currentTab === 'settings') renderSettings();
+  if (currentTab === 'meds') renderMeds();
+  if (currentTab === 'profile') renderProfile();
 }
 function setTab(tab) {
   currentTab = tab;
-  ['today', 'history', 'cabinet', 'settings'].forEach(x => $(`#view-${x}`).classList.toggle('hidden', x !== tab));
-  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  ['today', 'history', 'meds', 'profile'].forEach(x => $(`#view-${x}`).classList.toggle('hidden', x !== tab));
   window.scrollTo({ top: 0 });
   renderAll();
 }
+function setLang(l) { currentLang = l; localStorage.setItem('nomnom.lang', l); }
 
 const actions = {
   tab: (el) => setTab(el.dataset.tab),
-  lang: (el) => { currentLang = el.dataset.lang; localStorage.setItem('nomnom.lang', currentLang); renderAll(); },
-  aiInfo: () => openSheet(`<h2>${aiConfigured ? '✨ AI' : '📴 Offline'}</h2><p class="lead">${aiConfigured ? t('aiOnInfo') : t('aiOffInfo')}</p><div class="actions"><button class="btn primary" data-action="closeSheet">OK</button></div>`),
+  lang: (el) => { setLang(el.dataset.lang); renderAll(); },
   closeSheet: () => closeSheet(),
   record: () => startRecord(),
   recStop: () => { if (rec) try { rec.stop(); } catch {} },
@@ -1209,14 +1410,24 @@ const actions = {
   composerSend: () => { const v = $('#composer').value.trim(); if (v) submitText(v); else $('#composer').focus(); },
   photo: () => { $('#photoInput').value = ''; $('#photoInput').click(); },
   photoSend: () => submitPhoto($('#photoNote')?.value.trim() || ''),
-  rStep: (el) => { const it = reviewItems[+el.dataset.i]; it.servings = Math.max(0.5, Math.round((it.servings + Number(el.dataset.d)) * 2) / 2); syncReviewTimes(); renderReview(); },
+  rStep: (el) => {
+    syncReviewTimes(); const it = reviewItems[+el.dataset.i]; const d = Number(el.dataset.d);
+    if (it.kind === 'exercise') { const nm = Math.max(5, it.minutes + d * 5); it.burned = it.minutes ? Math.round(it.burned * nm / it.minutes) : it.burned; it.minutes = nm; }
+    else it.servings = Math.max(0.5, Math.round((it.servings + d * 0.5) * 2) / 2);
+    renderReview();
+  },
   rDel: (el) => { syncReviewTimes(); reviewItems.splice(+el.dataset.i, 1); reviewItems.length ? renderReview() : closeSheet(); },
   rCab: (el) => { reviewItems[+el.dataset.i]._toCabinet = el.checked; },
   commit: () => commitReview(),
-  day: (el) => { const d = Number(el.dataset.d); viewDate = d === 0 ? todayKey() : addDays(viewDate, d); if (viewDate > todayKey()) viewDate = todayKey(); renderToday(); },
-  microTab: (el) => { microTab = el.dataset.g; renderAll(); },
+  day: (el) => { const d = Number(el.dataset.d); viewDate = d === 0 ? todayKey() : addDays(viewDate, d); if (viewDate > todayKey()) viewDate = todayKey(); renderToday(); window.scrollTo({ top: 0 }); },
+  vitSheet: () => { const tot = sumEntries(entriesOn(viewDate)); openSheet(`<h2>${t('vitMin')}</h2>${vitMinHTML(tot, targets())}<div class="actions"><button class="btn primary" data-action="closeSheet">${t('done')}</button></div>`); },
   entry: (el) => openEntry(el.dataset.id),
-  eStep: (el) => { const e = S.entries.find(x => x.id === el.dataset.id); e.servings = Math.max(0.5, Math.round((e.servings + Number(el.dataset.d)) * 2) / 2); save(); renderAll(); openEntry(e.id); },
+  eStep: (el) => {
+    const e = S.entries.find(x => x.id === el.dataset.id); const d = Number(el.dataset.d);
+    if (e.kind === 'exercise') { const nm = Math.max(5, (e.minutes || 30) + d * 5); e.burned = e.minutes ? Math.round((e.burned || 0) * nm / e.minutes) : e.burned; e.minutes = nm; }
+    else e.servings = Math.max(0.5, Math.round((e.servings + d * 0.5) * 2) / 2);
+    save(); renderAll(); openEntry(e.id);
+  },
   eDel: (el) => {
     const e = S.entries.find(x => x.id === el.dataset.id); if (!e) return;
     const doseKeys = Object.keys(S.doses).filter(k => S.doses[k] === e.id);
@@ -1231,36 +1442,50 @@ const actions = {
     if (histMode === 'week') d.setDate(d.getDate() + 7 * n); else { d.setDate(1); d.setMonth(d.getMonth() + n); }
     histAnchor = dateKey(d) > todayKey() ? todayKey() : dateKey(d); renderHistory();
   },
-  histMetric: (el) => { histMetric = el.dataset.m; renderHistory(); },
   openDay: (el) => { if (el.dataset.k > todayKey()) return; viewDate = el.dataset.k; setTab('today'); },
   cabLog: (el) => takeDose(el.dataset.c, '', todayKey()),
   cabEdit: (el) => openCabEdit(el.dataset.c),
   cabSave: (el) => saveCab(el.dataset.c),
   cabDel: (el) => { S.cabinet = S.cabinet.filter(c => c.id !== el.dataset.c); save(); closeSheet(); renderAll(); toast(t('deleted')); },
-  segPick: (el) => { el.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === el)); },
+  segPick: (el) => { el.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); },
   ics: () => shareOrDownload(buildICS(), 'nomnom-reminders.ics', 'text/calendar'),
   notifyToggle: async () => {
-    if (!S.settings.notify && 'Notification' in window) {
-      const p = await Notification.requestPermission().catch(() => 'denied');
-      S.settings.notify = p === 'granted';
-      if (p !== 'granted') toast(t('notifyInAppSub'));
-    } else S.settings.notify = !S.settings.notify;
-    save(); renderCabinet();
+    if (!S.settings.notify && 'Notification' in window) { const p = await Notification.requestPermission().catch(() => 'denied'); S.settings.notify = p === 'granted'; }
+    else S.settings.notify = !S.settings.notify;
+    save(); renderMeds();
   },
-  sex: (el) => { S.settings.sex = el.dataset.v; S.settings.kcal = null; save(); renderSettings(); },
-  autoLog: () => { S.settings.autoLog = !S.settings.autoLog; save(); renderSettings(); },
-  theme: () => {
-    const light = document.body.classList.toggle('light-mode');
-    localStorage.setItem('nomnom.theme', light ? 'light' : 'dark');
-    $('meta[name=theme-color]').content = light ? '#FAFAF7' : '#050505';
-    renderSettings();
+  editField: (el) => openFieldEdit(el.dataset.f),
+  saveField: (el) => saveField(el.dataset.f),
+  setSetting: (el) => { S.settings[el.dataset.k] = el.dataset.v; save(); renderAll(); },
+  autoLog: () => { S.settings.autoLog = !S.settings.autoLog; save(); renderProfile(); },
+  aiRecheck: () => { checkAI(); renderProfile(); },
+  pickOpt: (el) => {
+    const name = el.dataset.name, v = el.dataset.v;
+    if (!$('#onb').classList.contains('hidden')) {
+      onbCollect();
+      if (name === 'lang') { setLang(v); applyDisplay(); renderChrome(); }
+      else if (name === 'textSize' || name === 'view') { S.settings[name] = v; save(); applyDisplay(); }
+      else onb.d[name] = v;
+      renderOnb(); return;
+    }
+    el.parentElement.querySelectorAll('.opt').forEach(b => b.classList.toggle('on', b === el));
   },
-  exportJson: () => shareOrDownload(JSON.stringify(S, null, 2), `nomnom-log-${todayKey()}.json`, 'application/json'),
-  exportCsv: () => exportCsv(),
+  onbNext: () => onbNext(),
+  onbBack: () => { onbCollect(); onb.err = ''; onb.step = Math.max(0, onb.step - 1); renderOnb(); },
+  redoSetup: () => startOnboarding(),
+  exportJson: () => shareOrDownload(JSON.stringify(S, null, 2), `nomnom-${todayKey()}.json`, 'application/json'),
+  exportCsv: () => {
+    const head = ['date', 'time', 'kind', 'name', 'brand', 'servings', 'serving', 'minutes', 'kcal_burned', 'source', ...NUTRIENT_KEYS];
+    const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const rows = [...S.entries].sort((a, b) => a.ts - b.ts).map(e => {
+      const d = new Date(e.ts), et = entryTotals(e);
+      return [dateKey(d), hhmm(d), e.kind, displayName(e), e.brand, e.servings, e.serving, e.minutes || '', e.burned || '', e.source, ...NUTRIENT_KEYS.map(k => Math.round(et[k] * 100) / 100)].map(q).join(',');
+    });
+    shareOrDownload([head.join(','), ...rows].join('\n'), `nomnom-${todayKey()}.csv`, 'text/csv');
+  },
   importJson: () => { $('#importInput').value = ''; $('#importInput').click(); },
-  wipe: () => { if (confirm(t('wipeConfirm'))) { const keep = S.settings; S = DEFAULT_STATE(); S.settings = keep; save(); renderAll(); toast(t('deleted')); } },
+  wipe: () => { if (confirm(t('wipeConfirm'))) { const keep = { ...S.settings }; S = DEFAULT_STATE(); S.settings = keep; save(); startOnboarding(); } },
 };
-function syncReviewTimes() { document.querySelectorAll('.rTime').forEach(el => { const it = reviewItems[+el.dataset.i]; if (it) it._time = el.value; }); }
 
 document.addEventListener('click', (e) => {
   const el = e.target.closest('[data-action]');
@@ -1283,21 +1508,24 @@ $('#importInput').addEventListener('change', async (e) => {
     const cids = new Set(S.cabinet.map(x => x.id));
     (j.cabinet || []).forEach(x => { if (x && x.id && !cids.has(x.id)) S.cabinet.push({ ...x, nutrients: cleanNutrients(x.nutrients), times: Array.isArray(x.times) ? x.times : [] }); });
     Object.assign(S.doses, j.doses || {});
+    if (!S.profile && j.profile) S.profile = j.profile;
     save(); renderAll(); toast(`${t('imported')}: ${j.entries.length}`);
   } catch { toast(t('badFile')); }
 });
-document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (viewDate > todayKey()) viewDate = todayKey(); renderAll(); } });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (viewDate > todayKey()) viewDate = todayKey(); renderAll(); if (aiState.ok !== true) checkAI(); } });
+matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => applyDisplay());
 
 // Boot
-applyStaticLang();
+measureSystemBase();
 renderAll();
 checkAI();
 setInterval(checkReminders, 20000); checkReminders();
+if (!S.profile) startOnboarding();
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
-// Deep link: /log/#record opens the recorder (e.g. from an iOS Shortcut / Back Tap).
-if (location.hash === '#record') setTimeout(startRecord, 300);
-if (location.hash === '#type') setTimeout(() => openComposer(), 300);
-window.__nomnomLog = { get state() { return S; }, localParse };
+// Deep links: /log/#record (e.g. from an iOS Shortcut / Back Tap) and /log/#type
+if (S.profile && location.hash === '#record') setTimeout(startRecord, 300);
+if (S.profile && location.hash === '#type') setTimeout(() => openComposer(), 300);
+window.__nomnomLog = { get state() { return S; }, localParse, targetsFor, checkAI };
 </script>
 </body>
 </html>

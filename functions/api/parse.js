@@ -40,9 +40,9 @@ const OUTPUT_SCHEMA = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['kind', 'name', 'name_vi', 'brand', 'serving', 'servings', 'confidence', 'assumptions', 'reminder_time', 'nutrients'],
+        required: ['kind', 'name', 'name_vi', 'brand', 'serving', 'servings', 'confidence', 'assumptions', 'reminder_time', 'minutes', 'kcal_burned', 'nutrients'],
         properties: {
-          kind: { type: 'string', enum: ['food', 'drink', 'supplement', 'medication'] },
+          kind: { type: 'string', enum: ['food', 'drink', 'supplement', 'medication', 'exercise'] },
           name: { type: 'string', description: 'Display name in the user language.' },
           name_vi: { type: 'string', description: 'Vietnamese name with full diacritics, or same as name if not Vietnamese.' },
           brand: { type: 'string', description: 'Brand for packaged products/supplements/meds, else empty string.' },
@@ -51,6 +51,8 @@ const OUTPUT_SCHEMA = {
           confidence: { type: 'string', enum: ['low', 'medium', 'high'] },
           assumptions: { type: 'string', description: 'Brief note on portion/recipe assumptions or label details not captured.' },
           reminder_time: { type: 'string', description: 'HH:MM 24h if the user asked for / implied a daily reminder, else empty string.' },
+          minutes: { type: 'number', description: 'Exercise duration in minutes; 0 for non-exercise items.' },
+          kcal_burned: { type: 'number', description: 'Total kcal burned by the exercise; 0 for non-exercise items.' },
           nutrients: nutrientSchema,
         },
       },
@@ -58,7 +60,7 @@ const OUTPUT_SCHEMA = {
   },
 };
 
-const SYSTEM_PROMPT = `You are the parser inside NomNom Log, a Vietnamese-first nutrition journal. The user taps a button and speaks, types, or sends a photo describing something they just ate, drank, or took (supplement or medication). Turn it into structured log items.
+const SYSTEM_PROMPT = `You are the parser inside NomNom Log, a Vietnamese-first nutrition journal. The user taps a button and speaks, types, or sends a photo describing something they just ate, drank, took (supplement or medication), or an exercise they did. Turn it into structured log items.
 
 How to parse:
 - Create one item per distinct thing consumed. "bún bò and an iced coffee" is two items. Ignore filler ("okay", "um", "for lunch").
@@ -67,7 +69,8 @@ How to parse:
 - Use typical Vietnamese street-vendor or home portions unless the user states otherwise. Adjust for modifiers they mention (large/đặc biệt bowl, extra meat, no sugar, ít đường, less rice).
 - When the dish matches the NomNom reference table below, start from those values and adjust for stated modifiers. Otherwise estimate from standard food-composition data. Be realistic about sodium in broths, fish sauce and dipping sauces, and sugar in Vietnamese drinks and chè.
 - Every nutrient key must be present; use 0 when there is none. Units are in the key names (mg, mcg, g, ml). water_ml counts the liquid in drinks and soups.
-- Only log things the user consumed or is consuming now. If the message is a question, a plan, or not loggable, return an empty items array and use reply to say so briefly.
+- Exercise (walking, đi bộ, running, cycling, swimming, yoga, dưỡng sinh, gym, dancing, badminton, housework…): kind "exercise", minutes = duration (default 30 if not stated; steps ÷ 100 ≈ minutes of walking), kcal_burned = MET × user weight (kg) × hours using standard Compendium MET values (walking 3.5, brisk walking 4.3, running 9.8, cycling 7, swimming 6, yoga 2.5, tai chi 3, gym 5, dancing 5, badminton 5.5). nutrients all 0, servings 1. For non-exercise items set minutes and kcal_burned to 0.
+- Only log things the user consumed, took, or did. If the message is a question, a plan, or not loggable, return an empty items array and use reply to say so briefly.
 
 Photos:
 - Supplement bottle / box: read the Supplement Facts panel. Use per-serving label amounts. Convert IU: vitamin D 40 IU = 1 mcg; vitamin A as mcg RAE (retinol 3.33 IU = 1 mcg, beta-carotene 20 IU = 1 mcg); vitamin E 1 mg ≈ 1.49 IU (natural) or 2.22 IU (synthetic). Folate as mcg DFE (folic acid × 1.7). Put brand and product name in brand/name. Put notable ingredients outside the schema (omega-3 EPA/DHA, probiotics, herbs) in assumptions. If the label is unreadable, say so and set confidence low.
@@ -104,6 +107,10 @@ export async function onRequestPost({ request, env }) {
   const lang = body.lang === 'en' ? 'en' : 'vi';
   const localTime = typeof body.local_time === 'string' ? body.local_time.slice(0, 40) : '';
   const image = body.image;
+  const prof = body.profile && typeof body.profile === 'object' ? body.profile : {};
+  const weight = Number(prof.weight_kg) > 20 && Number(prof.weight_kg) < 300 ? Number(prof.weight_kg) : 60;
+  const age = Number(prof.age) > 0 && Number(prof.age) < 120 ? Number(prof.age) : null;
+  const sex = prof.sex === 'male' ? 'male' : prof.sex === 'female' ? 'female' : 'unknown';
 
   if (!text && !image) return json({ error: 'empty' }, 400);
   if (image && (!IMAGE_TYPES.includes(image.media_type) || typeof image.data !== 'string' || image.data.length > MAX_IMAGE_B64)) {
@@ -114,7 +121,7 @@ export async function onRequestPost({ request, env }) {
   if (image) content.push({ type: 'image', source: { type: 'base64', media_type: image.media_type, data: image.data } });
   content.push({
     type: 'text',
-    text: `User language: ${lang}\nUser local time: ${localTime || 'unknown'}\n` +
+    text: `User language: ${lang}\nUser local time: ${localTime || 'unknown'}\nUser profile: sex ${sex}, age ${age ?? 'unknown'}, weight ${weight} kg\n` +
       (text ? `User said: """${text}"""` : 'No text — parse the photo.'),
   });
 
@@ -149,9 +156,11 @@ export async function onRequestPost({ request, env }) {
   }
 
   if (!res.ok) {
-    const detail = await res.text().catch(() => '');
-    console.error('anthropic error', res.status, detail.slice(0, 500));
-    return json({ error: res.status === 429 ? 'rate_limited' : 'upstream_error', status: res.status }, res.status === 429 ? 429 : 502);
+    const raw = await res.text().catch(() => '');
+    console.error('anthropic error', res.status, raw.slice(0, 500));
+    let detail = '';
+    try { detail = JSON.parse(raw).error?.message || ''; } catch {}
+    return json({ error: res.status === 429 ? 'rate_limited' : 'upstream_error', status: res.status, detail: detail.slice(0, 300) }, res.status === 429 ? 429 : 502);
   }
 
   const msg = await res.json();

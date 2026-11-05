@@ -1,12 +1,12 @@
 {
   "name": "NomNom Log",
-  "short_name": "NomNom Log",
+  "short_name": "NomNom",
   "description": "Nói hoặc chụp — NomNom ghi lại đa lượng, khoáng chất và vitamin. Speak or snap — NomNom logs macros, minerals and vitamins.",
   "start_url": "/log/",
   "scope": "/log/",
   "display": "standalone",
-  "background_color": "#050505",
-  "theme_color": "#050505",
+  "background_color": "#F2F2F7",
+  "theme_color": "#F2F2F7",
   "lang": "vi",
   "icons": [
     { "src": "/log/icon-192.png", "sizes": "192x192", "type": "image/png" },
