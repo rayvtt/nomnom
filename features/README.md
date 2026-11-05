@@ -34,6 +34,9 @@ Per-feature spec docs. **Each iteration session reads only the relevant feature 
 - [recipe-analyzer.md](./recipe-analyzer.md) — §7.5 AI recipe text/photo analyzer
 - [vendor-hub.md](./vendor-hub.md) — §8 B2B restaurant menu labeling demo
 
+### Apps
+- [daily-log.md](./daily-log.md) — `/log/` NomNom Log: installable iPhone web app — voice/photo → AI nutrition logging, daily/weekly/monthly macros + minerals + vitamins, supplement & med reminders
+
 ## Status legend (used in each spec)
 
 - ✅ **Wired** — pulls real state, persists, behaves correctly

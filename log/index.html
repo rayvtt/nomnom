@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NomNom Log – Nhật ký dinh dưỡng</title>
+<meta name="description" content="Nói hoặc chụp ảnh — NomNom ghi lại dinh dưỡng, khoáng chất và vitamin cho bạn.">
+<meta name="theme-color" content="#050505">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NomNom Log">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050505; --bg-2: #0A0A0A; --bg-3: #111;
+    --text: #F5F0E4; --text-2: #8A8070; --text-3: #4A4540;
+    --accent: #FF6A28; --accent-2: #FF9F1C;
+    --green: #34D399; --green-dim: #1A6B4D;
+    --red: #EF4444; --purple: #A78BFA; --blue: #60A5FA;
+    --card-bg: rgba(255,255,255,0.03); --card-border: rgba(255,255,255,0.06);
+    --card-hover: rgba(255,255,255,0.06);
+    --nav-bg: rgba(5,5,5,0.78);
+    --sheet-bg: #0E0E0E;
+    --track: rgba(255,255,255,0.07);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+  }
+  body.light-mode {
+    --bg: #FAFAF7; --bg-2: #F0EDE6; --bg-3: #E8E4DC;
+    --text: #1A1814; --text-2: #6B6560; --text-3: #9A948E;
+    --green-dim: #A7F3D0;
+    --card-bg: rgba(0,0,0,0.03); --card-border: rgba(0,0,0,0.08);
+    --card-hover: rgba(0,0,0,0.06);
+    --nav-bg: rgba(250,250,247,0.82);
+    --sheet-bg: #FFFFFF;
+    --track: rgba(0,0,0,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: 'Outfit', sans-serif; color: var(--text);
+    min-height: 100vh; min-height: 100dvh;
+    transition: background 0.3s, color 0.3s;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+  }
+  button, input, select, textarea { font-family: inherit; color: inherit; }
+  button { cursor: pointer; border: none; background: none; }
+  .serif { font-family: 'Instrument Serif', serif; font-weight: 400; }
+  .muted { color: var(--text-2); }
+  .faint { color: var(--text-3); }
+  .hidden { display: none !important; }
+
+  /* ---------- App shell ---------- */
+  .app { max-width: 520px; margin: 0 auto; padding: calc(var(--safe-t) + 64px) 16px calc(var(--safe-b) + 190px); }
+  header.top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+    padding: calc(var(--safe-t) + 10px) 16px 10px;
+    background: var(--nav-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--card-border);
+  }
+  .top-inner { max-width: 520px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
+  .logo { font-family: 'Instrument Serif', serif; font-size: 26px; letter-spacing: -0.5px; }
+  .logo span { color: var(--accent); font-style: italic; }
+  .logo small { font-family: 'Outfit', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-2); margin-left: 6px; }
+  .spacer { flex: 1; }
+  .ai-pill { font-size: 11px; font-weight: 600; padding: 4px 9px; border-radius: 99px; border: 1px solid var(--card-border); color: var(--text-2); display: flex; align-items: center; gap: 6px; }
+  .ai-pill i { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); display: inline-block; }
+  .ai-pill.on i { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .lang-toggle { display: flex; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 99px; padding: 2px; }
+  .lang-toggle button { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 99px; color: var(--text-2); }
+  .lang-toggle button.active { background: var(--accent); color: #fff; }
+
+  /* ---------- Cards ---------- */
+  .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 22px; padding: 18px; margin-bottom: 14px; }
+  .card h3 { font-size: 13px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: var(--text-2); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card h3 .right { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 500; }
+  .row { display: flex; align-items: center; gap: 10px; }
+  .btn { padding: 10px 16px; border-radius: 14px; font-weight: 600; font-size: 14px; background: var(--card-hover); border: 1px solid var(--card-border); }
+  .btn.primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border: none; }
+  .btn.small { padding: 6px 11px; font-size: 12px; border-radius: 10px; }
+  .btn.danger { color: var(--red); }
+  .btn.block { width: 100%; padding: 15px; font-size: 16px; border-radius: 16px; }
+  .btn:active { transform: scale(0.97); }
+
+  /* ---------- Date nav ---------- */
+  .date-nav { display: flex; align-items: center; justify-content: space-between; margin: 4px 2px 14px; }
+  .date-nav .lbl { text-align: center; }
+  .date-nav .lbl .d { font-family: 'Instrument Serif', serif; font-size: 30px; line-height: 1; }
+  .date-nav .lbl .s { font-size: 12px; color: var(--text-2); margin-top: 3px; }
+  .icon-btn { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--card-bg); border: 1px solid var(--card-border); font-size: 18px; color: var(--text-2); }
+  .icon-btn:disabled { opacity: 0.3; }
+
+  /* ---------- Summary ---------- */
+  .summary { display: grid; grid-template-columns: 132px 1fr; gap: 18px; align-items: center; }
+  .ring-wrap { position: relative; width: 132px; height: 132px; }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-wrap .ring-txt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-txt .big { font-family: 'Instrument Serif', serif; font-size: 38px; line-height: 1; }
+  .ring-txt .sub { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .ring-fg { transition: stroke-dashoffset 0.8s cubic-bezier(.2,.8,.2,1); }
+  .macro { margin-bottom: 11px; }
+  .macro:last-child { margin-bottom: 0; }
+  .macro .top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+  .macro .top b { font-weight: 600; }
+  .bar { height: 7px; background: var(--track); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; border-radius: 99px; transition: width 0.8s cubic-bezier(.2,.8,.2,1); }
+
+  /* ---------- Doses ---------- */
+  .dose { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--card-border); }
+  .dose:first-of-type { border-top: none; padding-top: 0; }
+  .dose .t { font-family: 'Instrument Serif', serif; font-size: 22px; width: 58px; }
+  .dose .n { flex: 1; min-width: 0; }
+  .dose .n b { display: block; font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .dose .n span { font-size: 12px; color: var(--text-2); }
+  .dose .done { color: var(--green); font-weight: 600; font-size: 13px; }
+  .dose.due .t { color: var(--accent-2); }
+
+  /* ---------- Timeline ---------- */
+  .entry { display: flex; gap: 12px; align-items: center; padding: 11px 0; border-top: 1px solid var(--card-border); cursor: pointer; }
+  .entry:first-of-type { border-top: none; padding-top: 0; }
+  .entry .ico { width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center; font-size: 21px; background: var(--card-hover); flex-shrink: 0; overflow: hidden; }
+  .entry .ico img { width: 100%; height: 100%; object-fit: cover; }
+  .entry .body { flex: 1; min-width: 0; }
+  .entry .body b { display: block; font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry .body span { font-size: 12px; color: var(--text-2); }
+  .entry .kc { text-align: right; }
+  .entry .kc b { font-family: 'Instrument Serif', serif; font-size: 22px; font-weight: 400; }
+  .entry .kc span { display: block; font-size: 11px; color: var(--text-2); }
+  .empty { text-align: center; padding: 18px 8px; color: var(--text-2); font-size: 14px; line-height: 1.5; }
+  .empty .e { font-size: 34px; display: block; margin-bottom: 6px; }
+
+  /* ---------- Nutrient bars ---------- */
+  .nutr { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .nrow .top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .nrow .top .v { color: var(--text-2); font-variant-numeric: tabular-nums; }
+  .nrow .top .p { font-weight: 600; margin-left: 8px; font-variant-numeric: tabular-nums; }
+  .tabs-mini { display: flex; gap: 6px; margin-bottom: 14px; }
+  .chip { padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 600; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-2); white-space: nowrap; }
+  .chip.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .chips-scroll { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; scrollbar-width: none; }
+  .chips-scroll::-webkit-scrollbar { display: none; }
+  .insight { font-size: 13px; line-height: 1.55; padding: 12px 14px; border-radius: 14px; background: rgba(255,106,40,0.08); border: 1px solid rgba(255,106,40,0.18); margin-top: 14px; }
+  .insight b { color: var(--accent); }
+  .insight.good { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.2); }
+  .insight.good b { color: var(--green); }
+
+  /* ---------- History chart ---------- */
+  .chart svg { width: 100%; height: 170px; display: block; }
+  .chart .bar-r { cursor: pointer; transition: opacity 0.2s; }
+  .chart .bar-r:hover { opacity: 0.8; }
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  .stat { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; padding: 12px; text-align: center; }
+  .stat b { display: block; font-family: 'Instrument Serif', serif; font-size: 28px; font-weight: 400; line-height: 1.1; }
+  .stat span { font-size: 11px; color: var(--text-2); }
+
+  /* ---------- Cabinet ---------- */
+  .cab { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-top: 1px solid var(--card-border); }
+  .cab:first-of-type { border-top: none; padding-top: 0; }
+  .cab .ico { width: 48px; height: 48px; border-radius: 14px; background: var(--card-hover); display: grid; place-items: center; font-size: 22px; overflow: hidden; flex-shrink: 0; }
+  .cab .ico img { width: 100%; height: 100%; object-fit: cover; }
+  .cab .body { flex: 1; min-width: 0; }
+  .cab .body b { display: block; font-weight: 600; font-size: 15px; }
+  .cab .body span { font-size: 12px; color: var(--text-2); }
+  .cab .acts { display: flex; flex-direction: column; gap: 6px; }
+
+  /* ---------- Forms ---------- */
+  label.f { display: block; font-size: 12px; font-weight: 600; color: var(--text-2); margin: 12px 0 6px; letter-spacing: 0.3px; }
+  .inp, select.inp, textarea.inp { width: 100%; padding: 12px 14px; border-radius: 14px; background: var(--card-bg); border: 1px solid var(--card-border); font-size: 16px; outline: none; }
+  .inp:focus { border-color: var(--accent); }
+  textarea.inp { min-height: 96px; resize: vertical; line-height: 1.5; }
+  .seg { display: flex; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 3px; }
+  .seg button { flex: 1; padding: 9px; border-radius: 11px; font-size: 13px; font-weight: 600; color: var(--text-2); }
+  .seg button.active { background: var(--card-hover); color: var(--text); box-shadow: 0 1px 0 var(--card-border); }
+  .switch { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 1px solid var(--card-border); font-size: 14px; gap: 12px; }
+  .switch:first-of-type { border-top: none; }
+  .switch small { display: block; color: var(--text-2); font-size: 12px; margin-top: 2px; }
+  .tgl { position: relative; width: 48px; height: 28px; border-radius: 99px; background: var(--track); flex-shrink: 0; transition: background 0.2s; }
+  .tgl::after { content: ''; position: absolute; top: 3px; left: 3px; width: 22px; height: 22px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+  .tgl.on { background: var(--green); }
+  .tgl.on::after { transform: translateX(20px); }
+
+  /* ---------- Capture dock ---------- */
+  .dock { position: fixed; left: 0; right: 0; bottom: calc(var(--safe-b) + 66px); z-index: 45; display: flex; justify-content: center; align-items: center; gap: 22px; pointer-events: none; }
+  .dock > * { pointer-events: auto; }
+  .dock .side { width: 52px; height: 52px; border-radius: 50%; background: var(--nav-bg); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid var(--card-border); display: grid; place-items: center; font-size: 22px; box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+  .mic { width: 78px; height: 78px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-2)); display: grid; place-items: center; box-shadow: 0 10px 34px rgba(255,106,40,0.45); position: relative; }
+  .mic svg { width: 32px; height: 32px; }
+  .mic::before { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(255,106,40,0.35); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0% { transform: scale(0.95); opacity: 1; } 100% { transform: scale(1.25); opacity: 0; } }
+  .mic:active { transform: scale(0.94); }
+
+  nav.tabbar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 44; background: var(--nav-bg); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-top: 1px solid var(--card-border); padding: 6px 8px calc(var(--safe-b) + 6px); }
+  .tabbar-inner { max-width: 520px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .tabbar button { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0; font-size: 10.5px; font-weight: 600; color: var(--text-3); }
+  .tabbar button .ti { font-size: 20px; filter: grayscale(1); opacity: 0.7; }
+  .tabbar button.active { color: var(--accent); }
+  .tabbar button.active .ti { filter: none; opacity: 1; }
+
+  /* ---------- Sheet ---------- */
+  .backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 80; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .backdrop.open { opacity: 1; pointer-events: auto; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 81; max-width: 560px; margin: 0 auto; background: var(--sheet-bg); border-radius: 26px 26px 0 0; border: 1px solid var(--card-border); border-bottom: none; padding: 10px 18px calc(var(--safe-b) + 18px); max-height: 88vh; max-height: 88dvh; overflow-y: auto; transform: translateY(105%); transition: transform 0.32s cubic-bezier(.2,.9,.25,1); }
+  .sheet.open { transform: translateY(0); }
+  .sheet .grab { width: 40px; height: 5px; border-radius: 99px; background: var(--track); margin: 0 auto 14px; }
+  .sheet h2 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: 30px; line-height: 1.1; margin-bottom: 6px; }
+  .sheet .lead { color: var(--text-2); font-size: 14px; margin-bottom: 16px; line-height: 1.5; }
+  .sheet .actions { display: flex; gap: 10px; margin-top: 18px; }
+  .sheet .actions .btn { flex: 1; padding: 14px; }
+  .sheet .actions.sticky { position: sticky; bottom: calc(-1 * (var(--safe-b) + 18px)); margin: 18px -18px calc(-1 * (var(--safe-b) + 18px)); padding: 12px 18px calc(var(--safe-b) + 18px); background: var(--sheet-bg); border-top: 1px solid var(--card-border); }
+
+  .listening { text-align: center; padding: 10px 0 4px; }
+  .wave { display: flex; justify-content: center; gap: 5px; height: 46px; align-items: center; margin: 10px 0 16px; }
+  .wave i { width: 5px; border-radius: 99px; background: linear-gradient(var(--accent), var(--accent-2)); animation: wave 1s ease-in-out infinite; }
+  .wave i:nth-child(2) { animation-delay: .1s } .wave i:nth-child(3) { animation-delay: .2s } .wave i:nth-child(4) { animation-delay: .3s } .wave i:nth-child(5) { animation-delay: .4s } .wave i:nth-child(6) { animation-delay: .5s } .wave i:nth-child(7) { animation-delay: .6s }
+  @keyframes wave { 0%,100% { height: 10px } 50% { height: 44px } }
+  .transcript { font-size: 20px; line-height: 1.45; min-height: 60px; padding: 8px 4px; }
+  .transcript .interim { color: var(--text-2); }
+
+  .thinking { text-align: center; padding: 28px 0 18px; }
+  .thinking .orb { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; background: conic-gradient(var(--accent), var(--accent-2), var(--purple), var(--accent)); animation: spin 1.2s linear infinite; -webkit-mask: radial-gradient(circle, transparent 52%, #000 54%); mask: radial-gradient(circle, transparent 52%, #000 54%); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .thinking .phrase { font-size: 15px; color: var(--text-2); }
+
+  .ritem { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 18px; padding: 14px; margin-bottom: 10px; }
+  .ritem .hd { display: flex; align-items: flex-start; gap: 10px; }
+  .ritem .hd .nm { flex: 1; min-width: 0; }
+  .ritem .hd .nm b { font-size: 16px; font-weight: 600; display: block; }
+  .ritem .hd .nm span { font-size: 12px; color: var(--text-2); }
+  .badge { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; background: var(--card-hover); color: var(--text-2); display: inline-block; }
+  .badge.food { color: var(--accent); } .badge.drink { color: var(--blue); } .badge.supplement { color: var(--green); } .badge.medication { color: var(--purple); }
+  .badge.low { color: var(--red); } .badge.medium { color: var(--accent-2); } .badge.high { color: var(--green); }
+  .macros-line { display: flex; gap: 14px; margin-top: 10px; font-size: 13px; color: var(--text-2); flex-wrap: wrap; }
+  .macros-line b { color: var(--text); font-weight: 600; }
+  .assume { font-size: 12px; color: var(--text-2); margin-top: 8px; line-height: 1.45; font-style: italic; }
+  .stepper { display: flex; align-items: center; gap: 4px; background: var(--card-hover); border-radius: 12px; padding: 3px; }
+  .stepper button { width: 30px; height: 30px; border-radius: 9px; font-size: 18px; font-weight: 600; }
+  .stepper span { min-width: 34px; text-align: center; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .micro-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .micro-chips span { font-size: 11px; padding: 3px 8px; border-radius: 99px; background: var(--card-hover); color: var(--text-2); }
+  .cab-opt { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--card-border); font-size: 13px; }
+  .cab-opt input[type=time] { padding: 6px 8px; border-radius: 10px; background: var(--card-bg); border: 1px solid var(--card-border); font-size: 14px; }
+  .photo-prev { width: 100%; max-height: 260px; object-fit: contain; border-radius: 18px; background: var(--card-bg); margin-bottom: 12px; }
+  .ex-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .ntable { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .ntable td { padding: 7px 0; border-top: 1px solid var(--card-border); }
+  .ntable td:last-child { text-align: right; color: var(--text-2); font-variant-numeric: tabular-nums; }
+
+  .toast { position: fixed; left: 50%; top: calc(var(--safe-t) + 70px); transform: translate(-50%, -20px); background: var(--text); color: var(--bg); padding: 11px 16px; border-radius: 14px; font-size: 14px; font-weight: 500; z-index: 100; opacity: 0; pointer-events: none; transition: all 0.25s; display: flex; gap: 12px; align-items: center; max-width: 92vw; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+  .toast button { font-weight: 700; color: var(--accent); font-size: 14px; }
+
+  .fade-in { animation: fadeUp 0.45s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .install-tip { font-size: 13px; line-height: 1.55; color: var(--text-2); }
+  .install-tip b { color: var(--text); }
+  a.link { color: var(--accent); text-decoration: none; }
+  @media (max-width: 380px) {
+    .summary { grid-template-columns: 112px 1fr; gap: 14px; }
+    .ring-wrap, .ring-wrap svg { width: 112px; height: 112px; }
+    .ring-txt .big { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <div class="logo">Nom<span>Nom</span><small>Log</small></div>
+    <div class="spacer"></div>
+    <div class="ai-pill" id="aiPill" data-action="aiInfo"><i></i><span id="aiPillTxt">…</span></div>
+    <div class="lang-toggle">
+      <button data-action="lang" data-lang="vi">VN</button>
+      <button data-action="lang" data-lang="en">EN</button>
+    </div>
+  </div>
+</header>
+
+<main class="app">
+  <section id="view-today"></section>
+  <section id="view-history" class="hidden"></section>
+  <section id="view-cabinet" class="hidden"></section>
+  <section id="view-settings" class="hidden"></section>
+</main>
+
+<div class="dock">
+  <button class="side" data-action="photo" aria-label="Photo">📷</button>
+  <button class="mic" data-action="record" aria-label="Record">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 18v4"/></svg>
+  </button>
+  <button class="side" data-action="type" aria-label="Type">⌨️</button>
+</div>
+
+<nav class="tabbar">
+  <div class="tabbar-inner">
+    <button data-action="tab" data-tab="today" class="active"><span class="ti">📅</span><span data-vi="Hôm nay" data-en="Today">Hôm nay</span></button>
+    <button data-action="tab" data-tab="history"><span class="ti">📈</span><span data-vi="Lịch sử" data-en="History">Lịch sử</span></button>
+    <button data-action="tab" data-tab="cabinet"><span class="ti">💊</span><span data-vi="Tủ thuốc" data-en="Cabinet">Tủ thuốc</span></button>
+    <button data-action="tab" data-tab="settings"><span class="ti">⚙️</span><span data-vi="Cài đặt" data-en="Settings">Cài đặt</span></button>
+  </div>
+</nav>
+
+<div class="backdrop" id="backdrop" data-action="closeSheet"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="photoInput" accept="image/*" class="hidden">
+<input type="file" id="importInput" accept="application/json,.json" class="hidden">
+
+<script type="module">
+import { NUTRIENTS, NUTRIENT_KEYS, DAILY_VALUES, FOODS, SUPPLEMENTS, MED_WORDS, nutrientsFromArray } from './vn-foods.js';
+
+// =====================================================================
+// PERSISTENCE — namespaced like the landing page: nomnom.<scope>.dailylog
+// =====================================================================
+function scope() {
+  try { const u = JSON.parse(localStorage.getItem('nomnom.auth.user') || 'null'); return u && u.id ? u.id : 'guest'; }
+  catch { return 'guest'; }
+}
+const STORE_KEY = () => `nomnom.${scope()}.dailylog`;
+const DEFAULT_STATE = () => ({
+  version: 1,
+  entries: [],     // {id, ts, kind, name, name_vi, brand, serving, servings, confidence, assumptions, source, nutrients, thumb?, cabinetId?}
+  cabinet: [],     // {id, kind, name, brand, serving, nutrients, times[], thumb?, createdAt}
+  doses: {},       // 'YYYY-MM-DD|cabId|HH:MM' -> entryId
+  settings: { sex: 'female', kcal: null, autoLog: false, accessCode: '', notify: false },
+});
+function loadState() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORE_KEY()) || 'null');
+    if (!raw) return DEFAULT_STATE();
+    const d = DEFAULT_STATE();
+    return { ...d, ...raw, settings: { ...d.settings, ...(raw.settings || {}) } };
+  } catch { return DEFAULT_STATE(); }
+}
+function save() {
+  try { localStorage.setItem(STORE_KEY(), JSON.stringify(S)); }
+  catch (e) { toast(t('storageFull')); }
+}
+let S = loadState();
+let currentLang = localStorage.getItem('nomnom.lang') || 'vi';
+if (localStorage.getItem('nomnom.theme') === 'light') document.body.classList.add('light-mode');
+
+// =====================================================================
+// I18N
+// =====================================================================
+const T = {
+  today: ['Hôm nay', 'Today'], yesterday: ['Hôm qua', 'Yesterday'],
+  consumed: ['đã nạp', 'eaten'], of: ['trên', 'of'], kcalLeft: ['kcal còn lại', 'kcal left'], kcalOver: ['kcal vượt', 'kcal over'],
+  doses: ['Thuốc & bổ sung', 'Meds & supplements'], take: ['Uống', 'Take'], taken: ['Đã uống', 'Taken'], dueNow: ['Đến giờ', 'Due now'],
+  log: ['Nhật ký', 'Log'], items: ['mục', 'items'], item: ['mục', 'item'],
+  emptyLog: ['Chưa có gì. Nhấn 🎙 và nói “Mình vừa ăn bún bò Huế”, hoặc 📷 chụp lọ vitamin.', 'Nothing yet. Tap 🎙 and say “I just had bún bò for lunch”, or 📷 snap a supplement bottle.'],
+  minerals: ['Khoáng chất', 'Minerals'], vitamins: ['Vitamin', 'Vitamins'], macros: ['Đa lượng', 'Macros'],
+  limit: ['giới hạn', 'limit'],
+  lowOn: ['Đang thiếu', 'Running low on'], overOn: ['Vượt mức', 'Over the limit on'], tryFood: ['Thử thêm', 'Try adding'],
+  allGood: ['Tuyệt! Các vi chất chính đều ổn hôm nay.', 'Nice! Key micronutrients look covered.'],
+  listening: ['Đang nghe…', 'Listening…'], speakNow: ['Nói món bạn vừa ăn, uống hoặc thuốc vừa dùng.', 'Say what you ate, drank, or took.'],
+  done: ['Xong', 'Done'], typeInstead: ['Gõ thay', 'Type instead'], cancel: ['Huỷ', 'Cancel'],
+  whatDidYou: ['Bạn vừa ăn gì?', 'What did you have?'],
+  typeLead: ['Gõ hoặc nhấn 🎙 trên bàn phím iPhone để đọc. Có thể ghi nhiều món một lúc.', 'Type, or tap 🎙 on the iPhone keyboard to dictate. Several things at once is fine.'],
+  typePh: ['VD: Trưa nay ăn bún bò Huế với ly trà đá, uống 1 viên vitamin D', 'e.g. Just had bún bò for lunch with an iced tea, took 1 vitamin D'],
+  analyze: ['Phân tích', 'Analyze'],
+  noSR: ['Thiết bị này chưa hỗ trợ nhận giọng nói trong app — dùng 🎙 trên bàn phím nhé.', 'Speech recognition isn’t available here — use the 🎙 on your keyboard instead.'],
+  srError: ['Không nghe rõ. Thử lại hoặc gõ nhé.', 'Didn’t catch that. Try again or type it.'],
+  thinking: [['Đang nhận diện món…', 'Đang tra cơ sở dữ liệu NomNom…', 'Đang tính đa lượng…', 'Đang ước tính khoáng chất & vitamin…'], ['Detecting dishes…', 'Checking the NomNom database…', 'Calculating macros…', 'Estimating minerals & vitamins…']],
+  review: ['Kiểm tra lại', 'Review'], logIt: ['Ghi vào nhật ký', 'Log it'], nothingFound: ['Không tìm thấy món nào để ghi.', 'Nothing to log found.'],
+  addCabinet: ['Lưu vào tủ thuốc, nhắc lúc', 'Save to cabinet, remind at'],
+  logged: ['Đã ghi', 'Logged'], undo: ['Hoàn tác', 'Undo'], deleted: ['Đã xoá', 'Deleted'],
+  photoTitle: ['Phân tích ảnh', 'Analyze photo'],
+  photoLead: ['Lọ vitamin, hộp thuốc hay đĩa đồ ăn. Với lọ thuốc bổ, hãy để rõ bảng “Supplement Facts”.', 'Supplement bottle, med box or a plate of food. For supplements, make the “Supplement Facts” panel visible.'],
+  photoNotePh: ['Ghi chú (tuỳ chọn): VD “uống 2 viên”', 'Note (optional): e.g. “took 2 of these”'],
+  photoNeedsAI: ['Phân tích ảnh cần AI (chưa cấu hình). Hãy gõ tên sản phẩm hoặc chọn mẫu có sẵn trong Tủ thuốc.', 'Photo analysis needs AI (not configured). Type the product name, or pick a preset in the Cabinet.'],
+  offlineReply: ['Chế độ offline — ước tính từ cơ sở dữ liệu NomNom.', 'Offline mode — estimated from the NomNom database.'],
+  notRecognized: ['Chưa nhận ra', 'Didn’t recognize'],
+  aiOn: ['AI', 'AI'], aiOff: ['Offline', 'Offline'],
+  aiOnInfo: ['AI đang bật: giọng nói, chữ và ảnh được Claude phân tích. Chỉ nội dung bạn gửi được chuyển đi; nhật ký lưu trên máy.', 'AI is on: voice, text and photos are parsed by Claude. Only what you submit is sent; your log stays on this device.'],
+  aiOffInfo: ['Đang dùng bộ phân tích offline với ~50 món Việt & thuốc bổ phổ biến. Triển khai trên Cloudflare Pages kèm ANTHROPIC_API_KEY để bật AI.', 'Using the offline parser (~50 Vietnamese dishes & common supplements). Deploy on Cloudflare Pages with ANTHROPIC_API_KEY to enable AI.'],
+  week: ['Tuần', 'Week'], month: ['Tháng', 'Month'],
+  avgDay: ['Trung bình mỗi ngày đã ghi', 'Average per logged day'],
+  daysLogged: ['ngày đã ghi', 'days logged'], avgKcal: ['kcal TB', 'avg kcal'], adherence: ['uống đúng', 'adherence'],
+  tapBar: ['Nhấn vào cột để xem ngày đó', 'Tap a bar to open that day'],
+  cabinet: ['Tủ thuốc', 'Cabinet'], cabLead: ['Thuốc bổ & thuốc bạn dùng thường xuyên. Đặt giờ để nhắc và ghi chỉ với một chạm.', 'Supplements & meds you take regularly. Set times to get reminders and log with one tap.'],
+  scanBottle: ['📷 Quét lọ', '📷 Scan bottle'], addManual: ['+ Thêm', '+ Add'], logNow: ['Ghi ngay', 'Log now'], edit: ['Sửa', 'Edit'], del: ['Xoá', 'Delete'],
+  emptyCab: ['Chưa có gì. Quét lọ vitamin hoặc thêm thủ công.', 'Empty. Scan a supplement bottle or add one manually.'],
+  noTimes: ['Không nhắc', 'No reminder'],
+  reminders: ['Nhắc nhở', 'Reminders'],
+  icsBtn: ['Thêm nhắc nhở vào Lịch iPhone', 'Add reminders to iPhone Calendar'],
+  icsLead: ['Tạo file lịch lặp lại hằng ngày có báo thức — nhắc cả khi app đóng.', 'Creates daily repeating calendar events with alerts — works even when the app is closed.'],
+  notifyInApp: ['Thông báo khi app đang mở', 'Notify while app is open'],
+  notifyInAppSub: ['iOS 16.4+: cần thêm app vào Màn hình chính.', 'iOS 16.4+: requires adding the app to your Home Screen.'],
+  name: ['Tên', 'Name'], brand: ['Thương hiệu', 'Brand'], serving: ['Mỗi lần dùng', 'Serving'], type: ['Loại', 'Type'], times: ['Giờ nhắc (cách nhau bởi dấu phẩy)', 'Reminder times (comma-separated)'],
+  preset: ['Dinh dưỡng từ mẫu', 'Nutrients from preset'], none: ['Không có', 'None'],
+  supplement: ['Thuốc bổ', 'Supplement'], medication: ['Thuốc', 'Medication'], food: ['Món ăn', 'Food'], drink: ['Đồ uống', 'Drink'],
+  saveBtn: ['Lưu', 'Save'], saved: ['Đã lưu', 'Saved'],
+  settings: ['Cài đặt', 'Settings'], profile: ['Mục tiêu', 'Targets'], sex: ['Giới tính (cho chuẩn RDA)', 'Sex (for RDA targets)'], female: ['Nữ', 'Female'], male: ['Nam', 'Male'],
+  kcalTarget: ['Mục tiêu kcal/ngày', 'Daily kcal target'],
+  autoLog: ['Ghi ngay không cần xem lại', 'Log instantly without review'], autoLogSub: ['Vẫn có nút Hoàn tác.', 'You can still Undo.'],
+  theme: ['Giao diện sáng', 'Light mode'],
+  accessCode: ['Mã truy cập AI (nếu máy chủ yêu cầu)', 'AI access code (if the server requires one)'],
+  data: ['Dữ liệu', 'Data'], exportJson: ['Xuất JSON', 'Export JSON'], exportCsv: ['Xuất CSV', 'Export CSV'], importJson: ['Nhập JSON', 'Import JSON'], wipe: ['Xoá toàn bộ', 'Erase all'],
+  wipeConfirm: ['Xoá toàn bộ nhật ký và tủ thuốc trên máy này?', 'Erase the entire log and cabinet on this device?'],
+  imported: ['Đã nhập', 'Imported'], badFile: ['File không hợp lệ', 'Invalid file'],
+  install: ['Cài lên iPhone', 'Install on iPhone'],
+  installTip: ['Mở trang này bằng <b>Safari</b> → nhấn <b>Chia sẻ</b> <span>⎋</span> → <b>Thêm vào MH chính</b>. NomNom Log sẽ mở toàn màn hình như một app.', 'Open this page in <b>Safari</b> → tap <b>Share</b> <span>⎋</span> → <b>Add to Home Screen</b>. NomNom Log then opens full-screen like an app.'],
+  privacy: ['Nhật ký lưu trên máy này (localStorage). Chỉ câu nói/ảnh bạn gửi mới được chuyển tới AI để phân tích.', 'Your log is stored on this device (localStorage). Only the words/photos you submit are sent to the AI parser.'],
+  storageFull: ['Bộ nhớ đầy — hãy xuất & xoá bớt dữ liệu.', 'Storage full — export and clear some data.'],
+  servings: ['phần', 'serving(s)'], details: ['Chi tiết', 'Details'], totalFor: ['Tổng cho', 'Total for'],
+  confidence: { low: ['ít chắc', 'low confidence'], medium: ['khá chắc', 'medium confidence'], high: ['chắc chắn', 'high confidence'] },
+  reminderFor: ['Đến giờ uống', 'Time to take'],
+  backToToday: ['Về hôm nay', 'Back to today'],
+  apiErr: ['AI lỗi — đã dùng bộ phân tích offline.', 'AI error — used the offline parser instead.'],
+  badCode: ['Sai mã truy cập AI (xem Cài đặt).', 'Wrong AI access code (see Settings).'],
+  refusal: ['AI không thể phân tích nội dung này.', 'The AI couldn’t analyze this.'],
+  back: ['Quay lại', 'Back'],
+};
+function t(key) {
+  const v = T[key];
+  if (!v) return key;
+  return Array.isArray(v) ? v[currentLang === 'vi' ? 0 : 1] : v;
+}
+const L = (pair) => pair[currentLang === 'vi' ? 0 : 1];
+function applyStaticLang() {
+  document.documentElement.lang = currentLang;
+  document.querySelectorAll('[data-vi]').forEach(el => { el.textContent = el.dataset[currentLang]; });
+  document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+}
+
+// =====================================================================
+// UTILS
+// =====================================================================
+const $ = (s, r = document) => r.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const pad = (n) => String(n).padStart(2, '0');
+const dateKey = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const keyToDate = (k) => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+const todayKey = () => dateKey(new Date());
+const addDays = (k, n) => { const d = keyToDate(k); d.setDate(d.getDate() + n); return dateKey(d); };
+const hhmm = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const locale = () => currentLang === 'vi' ? 'vi-VN' : 'en-US';
+const NUT = Object.fromEntries(NUTRIENTS.map(n => [n.key, n]));
+const KIND_ICON = { food: '🍜', drink: '🥤', supplement: '💊', medication: '🩺' };
+
+function fmtN(v, key) {
+  if (key === 'kcal' || Math.abs(v) >= 100) return Math.round(v).toLocaleString(locale());
+  if (Math.abs(v) >= 10) return (Math.round(v * 10) / 10).toLocaleString(locale());
+  return (Math.round(v * 100) / 100).toLocaleString(locale());
+}
+const zeroNutrients = () => Object.fromEntries(NUTRIENT_KEYS.map(k => [k, 0]));
+function cleanNutrients(n) {
+  const out = zeroNutrients();
+  if (n) NUTRIENT_KEYS.forEach(k => { const v = Number(n[k]); out[k] = Number.isFinite(v) && v > 0 ? v : 0; });
+  return out;
+}
+function entryTotals(e) {
+  const out = {}; const s = Number(e.servings) || 0;
+  NUTRIENT_KEYS.forEach(k => { out[k] = (e.nutrients?.[k] || 0) * s; });
+  return out;
+}
+function sumEntries(list) {
+  const tot = zeroNutrients();
+  list.forEach(e => { const et = entryTotals(e); NUTRIENT_KEYS.forEach(k => tot[k] += et[k]); });
+  return tot;
+}
+function targets() {
+  const dv = { ...DAILY_VALUES[S.settings.sex === 'male' ? 'male' : 'female'] };
+  const k = Number(S.settings.kcal);
+  if (k >= 800 && k <= 6000) {
+    const r = k / dv.kcal; dv.kcal = k;
+    dv.carbs_g = Math.round(dv.carbs_g * r); dv.fat_g = Math.round(dv.fat_g * r);
+  }
+  return dv;
+}
+const entriesOn = (k) => S.entries.filter(e => dateKey(new Date(e.ts)) === k).sort((a, b) => a.ts - b.ts);
+function pctColor(p, isLimit) {
+  if (isLimit) return p > 100 ? 'var(--red)' : p > 75 ? 'var(--accent-2)' : 'var(--green)';
+  return p >= 90 ? 'var(--green)' : p >= 50 ? 'var(--accent-2)' : 'var(--red)';
+}
+function displayName(e) { return currentLang === 'vi' && e.name_vi ? e.name_vi : e.name; }
+
+let toastTimer;
+function toast(msg, undoFn) {
+  const el = $('#toast');
+  el.innerHTML = `<span>${esc(msg)}</span>` + (undoFn ? `<button id="toastUndo">${t('undo')}</button>` : '');
+  el.classList.add('show');
+  if (undoFn) $('#toastUndo').onclick = () => { undoFn(); el.classList.remove('show'); };
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), undoFn ? 5000 : 2600);
+}
+
+// =====================================================================
+// SHEET
+// =====================================================================
+let sheetOnClose = null;
+function openSheet(html, onClose) {
+  const sh = $('#sheet');
+  sh.innerHTML = `<div class="grab"></div>${html}`;
+  sh.scrollTop = 0;
+  sh.classList.add('open'); $('#backdrop').classList.add('open');
+  sheetOnClose = onClose || null;
+}
+function closeSheet() {
+  $('#sheet').classList.remove('open'); $('#backdrop').classList.remove('open');
+  if (sheetOnClose) { const f = sheetOnClose; sheetOnClose = null; f(); }
+}
+
+// =====================================================================
+// LOCAL (OFFLINE) PARSER — matches against the NomNom reference DB
+// =====================================================================
+const norm = (s) => s.toLowerCase().replace(/đ/g, 'd').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .replace(/[^a-z0-9\s.,;:+&/-]/g, ' ').replace(/\s+/g, ' ').trim();
+const QTY = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, half: 0.5, mot: 1, hai: 2, ba: 3, bon: 4, nua: 0.5 };
+const CATALOG = [...FOODS, ...SUPPLEMENTS]
+  .flatMap(f => f.alias.map(a => ({ alias: norm(a), food: f })))
+  .sort((a, b) => b.alias.length - a.alias.length);
+
+function localParse(text) {
+  const lang = currentLang;
+  const n = norm(text);
+  const segments = n.split(/[,;.+&]| and | va | voi | with | plus | roi | then | cung voi /).map(s => s.trim()).filter(Boolean);
+  const items = []; const unknown = [];
+  for (const seg of segments) {
+    const hit = CATALOG.find(c => new RegExp(`(^|\\s)${c.alias.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(\\s|$)`).test(seg));
+    if (hit) {
+      const idx = seg.indexOf(hit.alias);
+      const before = seg.slice(0, idx).trim().split(' ').filter(Boolean).slice(-3).reverse();
+      let qty = 1;
+      for (const tok of before) {
+        if (/^\d+([.,]\d+)?$/.test(tok)) { qty = parseFloat(tok.replace(',', '.')); break; }
+        if (tok in QTY) { qty = QTY[tok]; break; }
+      }
+      const xm = seg.match(/(?:^|\s)x\s?(\d+)(?:\s|$)|(?:^|\s)(\d+)\s?x(?:\s|$)/);
+      if (xm) qty = parseFloat(xm[1] || xm[2]);
+      if (/(^|\s)(large|big|extra|dac biet|size l)(\s|$)/.test(seg)) qty *= 1.3;
+      if (/(^|\s)(small|nho|mini)(\s|$)/.test(seg)) qty *= 0.7;
+      const f = hit.food;
+      let reminder = '';
+      if (f.kind === 'supplement') {
+        if (/(morning|buoi sang|moi sang)/.test(seg)) reminder = '08:00';
+        else if (/(night|before bed|buoi toi|moi toi|truoc khi ngu)/.test(seg)) reminder = '21:00';
+      }
+      items.push({
+        kind: f.kind, name: lang === 'vi' ? f.vi : f.en, name_vi: f.vi, brand: '',
+        serving: f.serving[lang], servings: Math.round(qty * 100) / 100, confidence: 'medium',
+        assumptions: lang === 'vi' ? 'Ước tính từ cơ sở dữ liệu NomNom (khẩu phần tiêu chuẩn).' : 'Estimated from the NomNom database (standard portion).',
+        reminder_time: reminder, nutrients: nutrientsFromArray(f.n),
+      });
+      continue;
+    }
+    const med = MED_WORDS.map(norm).find(w => new RegExp(`(^|\\s)${w}(\\s|$)`).test(seg));
+    if (med) {
+      const generic = ['thuoc', 'medication', 'medicine', 'meds', 'med', 'pill', 'pills'].includes(med);
+      const nm = generic ? (lang === 'vi' ? 'Thuốc' : 'Medication') : med.replace(/\b\w/g, c => c.toUpperCase());
+      items.push({ kind: 'medication', name: nm, name_vi: generic ? 'Thuốc' : nm, brand: '', serving: lang === 'vi' ? '1 liều' : '1 dose', servings: 1,
+        confidence: 'medium', assumptions: '', reminder_time: '', nutrients: zeroNutrients() });
+      continue;
+    }
+    if (seg.split(' ').length <= 8 && !/^(ok|okay|um|uh|so|vay|thi|toi|minh|em|anh|i)$/.test(seg)) unknown.push(seg);
+  }
+  let reply = t('offlineReply');
+  if (unknown.length) reply += ` ${t('notRecognized')}: “${unknown.join('”, “')}”.`;
+  return { items, reply, source: 'local' };
+}
+
+// =====================================================================
+// AI PARSER — /api/parse (Cloudflare Pages Function → Claude)
+// =====================================================================
+let aiConfigured = false;
+async function checkAI() {
+  try {
+    const r = await fetch('/api/parse', { headers: { accept: 'application/json' } });
+    const j = r.ok ? await r.json() : null;
+    aiConfigured = !!(j && j.configured);
+  } catch { aiConfigured = false; }
+  renderAIPill();
+}
+function renderAIPill() {
+  $('#aiPill').classList.toggle('on', aiConfigured);
+  $('#aiPillTxt').textContent = aiConfigured ? t('aiOn') : t('aiOff');
+}
+async function parseInput({ text = '', image = null }) {
+  if (aiConfigured) {
+    try {
+      const r = await fetch('/api/parse', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', ...(S.settings.accessCode ? { 'x-nomnom-code': S.settings.accessCode } : {}) },
+        body: JSON.stringify({ text, image, lang: currentLang, local_time: new Date().toString().slice(0, 33) }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && Array.isArray(j.items)) return j;
+      if (j.error === 'bad_access_code') toast(t('badCode'));
+      else if (j.error === 'refusal') return { items: [], reply: t('refusal'), source: 'ai' };
+      else toast(t('apiErr'));
+    } catch { toast(t('apiErr')); }
+  }
+  if (!text) return { items: [], reply: t('photoNeedsAI'), source: 'local' };
+  return localParse(text);
+}
+
+// =====================================================================
+// CAPTURE — voice, text, photo
+// =====================================================================
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null;
+
+function startRecord() {
+  if (!SR) { openComposer('', t('noSR')); return; }
+  let finalTxt = ''; let interim = ''; let cancelled = false; let submitted = false;
+  rec = new SR();
+  rec.lang = currentLang === 'vi' ? 'vi-VN' : 'en-US';
+  rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+  const paint = () => { const el = $('#transcript'); if (el) el.innerHTML = `${esc(finalTxt)} <span class="interim">${esc(interim)}</span>`; };
+  rec.onresult = (ev) => {
+    interim = '';
+    for (let i = ev.resultIndex; i < ev.results.length; i++) {
+      const r = ev.results[i];
+      if (r.isFinal) finalTxt += r[0].transcript + ' '; else interim += r[0].transcript;
+    }
+    paint();
+  };
+  rec.onerror = (ev) => {
+    if (cancelled) return;
+    cancelled = true;
+    if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') openComposer('', t('noSR'));
+    else openComposer((finalTxt + interim).trim(), t('srError'));
+  };
+  rec.onend = () => {
+    if (cancelled || submitted) return;
+    submitted = true;
+    const txt = (finalTxt + interim).trim();
+    if (txt) submitText(txt); else openComposer('', t('srError'));
+  };
+  openSheet(`
+    <div class="listening">
+      <h2>${t('listening')}</h2>
+      <p class="lead">${t('speakNow')}</p>
+      <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="transcript" id="transcript"></div>
+      <div class="actions">
+        <button class="btn" data-action="recType">${t('typeInstead')}</button>
+        <button class="btn primary" data-action="recStop">${t('done')}</button>
+      </div>
+    </div>`, () => { if (rec && !submitted) { cancelled = true; try { rec.abort(); } catch {} } });
+  rec._cancel = () => { cancelled = true; try { rec.abort(); } catch {} return (finalTxt + interim).trim(); };
+  try { rec.start(); } catch { openComposer('', t('noSR')); }
+}
+
+function openComposer(prefill = '', note = '') {
+  const examples = currentLang === 'vi'
+    ? ['Trưa nay ăn bún bò Huế', 'Cà phê sữa đá', 'Uống 1 viên vitamin D', '2 ổ bánh mì thịt']
+    : ['Just had bún bò for lunch', 'Iced coffee with milk', 'Took 1 vitamin D', 'Two bánh mì'];
+  openSheet(`
+    <h2>${t('whatDidYou')}</h2>
+    <p class="lead">${note ? `<b style="color:var(--accent-2)">${esc(note)}</b><br>` : ''}${t('typeLead')}</p>
+    <textarea class="inp" id="composer" placeholder="${esc(t('typePh'))}">${esc(prefill)}</textarea>
+    <div class="ex-chips">${examples.map(x => `<button class="chip" data-action="example" data-text="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+    <div class="actions">
+      <button class="btn" data-action="closeSheet">${t('cancel')}</button>
+      <button class="btn primary" data-action="composerSend">${t('analyze')}</button>
+    </div>`);
+  setTimeout(() => $('#composer')?.focus(), 350);
+}
+
+let pendingPhoto = null;
+async function handlePhoto(file) {
+  if (!file) return;
+  try { pendingPhoto = await resizeImage(file); }
+  catch { toast(t('badFile')); return; }
+  openSheet(`
+    <h2>${t('photoTitle')}</h2>
+    <p class="lead">${t('photoLead')}</p>
+    <img class="photo-prev" src="${pendingPhoto.dataUrl}" alt="">
+    <input class="inp" id="photoNote" placeholder="${esc(t('photoNotePh'))}">
+    ${aiConfigured ? '' : `<p class="lead" style="margin-top:12px;color:var(--accent-2)">${t('photoNeedsAI')}</p>`}
+    <div class="actions">
+      <button class="btn" data-action="closeSheet">${t('cancel')}</button>
+      <button class="btn primary" data-action="photoSend">${t('analyze')}</button>
+    </div>`);
+}
+function loadImg(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); res(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('img')); };
+    img.src = url;
+  });
+}
+function drawScaled(img, max, quality) {
+  const s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', quality);
+}
+async function resizeImage(file) {
+  const img = await loadImg(file);
+  const dataUrl = drawScaled(img, 1568, 0.85);
+  const thumb = drawScaled(img, 120, 0.7);
+  return { dataUrl, thumb, media_type: 'image/jpeg', data: dataUrl.split(',')[1] };
+}
+
+let thinkingTimer;
+function showThinking() {
+  const phrases = L(T.thinking); let i = 0;
+  openSheet(`<div class="thinking"><div class="orb"></div><div class="phrase" id="phrase">${phrases[0]}</div></div>`);
+  clearInterval(thinkingTimer);
+  thinkingTimer = setInterval(() => { const el = $('#phrase'); if (!el) return clearInterval(thinkingTimer); i = (i + 1) % phrases.length; el.textContent = phrases[i]; }, 1100);
+}
+async function submitText(text) {
+  showThinking();
+  const res = await parseInput({ text });
+  clearInterval(thinkingTimer);
+  handleParsed(res, { source: 'voice-text', text });
+}
+async function submitPhoto(note) {
+  const photo = pendingPhoto; if (!photo) return;
+  if (!aiConfigured && !note) { closeSheet(); openComposer('', t('photoNeedsAI')); return; }
+  showThinking();
+  const res = await parseInput({ text: note, image: aiConfigured ? { media_type: photo.media_type, data: photo.data } : null });
+  clearInterval(thinkingTimer);
+  handleParsed(res, { source: 'photo', thumb: photo.thumb });
+  pendingPhoto = null;
+}
+
+// =====================================================================
+// REVIEW + LOGGING
+// =====================================================================
+let reviewItems = []; let reviewMeta = {};
+function handleParsed(res, meta) {
+  reviewItems = (res.items || []).map(it => ({
+    ...it,
+    servings: Number(it.servings) > 0 ? Number(it.servings) : 1,
+    nutrients: cleanNutrients(it.nutrients),
+    _toCabinet: (it.kind === 'supplement' || it.kind === 'medication') && (meta.source === 'photo' || !!it.reminder_time),
+    _time: it.reminder_time || '',
+  }));
+  reviewMeta = { ...meta, reply: res.reply, aiSource: res.source };
+  if (!reviewItems.length) {
+    openSheet(`<h2>${t('review')}</h2><p class="lead">${esc(res.reply || t('nothingFound'))}</p>
+      <div class="actions"><button class="btn" data-action="closeSheet">${t('cancel')}</button><button class="btn primary" data-action="type">${t('typeInstead')}</button></div>`);
+    return;
+  }
+  if (S.settings.autoLog) { commitReview(); return; }
+  renderReview();
+}
+function microChips(n, servings) {
+  const dv = targets();
+  return NUTRIENTS.filter(x => x.group === 'mineral' || x.group === 'vitamin')
+    .map(x => ({ x, p: (n[x.key] * servings) / dv[x.key] * 100 }))
+    .filter(o => o.p >= 8).sort((a, b) => b.p - a.p).slice(0, 6)
+    .map(o => `<span style="${o.x.limit && o.p > 50 ? 'color:var(--red)' : ''}">${L([o.x.vi, o.x.en])} ${Math.round(o.p)}%</span>`).join('');
+}
+function renderReview() {
+  const cards = reviewItems.map((it, i) => {
+    const n = it.nutrients; const s = it.servings;
+    const conf = T.confidence[it.confidence] ? L(T.confidence[it.confidence]) : '';
+    return `<div class="ritem">
+      <div class="hd">
+        <div class="nm"><b>${esc(it.name)}</b><span>${esc([it.brand, it.serving].filter(Boolean).join(' · '))}</span>
+          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap"><span class="badge ${it.kind}">${t(it.kind)}</span>${conf ? `<span class="badge ${it.confidence}">${conf}</span>` : ''}</div></div>
+        <div class="stepper"><button data-action="rStep" data-i="${i}" data-d="-0.5">−</button><span>${fmtN(s)}</span><button data-action="rStep" data-i="${i}" data-d="0.5">+</button></div>
+      </div>
+      ${it.kind === 'medication' ? '' : `<div class="macros-line"><span><b>${fmtN(n.kcal * s, 'kcal')}</b> kcal</span><span>P <b>${fmtN(n.protein_g * s)}g</b></span><span>C <b>${fmtN(n.carbs_g * s)}g</b></span><span>F <b>${fmtN(n.fat_g * s)}g</b></span>${n.sodium_mg ? `<span>Na <b>${fmtN(n.sodium_mg * s)}mg</b></span>` : ''}</div>
+      <div class="micro-chips">${microChips(n, s)}</div>`}
+      ${it.assumptions ? `<div class="assume">${esc(it.assumptions)}</div>` : ''}
+      ${(it.kind === 'supplement' || it.kind === 'medication') ? `<label class="cab-opt"><input type="checkbox" data-action="rCab" data-i="${i}" ${it._toCabinet ? 'checked' : ''}> <span style="flex:1">${t('addCabinet')}</span><input type="time" data-i="${i}" class="rTime" value="${esc(it._time)}"></label>` : ''}
+      <div style="text-align:right;margin-top:8px"><button class="btn small danger" data-action="rDel" data-i="${i}">${t('del')}</button></div>
+    </div>`;
+  }).join('');
+  openSheet(`
+    <h2>${t('review')}</h2>
+    <p class="lead">${esc(reviewMeta.reply || '')}</p>
+    ${cards}
+    <div class="actions sticky">
+      <button class="btn" data-action="closeSheet">${t('cancel')}</button>
+      <button class="btn primary" data-action="commit">${t('logIt')} (${reviewItems.length})</button>
+    </div>`);
+}
+function logTimestamp() {
+  const now = new Date();
+  if (viewDate === todayKey()) return now.getTime();
+  const d = keyToDate(viewDate); d.setHours(now.getHours(), now.getMinutes(), 0, 0); return d.getTime();
+}
+function commitReview() {
+  document.querySelectorAll('.rTime').forEach(el => { const i = +el.dataset.i; if (reviewItems[i]) reviewItems[i]._time = el.value; });
+  const ts = logTimestamp(); const added = []; const cabAdded = [];
+  reviewItems.forEach((it, i) => {
+    let cabinetId;
+    if (it._toCabinet) {
+      const c = { id: uid(), kind: it.kind, name: it.name, name_vi: it.name_vi, brand: it.brand || '', serving: it.serving, nutrients: it.nutrients,
+        times: it._time ? [it._time] : [], thumb: reviewMeta.thumb || null, createdAt: Date.now() };
+      S.cabinet.push(c); cabAdded.push(c.id); cabinetId = c.id;
+    }
+    const e = { id: uid(), ts: ts + i, kind: it.kind, name: it.name, name_vi: it.name_vi || '', brand: it.brand || '', serving: it.serving || '',
+      servings: it.servings, confidence: it.confidence || 'medium', assumptions: it.assumptions || '', source: reviewMeta.source,
+      nutrients: it.nutrients, thumb: reviewMeta.thumb || null, cabinetId };
+    S.entries.push(e); added.push(e.id);
+    if (cabinetId && it._time) {
+      S.doses[`${dateKey(new Date(ts))}|${cabinetId}|${it._time}`] = e.id;
+    }
+  });
+  save(); closeSheet(); renderAll();
+  toast(`${t('logged')} ${added.length} ${t(added.length === 1 ? 'item' : 'items')}`, () => {
+    S.entries = S.entries.filter(e => !added.includes(e.id));
+    S.cabinet = S.cabinet.filter(c => !cabAdded.includes(c.id));
+    Object.keys(S.doses).forEach(k => { if (added.includes(S.doses[k])) delete S.doses[k]; });
+    save(); renderAll();
+  });
+  burst();
+}
+function burst() {
+  const mic = $('.mic'); if (!mic) return;
+  const r = mic.getBoundingClientRect();
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    const a = (Math.PI * 2 * i) / 14; const d = 50 + Math.random() * 40;
+    p.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;width:7px;height:7px;border-radius:50%;z-index:90;pointer-events:none;background:${['var(--accent)', 'var(--accent-2)', 'var(--green)'][i % 3]};transition:all .7s cubic-bezier(.2,.8,.2,1)`;
+    document.body.appendChild(p);
+    requestAnimationFrame(() => { p.style.transform = `translate(${Math.cos(a) * d}px,${Math.sin(a) * d}px) scale(.3)`; p.style.opacity = '0'; });
+    setTimeout(() => p.remove(), 750);
+  }
+}
+
+// =====================================================================
+// DOSES (cabinet schedule) + REMINDERS
+// =====================================================================
+function dosesFor(k) {
+  const list = [];
+  S.cabinet.forEach(c => (c.times || []).forEach(tm => list.push({ c, time: tm, key: `${k}|${c.id}|${tm}` })));
+  return list.sort((a, b) => a.time.localeCompare(b.time));
+}
+function takeDose(cabId, time, k) {
+  const c = S.cabinet.find(x => x.id === cabId); if (!c) return;
+  const d = keyToDate(k); const now = new Date();
+  if (k === todayKey()) d.setHours(now.getHours(), now.getMinutes()); else { const [h, m] = time.split(':').map(Number); d.setHours(h, m); }
+  const e = { id: uid(), ts: d.getTime(), kind: c.kind, name: c.name, name_vi: c.name_vi || '', brand: c.brand, serving: c.serving, servings: 1,
+    confidence: 'high', assumptions: '', source: 'cabinet', nutrients: c.nutrients, thumb: c.thumb, cabinetId: c.id };
+  S.entries.push(e);
+  if (time) S.doses[`${k}|${cabId}|${time}`] = e.id;
+  save(); renderAll(); burst();
+  toast(`${t('logged')}: ${displayName(c)}`, () => {
+    S.entries = S.entries.filter(x => x.id !== e.id);
+    if (time) delete S.doses[`${k}|${cabId}|${time}`];
+    save(); renderAll();
+  });
+}
+const notified = new Set();
+function checkReminders() {
+  const k = todayKey(); const now = hhmm(new Date());
+  dosesFor(k).forEach(d => {
+    if (S.doses[d.key] || notified.has(d.key) || d.time !== now) return;
+    notified.add(d.key);
+    const body = `${t('reminderFor')}: ${displayName(d.c)} (${d.c.serving})`;
+    if (S.settings.notify && 'Notification' in window && Notification.permission === 'granted' && navigator.serviceWorker?.ready) {
+      navigator.serviceWorker.ready.then(reg => reg.showNotification('NomNom Log', { body, icon: './apple-touch-icon.png', tag: d.key })).catch(() => toast(body));
+    } else toast(body);
+    if (currentTab === 'today' && viewDate === k) renderToday();
+  });
+}
+function icsEscape(s) { return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+function buildICS() {
+  const stamp = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+  const start = keyToDate(todayKey());
+  const ymd = `${start.getFullYear()}${pad(start.getMonth() + 1)}${pad(start.getDate())}`;
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//NomNom//Log//EN', 'CALSCALE:GREGORIAN', 'X-WR-CALNAME:NomNom Log'];
+  S.cabinet.forEach(c => (c.times || []).forEach(tm => {
+    const [h, m] = tm.split(':');
+    const title = `${KIND_ICON[c.kind] || '💊'} ${displayName(c)}${c.serving ? ` — ${c.serving}` : ''}`;
+    lines.push('BEGIN:VEVENT', `UID:${c.id}-${h}${m}@nomnom-log`, `DTSTAMP:${stamp}`, `DTSTART:${ymd}T${h}${m}00`, 'DURATION:PT5M', 'RRULE:FREQ=DAILY',
+      `SUMMARY:${icsEscape(title)}`, `DESCRIPTION:${icsEscape(`${t('reminderFor')}. ${location.origin}/log/`)}`,
+      'BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsEscape(title)}`, 'TRIGGER:-PT0M', 'END:VALARM', 'END:VEVENT');
+  }));
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+async function shareOrDownload(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const file = new File([blob], filename, { type });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: filename }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+// =====================================================================
+// RENDER — TODAY (daily view, any date)
+// =====================================================================
+let currentTab = 'today'; let viewDate = todayKey();
+function dayLabel(k) {
+  if (k === todayKey()) return t('today');
+  if (k === addDays(todayKey(), -1)) return t('yesterday');
+  return keyToDate(k).toLocaleDateString(locale(), { weekday: 'long' });
+}
+function nutrientRows(tot, dv, group) {
+  return NUTRIENTS.filter(n => n.group === group).map(n => {
+    const p = dv[n.key] ? tot[n.key] / dv[n.key] * 100 : 0;
+    return `<div class="nrow"><div class="top"><span>${L([n.vi, n.en])}${n.limit ? ` <span class="faint">(${t('limit')})</span>` : ''}</span>
+      <span><span class="v">${fmtN(tot[n.key])} / ${fmtN(dv[n.key])} ${n.unit}</span><span class="p" style="color:${pctColor(p, n.limit)}">${Math.round(p)}%</span></span></div>
+      <div class="bar"><i style="width:${Math.min(100, p)}%;background:${pctColor(p, n.limit)}"></i></div></div>`;
+  }).join('');
+}
+function bestFoodFor(key) {
+  const idx = NUTRIENT_KEYS.indexOf(key);
+  return FOODS.filter(f => f.n[0] > 30).map(f => ({ f, score: f.n[idx] / f.n[0] })).sort((a, b) => b.score - a.score)[0]?.f;
+}
+function insightHTML(tot, dv, days = 1) {
+  const lows = NUTRIENTS.filter(n => (n.group === 'mineral' || n.group === 'vitamin') && !n.limit)
+    .map(n => ({ n, p: tot[n.key] / days / dv[n.key] * 100 })).filter(o => o.p < 50).sort((a, b) => a.p - b.p).slice(0, 3);
+  const overs = NUTRIENTS.filter(n => n.limit).map(n => ({ n, p: tot[n.key] / days / dv[n.key] * 100 })).filter(o => o.p > 100);
+  if (!lows.length && !overs.length) return `<div class="insight good"><b>✓</b> ${t('allGood')}</div>`;
+  const parts = [];
+  if (lows.length) {
+    const tip = bestFoodFor(lows[0].n.key);
+    parts.push(`${t('lowOn')} <b>${lows.map(o => `${L([o.n.vi, o.n.en])} (${Math.round(o.p)}%)`).join(', ')}</b>.${tip ? ` ${t('tryFood')}: ${esc(L([tip.vi, tip.en]))}.` : ''}`);
+  }
+  if (overs.length) parts.push(`${t('overOn')} <b>${overs.map(o => `${L([o.n.vi, o.n.en])} (${Math.round(o.p)}%)`).join(', ')}</b>.`);
+  return `<div class="insight">${parts.join('<br>')}</div>`;
+}
+let microTab = 'mineral';
+function renderToday() {
+  const k = viewDate; const list = entriesOn(k); const tot = sumEntries(list); const dv = targets();
+  const kcalP = Math.min(1, tot.kcal / dv.kcal); const C = 2 * Math.PI * 56;
+  const left = dv.kcal - tot.kcal;
+  const macros = [['protein_g', 'var(--accent)'], ['carbs_g', 'var(--accent-2)'], ['fat_g', 'var(--green)'], ['water_ml', 'var(--blue)']].map(([key, col]) => {
+    const p = tot[key] / dv[key] * 100;
+    return `<div class="macro"><div class="top"><span>${L([NUT[key].vi, NUT[key].en])}</span><span><b>${fmtN(tot[key])}</b><span class="muted"> / ${fmtN(dv[key])}${NUT[key].unit}</span></span></div><div class="bar"><i style="width:${Math.min(100, p)}%;background:${col}"></i></div></div>`;
+  }).join('');
+  const doses = dosesFor(k); const nowT = hhmm(new Date()); const isToday = k === todayKey();
+  const doseHTML = doses.length ? `<div class="card fade-in"><h3>💊 ${t('doses')}<span class="right muted">${doses.filter(d => S.doses[d.key]).length}/${doses.length}</span></h3>
+    ${doses.map(d => {
+      const takenId = S.doses[d.key]; const te = takenId && S.entries.find(e => e.id === takenId);
+      const due = isToday && !takenId && d.time <= nowT;
+      return `<div class="dose ${due ? 'due' : ''}"><div class="t">${d.time}</div><div class="n"><b>${esc(displayName(d.c))}</b><span>${esc([d.c.brand, d.c.serving].filter(Boolean).join(' · '))}${due ? ` · <span style="color:var(--accent-2)">${t('dueNow')}</span>` : ''}</span></div>
+        ${takenId ? `<span class="done">✓ ${te ? hhmm(new Date(te.ts)) : t('taken')}</span>` : `<button class="btn small ${due ? 'primary' : ''}" data-action="takeDose" data-c="${d.c.id}" data-t="${d.time}">${t('take')}</button>`}</div>`;
+    }).join('')}</div>` : '';
+  const entriesHTML = list.length ? list.map(e => {
+    const et = entryTotals(e);
+    return `<div class="entry" data-action="entry" data-id="${e.id}">
+      <div class="ico">${e.thumb ? `<img src="${e.thumb}" alt="">` : (KIND_ICON[e.kind] || '🍽')}</div>
+      <div class="body"><b>${esc(displayName(e))}</b><span>${hhmm(new Date(e.ts))} · ${fmtN(e.servings)} × ${esc(e.serving || '')}</span></div>
+      <div class="kc">${e.kind === 'medication' ? '<span>✓</span>' : `<b>${fmtN(et.kcal, 'kcal')}</b><span>kcal</span>`}</div></div>`;
+  }).join('') : `<div class="empty"><span class="e">🎙</span>${t('emptyLog')}</div>`;
+
+  $('#view-today').innerHTML = `
+    <div class="date-nav">
+      <button class="icon-btn" data-action="day" data-d="-1">‹</button>
+      <div class="lbl" ${isToday ? '' : 'data-action="day" data-d="0"'}><div class="d">${dayLabel(k)}</div><div class="s">${keyToDate(k).toLocaleDateString(locale(), { day: 'numeric', month: 'long', year: 'numeric' })}${isToday ? '' : ` · <a class="link">${t('backToToday')}</a>`}</div></div>
+      <button class="icon-btn" data-action="day" data-d="1" ${isToday ? 'disabled' : ''}>›</button>
+    </div>
+    <div class="card fade-in">
+      <div class="summary">
+        <div class="ring-wrap">
+          <svg width="132" height="132" viewBox="0 0 132 132"><circle cx="66" cy="66" r="56" fill="none" stroke="var(--track)" stroke-width="11"/>
+            <circle class="ring-fg" cx="66" cy="66" r="56" fill="none" stroke="${tot.kcal > dv.kcal ? 'var(--red)' : 'url(#rg)'}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - kcalP)}"/>
+            <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF6A28"/><stop offset="1" stop-color="#FF9F1C"/></linearGradient></defs></svg>
+          <div class="ring-txt"><div class="big">${fmtN(tot.kcal, 'kcal')}</div><div class="sub">${t('of')} ${fmtN(dv.kcal, 'kcal')} kcal</div><div class="sub" style="color:${left < 0 ? 'var(--red)' : 'var(--text-3)'}">${fmtN(Math.abs(left), 'kcal')} ${left < 0 ? t('kcalOver') : t('kcalLeft')}</div></div>
+        </div>
+        <div>${macros}</div>
+      </div>
+    </div>
+    ${doseHTML}
+    <div class="card fade-in"><h3>📝 ${t('log')}<span class="right muted">${list.length} ${t(list.length === 1 ? 'item' : 'items')}</span></h3>${entriesHTML}</div>
+    <div class="card fade-in">
+      <div class="tabs-mini">
+        <button class="chip ${microTab === 'mineral' ? 'active' : ''}" data-action="microTab" data-g="mineral">${t('minerals')}</button>
+        <button class="chip ${microTab === 'vitamin' ? 'active' : ''}" data-action="microTab" data-g="vitamin">${t('vitamins')}</button>
+        <button class="chip ${microTab === 'macro' ? 'active' : ''}" data-action="microTab" data-g="macro">${t('macros')}</button>
+      </div>
+      <div class="nutr">${nutrientRows(tot, dv, microTab)}</div>
+      ${list.length ? insightHTML(tot, dv) : ''}
+    </div>`;
+}
+
+function openEntry(id) {
+  const e = S.entries.find(x => x.id === id); if (!e) return;
+  const et = entryTotals(e);
+  const rows = NUTRIENTS.filter(n => et[n.key] > 0).map(n => `<tr><td>${L([n.vi, n.en])}</td><td>${fmtN(et[n.key])} ${n.unit}</td></tr>`).join('');
+  openSheet(`
+    <h2>${esc(displayName(e))}</h2>
+    <p class="lead">${esc([e.brand, e.serving].filter(Boolean).join(' · '))} · ${new Date(e.ts).toLocaleString(locale(), { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' })}</p>
+    <div class="row" style="justify-content:space-between"><span class="badge ${e.kind}">${t(e.kind)}</span>
+      <div class="stepper"><button data-action="eStep" data-id="${e.id}" data-d="-0.5">−</button><span>${fmtN(e.servings)}</span><button data-action="eStep" data-id="${e.id}" data-d="0.5">+</button></div></div>
+    ${e.assumptions ? `<div class="assume">${esc(e.assumptions)}</div>` : ''}
+    ${rows ? `<table class="ntable">${rows}</table>` : ''}
+    <div class="actions"><button class="btn danger" data-action="eDel" data-id="${e.id}">${t('del')}</button><button class="btn primary" data-action="closeSheet">${t('done')}</button></div>`);
+}
+
+// =====================================================================
+// RENDER — HISTORY (weekly / monthly)
+// =====================================================================
+let histMode = 'week'; let histAnchor = todayKey(); let histMetric = 'kcal';
+function periodRange() {
+  const d = keyToDate(histAnchor);
+  if (histMode === 'week') {
+    const dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow);
+    return Array.from({ length: 7 }, (_, i) => addDays(dateKey(d), i));
+  }
+  const y = d.getFullYear(), m = d.getMonth(); const n = new Date(y, m + 1, 0).getDate();
+  return Array.from({ length: n }, (_, i) => dateKey(new Date(y, m, i + 1)));
+}
+function renderHistory() {
+  const days = periodRange(); const dv = targets(); const tk = todayKey();
+  const perDay = days.map(k => { const l = entriesOn(k); return { k, list: l, tot: sumEntries(l) }; });
+  const logged = perDay.filter(d => d.list.length);
+  const sum = zeroNutrients(); logged.forEach(d => NUTRIENT_KEYS.forEach(n => sum[n] += d.tot[n]));
+  const nLogged = Math.max(1, logged.length);
+  const avg = Object.fromEntries(NUTRIENT_KEYS.map(n => [n, sum[n] / nLogged]));
+  let sched = 0, taken = 0;
+  days.filter(k => k <= tk).forEach(k => dosesFor(k).forEach(d => { if ((d.c.createdAt || 0) < keyToDate(k).getTime() + 86400000) { sched++; if (S.doses[d.key]) taken++; } }));
+
+  const W = 340, H = 170, padB = 22, padT = 10; const bw = W / days.length;
+  const vals = perDay.map(d => d.tot[histMetric]); const target = dv[histMetric];
+  const maxV = Math.max(target * 1.25, ...vals, 1);
+  const y = (v) => H - padB - (v / maxV) * (H - padB - padT);
+  const meta = NUT[histMetric];
+  const bars = perDay.map((d, i) => {
+    const v = d.tot[histMetric]; const x = i * bw + bw * 0.18; const w = bw * 0.64; const p = target ? v / target * 100 : 0;
+    const col = v === 0 ? 'var(--track)' : pctColor(p, meta.limit);
+    const lbl = histMode === 'week' ? keyToDate(d.k).toLocaleDateString(locale(), { weekday: 'narrow' }) : ((i + 1) % 5 === 0 || i === 0 ? String(i + 1) : '');
+    return `<g class="bar-r" data-action="openDay" data-k="${d.k}"><rect x="${i * bw}" y="0" width="${bw}" height="${H}" fill="transparent"/>
+      <rect x="${x}" y="${y(v)}" width="${w}" height="${Math.max(v ? 2 : 0, H - padB - y(v))}" rx="${Math.min(4, w / 2)}" fill="${col}" ${d.k === tk ? 'stroke="var(--text)" stroke-width="1"' : ''}/>
+      <text x="${i * bw + bw / 2}" y="${H - 6}" text-anchor="middle" font-size="10" fill="var(--text-3)" font-family="Outfit">${lbl}</text></g>`;
+  }).join('');
+  const label = histMode === 'week'
+    ? `${keyToDate(days[0]).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })} – ${keyToDate(days[6]).toLocaleDateString(locale(), { day: 'numeric', month: 'short' })}`
+    : keyToDate(days[0]).toLocaleDateString(locale(), { month: 'long', year: 'numeric' });
+  const metrics = ['kcal', 'protein_g', 'fiber_g', 'sugar_g', 'sodium_mg', 'calcium_mg', 'iron_mg', 'magnesium_mg', 'vit_d_mcg', 'vit_c_mg', 'water_ml'];
+  const nextDisabled = days[days.length - 1] >= tk;
+
+  $('#view-history').innerHTML = `
+    <div class="seg" style="margin-bottom:14px">
+      <button class="${histMode === 'week' ? 'active' : ''}" data-action="histMode" data-m="week">${t('week')}</button>
+      <button class="${histMode === 'month' ? 'active' : ''}" data-action="histMode" data-m="month">${t('month')}</button>
+    </div>
+    <div class="date-nav">
+      <button class="icon-btn" data-action="histNav" data-d="-1">‹</button>
+      <div class="lbl"><div class="d" style="font-size:24px">${label}</div></div>
+      <button class="icon-btn" data-action="histNav" data-d="1" ${nextDisabled ? 'disabled' : ''}>›</button>
+    </div>
+    <div class="card fade-in">
+      <div class="chips-scroll">${metrics.map(m => `<button class="chip ${m === histMetric ? 'active' : ''}" data-action="histMetric" data-m="${m}">${L([NUT[m].vi, NUT[m].en])}</button>`).join('')}</div>
+      <div class="chart"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <line x1="0" x2="${W}" y1="${y(target)}" y2="${y(target)}" stroke="var(--text-3)" stroke-dasharray="4 4" stroke-width="1"/>
+        ${bars}</svg></div>
+      <div class="row muted" style="font-size:12px;justify-content:space-between;margin-top:6px"><span>- - ${meta.limit ? t('limit') : 'RDA'}: ${fmtN(target)} ${meta.unit}</span><span>${t('tapBar')}</span></div>
+      <div class="stat-grid">
+        <div class="stat"><b>${logged.length}<span style="font-size:16px" class="muted">/${days.filter(k => k <= tk).length}</span></b><span>${t('daysLogged')}</span></div>
+        <div class="stat"><b>${fmtN(avg.kcal, 'kcal')}</b><span>${t('avgKcal')}</span></div>
+        <div class="stat"><b>${sched ? Math.round(taken / sched * 100) + '%' : '—'}</b><span>💊 ${t('adherence')}</span></div>
+      </div>
+    </div>
+    <div class="card fade-in">
+      <h3>${t('avgDay')}</h3>
+      <div class="tabs-mini">
+        <button class="chip ${microTab === 'mineral' ? 'active' : ''}" data-action="microTab" data-g="mineral">${t('minerals')}</button>
+        <button class="chip ${microTab === 'vitamin' ? 'active' : ''}" data-action="microTab" data-g="vitamin">${t('vitamins')}</button>
+        <button class="chip ${microTab === 'macro' ? 'active' : ''}" data-action="microTab" data-g="macro">${t('macros')}</button>
+      </div>
+      <div class="nutr">${nutrientRows(avg, dv, microTab)}</div>
+      ${logged.length ? insightHTML(sum, dv, nLogged) : ''}
+    </div>`;
+}
+
+// =====================================================================
+// RENDER — CABINET
+// =====================================================================
+function renderCabinet() {
+  const items = S.cabinet.map(c => {
+    const micro = microChips(c.nutrients, 1);
+    return `<div class="cab">
+      <div class="ico">${c.thumb ? `<img src="${c.thumb}" alt="">` : (KIND_ICON[c.kind] || '💊')}</div>
+      <div class="body"><b>${esc(displayName(c))}</b><span>${esc([c.brand, c.serving].filter(Boolean).join(' · '))}</span><br>
+        <span>⏰ ${c.times && c.times.length ? c.times.join(', ') : t('noTimes')}</span>
+        ${micro ? `<div class="micro-chips">${micro}</div>` : ''}</div>
+      <div class="acts"><button class="btn small primary" data-action="cabLog" data-c="${c.id}">${t('logNow')}</button><button class="btn small" data-action="cabEdit" data-c="${c.id}">${t('edit')}</button></div>
+    </div>`;
+  }).join('');
+  const hasTimes = S.cabinet.some(c => c.times && c.times.length);
+  $('#view-cabinet').innerHTML = `
+    <div class="card fade-in">
+      <h3>💊 ${t('cabinet')}</h3>
+      <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:14px">${t('cabLead')}</p>
+      <div class="row" style="margin-bottom:16px"><button class="btn primary" style="flex:1" data-action="photo">${t('scanBottle')}</button><button class="btn" style="flex:1" data-action="cabEdit" data-c="">${t('addManual')}</button></div>
+      ${items || `<div class="empty"><span class="e">🧴</span>${t('emptyCab')}</div>`}
+    </div>
+    <div class="card fade-in">
+      <h3>⏰ ${t('reminders')}</h3>
+      <p class="muted" style="font-size:13px;line-height:1.5;margin-bottom:12px">${t('icsLead')}</p>
+      <button class="btn block" data-action="ics" ${hasTimes ? '' : 'disabled style="opacity:.4"'}>📆 ${t('icsBtn')}</button>
+      <div class="switch" style="margin-top:12px"><div>${t('notifyInApp')}<small>${t('notifyInAppSub')}</small></div><button class="tgl ${S.settings.notify ? 'on' : ''}" data-action="notifyToggle"></button></div>
+    </div>`;
+}
+function openCabEdit(id) {
+  const c = id ? S.cabinet.find(x => x.id === id) : null;
+  const presets = SUPPLEMENTS.map(p => `<option value="${p.id}">${esc(L([p.vi, p.en]))}</option>`).join('');
+  openSheet(`
+    <h2>${c ? t('edit') : t('addManual').replace('+ ', '')}</h2>
+    <label class="f">${t('type')}</label>
+    <div class="seg" id="cKind"><button class="${!c || c.kind === 'supplement' ? 'active' : ''}" data-action="segPick" data-v="supplement">${t('supplement')}</button><button class="${c && c.kind === 'medication' ? 'active' : ''}" data-action="segPick" data-v="medication">${t('medication')}</button></div>
+    ${c ? '' : `<label class="f">${t('preset')}</label><select class="inp" id="cPreset"><option value="">${t('none')}</option>${presets}</select>`}
+    <label class="f">${t('name')}</label><input class="inp" id="cName" value="${esc(c ? displayName(c) : '')}">
+    <label class="f">${t('brand')}</label><input class="inp" id="cBrand" value="${esc(c?.brand || '')}">
+    <label class="f">${t('serving')}</label><input class="inp" id="cServing" value="${esc(c?.serving || (currentLang === 'vi' ? '1 viên' : '1 tablet'))}">
+    <label class="f">${t('times')}</label><input class="inp" id="cTimes" placeholder="08:00, 21:00" value="${esc((c?.times || []).join(', '))}">
+    <div class="actions">${c ? `<button class="btn danger" data-action="cabDel" data-c="${c.id}">${t('del')}</button>` : `<button class="btn" data-action="closeSheet">${t('cancel')}</button>`}
+      <button class="btn primary" data-action="cabSave" data-c="${c ? c.id : ''}">${t('saveBtn')}</button></div>`);
+  const sel = $('#cPreset');
+  if (sel) sel.onchange = () => {
+    const p = SUPPLEMENTS.find(x => x.id === sel.value); if (!p) return;
+    $('#cName').value = L([p.vi, p.en]); $('#cServing').value = L([p.serving.vi, p.serving.en]);
+  };
+}
+function saveCab(id) {
+  const kind = $('#cKind .active')?.dataset.v || 'supplement';
+  const name = $('#cName').value.trim(); if (!name) { $('#cName').focus(); return; }
+  const times = $('#cTimes').value.split(/[,\s]+/).map(s => s.trim()).filter(Boolean)
+    .map(s => { const m = s.match(/^(\d{1,2})(?::|h)?(\d{2})?$/); return m ? `${pad(Math.min(23, +m[1]))}:${pad(Math.min(59, +(m[2] || 0)))}` : null; }).filter(Boolean);
+  const preset = SUPPLEMENTS.find(x => x.id === $('#cPreset')?.value);
+  if (id) {
+    const c = S.cabinet.find(x => x.id === id);
+    Object.assign(c, { kind, name, name_vi: currentLang === 'vi' ? name : c.name_vi, brand: $('#cBrand').value.trim(), serving: $('#cServing').value.trim(), times });
+  } else {
+    S.cabinet.push({ id: uid(), kind, name, name_vi: preset ? preset.vi : name, brand: $('#cBrand').value.trim(), serving: $('#cServing').value.trim(),
+      nutrients: kind === 'medication' || !preset ? zeroNutrients() : nutrientsFromArray(preset.n), times, thumb: null, createdAt: Date.now() });
+  }
+  save(); closeSheet(); renderAll(); toast(t('saved'));
+}
+
+// =====================================================================
+// RENDER — SETTINGS
+// =====================================================================
+function renderSettings() {
+  const dv = targets();
+  $('#view-settings').innerHTML = `
+    <div class="card fade-in">
+      <h3>🎯 ${t('profile')}</h3>
+      <label class="f" style="margin-top:0">${t('sex')}</label>
+      <div class="seg"><button class="${S.settings.sex === 'female' ? 'active' : ''}" data-action="sex" data-v="female">${t('female')}</button><button class="${S.settings.sex === 'male' ? 'active' : ''}" data-action="sex" data-v="male">${t('male')}</button></div>
+      <label class="f">${t('kcalTarget')}</label>
+      <input class="inp" id="kcalInp" type="number" inputmode="numeric" min="800" max="6000" value="${dv.kcal}">
+    </div>
+    <div class="card fade-in">
+      <div class="switch"><div>${t('autoLog')}<small>${t('autoLogSub')}</small></div><button class="tgl ${S.settings.autoLog ? 'on' : ''}" data-action="autoLog"></button></div>
+      <div class="switch"><div>${t('theme')}</div><button class="tgl ${document.body.classList.contains('light-mode') ? 'on' : ''}" data-action="theme"></button></div>
+      <label class="f">${t('accessCode')}</label>
+      <input class="inp" id="codeInp" type="password" autocomplete="off" value="${esc(S.settings.accessCode)}">
+    </div>
+    <div class="card fade-in">
+      <h3>📲 ${t('install')}</h3>
+      <p class="install-tip">${t('installTip')}</p>
+    </div>
+    <div class="card fade-in">
+      <h3>🗂 ${t('data')}</h3>
+      <div class="row" style="flex-wrap:wrap;gap:8px">
+        <button class="btn small" data-action="exportJson">${t('exportJson')}</button>
+        <button class="btn small" data-action="exportCsv">${t('exportCsv')}</button>
+        <button class="btn small" data-action="importJson">${t('importJson')}</button>
+        <button class="btn small danger" data-action="wipe">${t('wipe')}</button>
+      </div>
+      <p class="muted" style="font-size:12px;line-height:1.5;margin-top:12px">🔒 ${t('privacy')}</p>
+    </div>
+    <p class="faint" style="text-align:center;font-size:12px;margin:8px 0 20px"><a class="link" href="/">NomNom</a> · Chuyên gia dinh dưỡng cho tất cả.</p>`;
+  $('#kcalInp').onchange = (e) => { S.settings.kcal = Number(e.target.value) || null; save(); };
+  $('#codeInp').onchange = (e) => { S.settings.accessCode = e.target.value.trim(); save(); };
+}
+
+function exportCsv() {
+  const head = ['date', 'time', 'kind', 'name', 'brand', 'servings', 'serving', 'source', ...NUTRIENT_KEYS];
+  const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const rows = [...S.entries].sort((a, b) => a.ts - b.ts).map(e => {
+    const d = new Date(e.ts); const et = entryTotals(e);
+    return [dateKey(d), hhmm(d), e.kind, displayName(e), e.brand, e.servings, e.serving, e.source, ...NUTRIENT_KEYS.map(k => Math.round(et[k] * 100) / 100)].map(q).join(',');
+  });
+  shareOrDownload([head.join(','), ...rows].join('\n'), `nomnom-log-${todayKey()}.csv`, 'text/csv');
+}
+
+// =====================================================================
+// ROUTING + ACTIONS
+// =====================================================================
+function renderAll() {
+  applyStaticLang(); renderAIPill();
+  if (currentTab === 'today') renderToday();
+  if (currentTab === 'history') renderHistory();
+  if (currentTab === 'cabinet') renderCabinet();
+  if (currentTab === 'settings') renderSettings();
+}
+function setTab(tab) {
+  currentTab = tab;
+  ['today', 'history', 'cabinet', 'settings'].forEach(x => $(`#view-${x}`).classList.toggle('hidden', x !== tab));
+  document.querySelectorAll('.tabbar button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  window.scrollTo({ top: 0 });
+  renderAll();
+}
+
+const actions = {
+  tab: (el) => setTab(el.dataset.tab),
+  lang: (el) => { currentLang = el.dataset.lang; localStorage.setItem('nomnom.lang', currentLang); renderAll(); },
+  aiInfo: () => openSheet(`<h2>${aiConfigured ? '✨ AI' : '📴 Offline'}</h2><p class="lead">${aiConfigured ? t('aiOnInfo') : t('aiOffInfo')}</p><div class="actions"><button class="btn primary" data-action="closeSheet">OK</button></div>`),
+  closeSheet: () => closeSheet(),
+  record: () => startRecord(),
+  recStop: () => { if (rec) try { rec.stop(); } catch {} },
+  recType: () => { const txt = rec && rec._cancel ? rec._cancel() : ''; sheetOnClose = null; openComposer(txt); },
+  type: () => openComposer(),
+  example: (el) => { const c = $('#composer'); if (c) { c.value = el.dataset.text; c.focus(); } },
+  composerSend: () => { const v = $('#composer').value.trim(); if (v) submitText(v); else $('#composer').focus(); },
+  photo: () => { $('#photoInput').value = ''; $('#photoInput').click(); },
+  photoSend: () => submitPhoto($('#photoNote')?.value.trim() || ''),
+  rStep: (el) => { const it = reviewItems[+el.dataset.i]; it.servings = Math.max(0.5, Math.round((it.servings + Number(el.dataset.d)) * 2) / 2); syncReviewTimes(); renderReview(); },
+  rDel: (el) => { syncReviewTimes(); reviewItems.splice(+el.dataset.i, 1); reviewItems.length ? renderReview() : closeSheet(); },
+  rCab: (el) => { reviewItems[+el.dataset.i]._toCabinet = el.checked; },
+  commit: () => commitReview(),
+  day: (el) => { const d = Number(el.dataset.d); viewDate = d === 0 ? todayKey() : addDays(viewDate, d); if (viewDate > todayKey()) viewDate = todayKey(); renderToday(); },
+  microTab: (el) => { microTab = el.dataset.g; renderAll(); },
+  entry: (el) => openEntry(el.dataset.id),
+  eStep: (el) => { const e = S.entries.find(x => x.id === el.dataset.id); e.servings = Math.max(0.5, Math.round((e.servings + Number(el.dataset.d)) * 2) / 2); save(); renderAll(); openEntry(e.id); },
+  eDel: (el) => {
+    const e = S.entries.find(x => x.id === el.dataset.id); if (!e) return;
+    const doseKeys = Object.keys(S.doses).filter(k => S.doses[k] === e.id);
+    S.entries = S.entries.filter(x => x.id !== e.id); doseKeys.forEach(k => delete S.doses[k]);
+    save(); closeSheet(); renderAll();
+    toast(t('deleted'), () => { S.entries.push(e); doseKeys.forEach(k => S.doses[k] = e.id); save(); renderAll(); });
+  },
+  takeDose: (el) => takeDose(el.dataset.c, el.dataset.t, viewDate),
+  histMode: (el) => { histMode = el.dataset.m; renderHistory(); },
+  histNav: (el) => {
+    const d = keyToDate(histAnchor); const n = Number(el.dataset.d);
+    if (histMode === 'week') d.setDate(d.getDate() + 7 * n); else { d.setDate(1); d.setMonth(d.getMonth() + n); }
+    histAnchor = dateKey(d) > todayKey() ? todayKey() : dateKey(d); renderHistory();
+  },
+  histMetric: (el) => { histMetric = el.dataset.m; renderHistory(); },
+  openDay: (el) => { if (el.dataset.k > todayKey()) return; viewDate = el.dataset.k; setTab('today'); },
+  cabLog: (el) => takeDose(el.dataset.c, '', todayKey()),
+  cabEdit: (el) => openCabEdit(el.dataset.c),
+  cabSave: (el) => saveCab(el.dataset.c),
+  cabDel: (el) => { S.cabinet = S.cabinet.filter(c => c.id !== el.dataset.c); save(); closeSheet(); renderAll(); toast(t('deleted')); },
+  segPick: (el) => { el.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('active', b === el)); },
+  ics: () => shareOrDownload(buildICS(), 'nomnom-reminders.ics', 'text/calendar'),
+  notifyToggle: async () => {
+    if (!S.settings.notify && 'Notification' in window) {
+      const p = await Notification.requestPermission().catch(() => 'denied');
+      S.settings.notify = p === 'granted';
+      if (p !== 'granted') toast(t('notifyInAppSub'));
+    } else S.settings.notify = !S.settings.notify;
+    save(); renderCabinet();
+  },
+  sex: (el) => { S.settings.sex = el.dataset.v; S.settings.kcal = null; save(); renderSettings(); },
+  autoLog: () => { S.settings.autoLog = !S.settings.autoLog; save(); renderSettings(); },
+  theme: () => {
+    const light = document.body.classList.toggle('light-mode');
+    localStorage.setItem('nomnom.theme', light ? 'light' : 'dark');
+    $('meta[name=theme-color]').content = light ? '#FAFAF7' : '#050505';
+    renderSettings();
+  },
+  exportJson: () => shareOrDownload(JSON.stringify(S, null, 2), `nomnom-log-${todayKey()}.json`, 'application/json'),
+  exportCsv: () => exportCsv(),
+  importJson: () => { $('#importInput').value = ''; $('#importInput').click(); },
+  wipe: () => { if (confirm(t('wipeConfirm'))) { const keep = S.settings; S = DEFAULT_STATE(); S.settings = keep; save(); renderAll(); toast(t('deleted')); } },
+};
+function syncReviewTimes() { document.querySelectorAll('.rTime').forEach(el => { const it = reviewItems[+el.dataset.i]; if (it) it._time = el.value; }); }
+
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-action]');
+  if (!el || el.disabled) return;
+  const fn = actions[el.dataset.action];
+  if (fn) { if (el.tagName !== 'INPUT') e.preventDefault(); fn(el, e); }
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && e.target.id === 'composer') actions.composerSend();
+});
+$('#photoInput').addEventListener('change', (e) => handlePhoto(e.target.files[0]));
+$('#importInput').addEventListener('change', async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const j = JSON.parse(await f.text());
+    if (!Array.isArray(j.entries)) throw new Error('bad');
+    const ids = new Set(S.entries.map(x => x.id));
+    j.entries.forEach(x => { if (x && x.id && !ids.has(x.id) && Number.isFinite(x.ts)) S.entries.push({ ...x, nutrients: cleanNutrients(x.nutrients) }); });
+    const cids = new Set(S.cabinet.map(x => x.id));
+    (j.cabinet || []).forEach(x => { if (x && x.id && !cids.has(x.id)) S.cabinet.push({ ...x, nutrients: cleanNutrients(x.nutrients), times: Array.isArray(x.times) ? x.times : [] }); });
+    Object.assign(S.doses, j.doses || {});
+    save(); renderAll(); toast(`${t('imported')}: ${j.entries.length}`);
+  } catch { toast(t('badFile')); }
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (viewDate > todayKey()) viewDate = todayKey(); renderAll(); } });
+
+// Boot
+applyStaticLang();
+renderAll();
+checkAI();
+setInterval(checkReminders, 20000); checkReminders();
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+// Deep link: /log/#record opens the recorder (e.g. from an iOS Shortcut / Back Tap).
+if (location.hash === '#record') setTimeout(startRecord, 300);
+if (location.hash === '#type') setTimeout(() => openComposer(), 300);
+window.__nomnomLog = { get state() { return S; }, localParse };
+</script>
+</body>
+</html>

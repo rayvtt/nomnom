@@ -15,6 +15,10 @@ NOMNOM/
 ├── CLAUDE.md                    ← You are here — global context, design system, conventions
 ├── README.md
 ├── index.html                   ← The app — single-file HTML/CSS/JS, ~5400 lines, deployed to Cloudflare Pages
+├── log/                         ← NomNom Log — installable iPhone web app (voice/photo → AI nutrition journal), served at /log/
+│   ├── index.html               ← single-file app (ES module)
+│   └── vn-foods.js              ← shared nutrient defs + VN dish/supplement reference data
+├── functions/api/parse.js       ← Cloudflare Pages Function: POST /api/parse → Claude (needs ANTHROPIC_API_KEY)
 └── features/                    ← Per-feature spec docs (read ONLY the relevant one when iterating)
     ├── README.md                ← Index + iteration workflow
     ├── auth.md, persistence.md, theme-i18n.md   ← Cross-cutting
@@ -22,6 +26,7 @@ NOMNOM/
     ├── setup-wizard.md, smart-order.md, dine-out.md
     ├── group-challenge.md, cuisine-db.md, recipe-hub.md
     ├── recipe-analyzer.md, vendor-hub.md, audience-timeline-proof.md
+    ├── daily-log.md             ← NomNom Log app (/log/)
 ```
 
 ## Iteration Workflow
